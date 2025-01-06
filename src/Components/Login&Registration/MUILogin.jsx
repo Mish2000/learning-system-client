@@ -30,6 +30,7 @@ function MuiLogin(props) {
             }}
         >
             <AppIcon size={250}/>
+            <Typography variant={"h2"}>self learning math</Typography>
             <Card
                 sx={{
                     width: '100%',
