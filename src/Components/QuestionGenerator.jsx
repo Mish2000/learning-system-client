@@ -12,7 +12,7 @@ function QuestionGenerator() {
     useEffect(() => {
         const fetchParents = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/api/topics?parentId=null');
+                const response = await axios.get('http://localhost:8080/api/topics');
                 setParentTopics(response.data);
             } catch (error) {
                 console.error('Failed to fetch parent topics', error);
