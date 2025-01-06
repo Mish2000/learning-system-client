@@ -1,58 +1,66 @@
 import './App.css'
-import Login from './components/Login.jsx'
-import TopicList from './components/TopicList.jsx'
-import QuestionGenerator from './components/QuestionGenerator.jsx'
-import AnswerSubmission from './components/AnswerSubmission.jsx'
-import UserDashboardSSE from './components/UserDashboardSSE.jsx'
-import AdminDashboard from './components/AdminDashboardSSE.jsx'
+
 import {useState} from "react";
-import Register from "./components/Register.jsx";
+import Register from "./Components/Register.jsx";
+import MuiLogin from "./Components/Login&Registration/MUILogin.jsx";
+import { BrowserRouter, Routes, Route } from 'react-router-dom'; // Correct import
+import {createTheme, CssBaseline, ThemeProvider} from "@mui/material";
+import {LOGIN_URL, REGISTER_URL} from "./Utils/Constants.jsx";
+import MuiRegister from "./Components/Login&Registration/MUIRegister.jsx";
+import Error404 from "./Components/ErrorPages/Error404.jsx";
+
 
 function App() {
     const [token, setToken] = useState(localStorage.getItem('jwtToken') || null);
-    const [role, setRole]   = useState(localStorage.getItem('role') || null);
+    const [role, setRole] = useState(localStorage.getItem('role') || null);
 
-    const handleLoginSuccess = (loggedToken, loggedRole) => {
-        setToken(loggedToken);
-        setRole(loggedRole);
-    };
+    const theme = createTheme({
+        palette: {
+            background: {
+                default: '#f0f0f0',
+            },
+            primary: {
+                main: '#0c8686',
+                // light: ,
+                // dark: ,
+                // contrastText: ,
+            },
+            secondary: {
+                main: '#ad51b4',
+                // light: ,
+                // dark: ,
+                // contrastText: ,
+            },
+        },
+        components: {
+            MuiButton: {
+                style: {
+                    textTransform: 'inherit',
 
-    const handleLogout = () => {
-        setToken(null);
-        setRole(null);
-        localStorage.removeItem('jwtToken');
-        localStorage.removeItem('role');
-    };
-
-    if (!token) {
-        return (
-            <div>
-                <h1>Welcome to Our Learning System</h1>
-                <Register />
-                <Login onLoginSuccess={handleLoginSuccess} />
-            </div>
-        );
-    }
+                }
+            },
+            MuiCard :{
+                style:{
+                    // backgroundColor: '#f60000',
+                    // elevation: "6",
+                }
+            }
+        }
+    });
 
     return (
-        <div>
-            <h1>Welcome, {role === 'ADMIN' ? 'Admin' : 'User'}!</h1>
-            <button onClick={handleLogout}>Logout</button>
+        <ThemeProvider theme={theme}>
+            <CssBaseline >
+            <BrowserRouter>
+                <Routes>
+                    <Route path={"*"} element={<Error404/>}/>
+                    <Route path={LOGIN_URL} element={<MuiLogin/>}/>
+                    <Route path={REGISTER_URL} element={<MuiRegister/>}/>
+                </Routes>
+            </BrowserRouter>
+            </CssBaseline>
+        </ThemeProvider>
 
-            <TopicList />
-            <QuestionGenerator />
-            <AnswerSubmission />
-
-            <hr />
-            <UserDashboardSSE />
-
-            {role === 'ADMIN' && (
-                <>
-                    <hr />
-                    <AdminDashboard />
-                </>
-            )}
-        </div>
     );
 }
 
