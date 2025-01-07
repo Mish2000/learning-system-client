@@ -23,6 +23,8 @@ function MuiRegister() {
     const regex = /^[a-zA-Z0-9]{4,30}$/;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const phoneRegex = /^05\d{1}-?\d{3}-?\d{4}$/;
+    const noError = (!usernameError && !phoneError && !emailError && !passwordError && !repeatError);
+    const notEmpty = (username.length >= 1 && phone.length >= 1 && email.length >= 1 && password.length >= 1 && repeat === password && repeat.length >=1);
 
     useEffect(() => {
         if (username.length >= 1) {
@@ -60,7 +62,6 @@ function MuiRegister() {
         event.target.value = formattedValue;
     };
 
-    const notEmpty = (username.length >= 1 && phone.length >= 1 && email.length >= 1 && password.length >= 1 && repeat !== password && repeat.length > 0);
 
     async function createAccount() {
         try {
@@ -145,49 +146,49 @@ function MuiRegister() {
                             onChange={(event) => setPassword(event.target.value)}
                         />
 
-                        <PasswordTextField
-                            error={repeatError}
-                            helperText={repeatError ? "Passwords must be the same!" : ""}
-                            variant={"outlined"}
-                            type={"password"}
-                            label={"Repeat Password"}
-                            value={repeat}
-                            onChange={(event) => setRepeat(event.target.value)}
-                        />
-                        {alert ? <Alert variant="filled" severity="error">
-                                Please check if all fields are filled correctly
-                            </Alert>
-                            :
-                            <></>
-                        }
+                    <PasswordTextField
+                        error={repeatError}
+                        helperText={repeatError ? "Passwords must be the same!" : ""}
+                        variant={"outlined"}
+                        type={"password"}
+                        label={"Repeat Password"}
+                        value={repeat}
+                        onChange={(event) => setRepeat(event.target.value)}
+                    />
+                    {alert ? <Alert variant="filled" severity="error">
+                            Please check if all fields are filled correctly
+                        </Alert>
+                        :
+                        <></>
+                    }
+                    <Button
+                        sx={{textTransform: 'inherit'}}
+                        variant={"contained"}
+                        onClick={() => {
+                            if (noError && notEmpty) {
+                                setAlert(false)
+                                createAccount().then(() => navigate(LOGIN_URL))
+                            } else {
+                                setAlert(true)
+                            }
+                        }}
+                    >Create Account</Button>
+                    <Stack>
                         <Button
                             sx={{textTransform: 'inherit'}}
-                            variant={"contained"}
+                            variant={"text"}
                             onClick={() => {
-                                if (error === "" && notEmpty) {
-                                    setAlert(false)
-                                    createAccount()
-                                } else {
-                                    setAlert(true)
-                                }
+                                navigate(LOGIN_URL)
                             }}
-                        >Create Account</Button>
-                        <Stack>
-                            <Button
-                                sx={{textTransform: 'inherit'}}
-                                variant={"text"}
-                                onClick={() => {
-                                    navigate(LOGIN_URL)
-                                }}
-                            >Login </Button>
-                            <Typography variant={"caption"} sx={{justifyContent: 'center', display: 'flex'}}>
-                                already have account? click here 👆
-                            </Typography>
-                        </Stack>
+                        >Login </Button>
+                        <Typography variant={"caption"} sx={{justifyContent: 'center', display: 'flex'}}>
+                            already have account? click here 👆
+                        </Typography>
                     </Stack>
-                </Card>
-            </Box>
-        );
-    }
+                </Stack>
+            </Card>
+        </Box>
+    );
+}
 
     export default MuiRegister;
