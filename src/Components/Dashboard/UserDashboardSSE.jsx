@@ -1,4 +1,8 @@
 import {useEffect, useState} from 'react';
+import {Box} from "@mui/material";
+import AppIcon from "../AppIcon.jsx";
+import QuestionGenerator from "../QuestionGenerator.jsx";
+import AnswerSubmission from "../AnswerSubmission.jsx";
 
 function UserDashboardSSE() {
     const [dashboardData, setDashboardData] = useState(null);
