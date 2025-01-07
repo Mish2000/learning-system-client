@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import  {useEffect, useState} from 'react';
 import {Alert, Box, Button, Card, Stack, TextField, Typography} from "@mui/material";
-import {useNavigate} from "react-router";
+import { useNavigate } from 'react-router-dom';
 import PasswordTextField from "./PasswordTextField.jsx";
-import {LOGIN_URL} from "../../Utils/Constants.jsx";
-import {register} from "../../API/Register.jsx";
+import {LOGIN_URL} from "../../Utils/Constants.js";
+import { registerUser } from '../../api/UserAPI';
 
 function MuiRegister() {
     const navigate = useNavigate();
@@ -63,17 +63,11 @@ function MuiRegister() {
     const notEmpty = (username.length >= 1 && phone.length >= 1 && email.length >= 1 && password.length >= 1 && repeat !== password && repeat.length > 0);
 
     async function createAccount() {
-        // register(username, email, password).then(() => {
-        //     if (result === 103) {
-        //         setError("This username is already taken ")
-        //     } else if (result === 104) {
-        //         setError("The username does not satisfy the requirements")
-        //     } else if (result === 105) {
-        //         setError("The password does not satisfy the requirements")
-        //     }else {navigate(LOGIN_URL)}
-        // })
-        register(username, email, password)
-        navigate(LOGIN_URL)
+        try {
+            await registerUser(username, email, password);
+        } catch (e) {
+            setError("Registration failed.");
+        }
     }
         return (
             <Box

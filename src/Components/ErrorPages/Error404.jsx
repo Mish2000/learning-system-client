@@ -1,4 +1,3 @@
-import React from 'react';
 import {Button, Stack, Typography} from "@mui/material";
 import ErrorIcon from '@mui/icons-material/Error';
 import {Link} from "react-router-dom";

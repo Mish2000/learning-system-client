@@ -1,18 +1,17 @@
-import './App.css'
 
-import {useState} from "react";
-import Register from "./Components/Register.jsx";
-import MuiLogin from "./Components/Login&Registration/MUILogin.jsx";
-import { BrowserRouter, Routes, Route } from 'react-router-dom'; // Correct import
-import {createTheme, CssBaseline, ThemeProvider} from "@mui/material";
-import {LOGIN_URL, REGISTER_URL} from "./Utils/Constants.jsx";
-import MuiRegister from "./Components/Login&Registration/MUIRegister.jsx";
-import Error404 from "./Components/ErrorPages/Error404.jsx";
-
+import  { useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
+import MuiLogin from './components/Login&Registration/MuiLogin';
+import MuiRegister from './components/Login&Registration/MuiRegister';
+import Error404 from './components/ErrorPages/Error404';
+import CombinedDashboard from './Components/Dashboard/CombinedDashboard';
+import PracticePage from './Components/Practice/PracticePage';
+import { LOGIN_URL, REGISTER_URL } from './Utils/Constants.js';
 
 function App() {
     const [token, setToken] = useState(localStorage.getItem('jwtToken') || null);
-    const [role, setRole] = useState(localStorage.getItem('role') || null);
+    const [role, setRole]   = useState(localStorage.getItem('role') || null);
 
     const theme = createTheme({
         palette: {
@@ -21,49 +20,75 @@ function App() {
             },
             primary: {
                 main: '#0c8686',
-                // light: ,
-                // dark: ,
-                // contrastText: ,
             },
             secondary: {
                 main: '#ad51b4',
-                // light: ,
-                // dark: ,
-                // contrastText: ,
             },
-        },
-        components: {
-            MuiButton: {
-                style: {
-                    textTransform: 'inherit',
-
-                }
-            },
-            MuiCard :{
-                style:{
-                    // backgroundColor: '#f60000',
-                    // elevation: "6",
-                }
-            }
         }
     });
 
+    const handleLogout = () => {
+        localStorage.removeItem('jwtToken');
+        localStorage.removeItem('role');
+        setToken(null);
+        setRole(null);
+    };
+
+    const handleLoginSuccess = (newToken, newRole) => {
+        localStorage.setItem('jwtToken', newToken);
+        localStorage.setItem('role', newRole);
+        setToken(newToken);
+        setRole(newRole);
+    };
+
     return (
         <ThemeProvider theme={theme}>
-            <CssBaseline >
-            <BrowserRouter>
-                <Routes>
-                    <Route path={"*"} element={<Error404/>}/>
-                    <Route path={LOGIN_URL} element={<MuiLogin/>}/>
-                    <Route path={REGISTER_URL} element={<MuiRegister/>}/>
-                </Routes>
-            </BrowserRouter>
+            <CssBaseline>
+                <BrowserRouter>
+
+                    <Routes>
+
+                        <Route path="/" element={<Navigate to={LOGIN_URL} replace />} />
+
+                        <Route
+                            path={LOGIN_URL}
+                            element={<MuiLogin onLoginSuccess={handleLoginSuccess} />}
+                        />
+                        <Route
+                            path={REGISTER_URL}
+                            element={<MuiRegister />}
+                        />
+
+                        {!token && (
+                            <>
+                                <Route path="/dashboard" element={<Navigate to={LOGIN_URL} />} />
+                                <Route path="/practice" element={<Navigate to={LOGIN_URL} />} />
+                            </>
+                        )}
+
+                        {token && (
+                            <>
+                                <Route
+                                    path="/dashboard"
+                                    element={<CombinedDashboard role={role} onLogout={handleLogout} />}
+                                />
+                                <Route
+                                    path="/practice"
+                                    element={<PracticePage onLogout={handleLogout} />}
+                                />
+                            </>
+                        )}
+
+                        <Route path="*" element={<Error404 />} />
+                    </Routes>
+
+                </BrowserRouter>
             </CssBaseline>
         </ThemeProvider>
-
     );
 }
 
 export default App;
+
 
 

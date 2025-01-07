@@ -1,19 +1,33 @@
-import React, {useState} from 'react';
+import  {useState} from 'react';
 import {Box, Button, Card, Stack, TextField, Typography} from "@mui/material";
-import {useNavigate} from "react-router";
-import {REGISTER_URL} from "../../Utils/Constants.jsx";
+import { useNavigate } from 'react-router-dom';
+import {REGISTER_URL} from "../../Utils/Constants.js";
 import PasswordTextField from "./PasswordTextField.jsx";
 import AppIcon from "../AppIcon.jsx";
+import axios from "axios";
+import PropTypes from 'prop-types';
 
-function MuiLogin(props) {
+function MuiLogin({onLoginSuccess}) {
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [loginError, setLoginError] = useState(false);
 
     async function handleLogin() {
-
+        try {
+            const response = await axios.post('http://localhost:8080/api/auth/login', {
+                username: username,
+                password: password
+            });
+            const { token, role } = response.data;
+            onLoginSuccess(token, role);
+            setLoginError(false);
+            navigate("/dashboard");
+        } catch (err) {
+            setLoginError(true);
+        }
     }
+
 
     return (
         <Box
@@ -91,6 +105,10 @@ function MuiLogin(props) {
         </Box>
     );
 }
+
+MuiLogin.propTypes = {
+    onLoginSuccess: PropTypes.func,
+};
 
 
 export default MuiLogin;

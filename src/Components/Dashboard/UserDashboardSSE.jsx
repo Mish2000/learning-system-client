@@ -24,7 +24,19 @@ function UserDashboardSSE() {
     }
 
     return (
-        <div>
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '100vh',
+                padding: {xs: 0, sm: 4, md: 4, lg: 4},
+                width: '100%',
+                maxWidth: {xs: '90%', sm: '800px'},
+                mx: 'auto',
+            }}>
+            <AppIcon size={80}/>
             <h2>User Dashboard</h2>
             <p>User ID: {dashboardData.userId}</p>
             <p>Total Attempts: {dashboardData.totalAttempts}</p>
@@ -42,7 +54,9 @@ function UserDashboardSSE() {
                     <li key={topic}>{topic}: {(rate * 100).toFixed(1)}%</li>
                 ))}
             </ul>
-        </div>
+            <QuestionGenerator/>
+            <AnswerSubmission/>
+        </Box>
     );
 }
 

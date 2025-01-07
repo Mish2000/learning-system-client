@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import TopicList from "./TopicList.jsx";
 
 function QuestionGenerator() {
     const [difficulty, setDifficulty] = useState('BASIC');
@@ -55,6 +56,7 @@ function QuestionGenerator() {
         <div>
             <h2>Generate a Question</h2>
             <div>
+                <TopicList/>
                 <label>Parent Topic: </label>
                 <select
                     value={selectedParent}
