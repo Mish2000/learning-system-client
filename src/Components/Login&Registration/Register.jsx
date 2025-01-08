@@ -19,6 +19,7 @@ function Register() {
     const [repeatError, setRepeatError] = useState(false);
     const [alert, setAlert] = useState(false);
     const [error, setError] = useState("");
+    const [success, setSuccess] = useState(false);
 
     const regex = /^[a-zA-Z0-9]{4,30}$/;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -62,89 +63,99 @@ function Register() {
         event.target.value = formattedValue;
     };
 
-
     async function createAccount() {
         try {
             await registerUser(username, email, password);
+            setSuccess(true);
+            setTimeout(() => {
+                navigate(LOGIN_URL);
+            }, 2250);
         } catch (e) {
             setError("Registration failed.");
         }
     }
-        return (
-            <Box
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    minHeight: '100vh',
-                    padding: {xs: 0, sm: 4, md: 4, lg: 4},
-                    width: '100%',
-                    maxWidth: {xs: '90%', sm: '800px'},
-                    mx: 'auto',
-                }}
-            >
-                <Card sx={{
-                    width: '100%',
-                    boxShadow: 3,
-                }}
-                      variant='outlined'>
-                    <Stack
-                        spacing={2}
-                        padding={2}
-                    >
-                        <Typography
-                            variant="h4">
-                            Create Account
-                        </Typography>
+
+    return (
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '100vh',
+                padding: {xs: 0, sm: 4, md: 4, lg: 4},
+                width: '100%',
+                maxWidth: {xs: '90%', sm: '800px'},
+                mx: 'auto',
+            }}
+        >
+            <Card sx={{
+                width: '100%',
+                boxShadow: 3,
+            }}
+                  variant='outlined'>
+                <Stack
+                    spacing={2}
+                    padding={2}
+                >
+                    <Typography
+                        variant="h4">
+                        Create Account
+                    </Typography>
+                    {success ? (
+                        <Alert variant="filled" severity="success">
+                            Registration successful! Redirecting to login page...
+                        </Alert>
+                    ) : (
                         <Typography
                             variant="h7"
                             color="error"
                         >
                             {error}
                         </Typography>
-                        <TextField
-                            error={usernameError}
-                            variant={"outlined"}
-                            type={"text"}
-                            helperText={"Between 4 -30 characters long,Can contain only numbers and english characters!"}
-                            label={"Username"}
-                            value={username}
-                            onChange={(event) => setUsername(event.target.value)}
-                        />
-                        <TextField
-                            error={emailError}
-                            variant={"outlined"}
-                            type={"text"}
-                            helperText={"in format of xxx@xxx.xxx"}
-                            label={"Email"}
-                            value={email}
-                            onChange={(event) => setEmail(event.target.value)}
-                        />
-                        <TextField
-                            error={phoneError}
-                            variant={"outlined"}
-                            type={"text"}
-                            helperText={"10 characters only in format of 05xxxxxxxx"}
-                            label={"Phone Number"}
-                            value={phone}
-                            onChange={(event) => {
-                                setPhone(event.target.value)
-                                {
-                                    handlePhoneChange(event)
-                                }
+                    )}
+                    <TextField
+                        error={usernameError}
+                        variant={"outlined"}
+                        type={"text"}
+                        helperText={"Between 4 -30 characters long,Can contain only numbers and english characters!"}
+                        label={"Username"}
+                        value={username}
+                        onChange={(event) => setUsername(event.target.value)}
+                    />
+                    <TextField
+                        error={emailError}
+                        variant={"outlined"}
+                        type={"text"}
+                        helperText={"in format of xxx@xxx.xxx"}
+                        label={"Email"}
+                        value={email}
+                        onChange={(event) => setEmail(event.target.value)}
+                    />
+                    <TextField
+                        error={phoneError}
+                        variant={"outlined"}
+                        type={"text"}
+                        helperText={"10 characters only in format of 05xxxxxxxx"}
+                        label={"Phone Number"}
+                        value={phone}
+                        onChange={(event) => {
+                            setPhone(event.target.value)
+                            {
+                                handlePhoneChange(event)
                             }
-                            }
-                        />
-                        <PasswordTextField
-                            error={passwordError}
-                            helperText={"Between 4 -30 characters long,Can contain only numbers and english characters! "}
-                            variant={"outlined"}
-                            type={"password"}
-                            label={"Password"}
-                            value={password}
-                            onChange={(event) => setPassword(event.target.value)}
-                        />
+                        }
+                        }
+                    />
+                    <PasswordTextField
+                        error={passwordError}
+                        helperText={"Between 4 -30 characters long,Can contain only numbers and english characters! "}
+                        variant={"outlined"}
+                        type={"password"}
+                        label={"Password"}
+                        value={password}
+                        onChange={(event) => setPassword(event.target.value)}
+                    />
 
                     <PasswordTextField
                         error={repeatError}
@@ -167,7 +178,7 @@ function Register() {
                         onClick={() => {
                             if (noError && notEmpty) {
                                 setAlert(false)
-                                createAccount().then(() => navigate(LOGIN_URL))
+                                createAccount()
                             } else {
                                 setAlert(true)
                             }
@@ -191,4 +202,4 @@ function Register() {
     );
 }
 
-    export default Register;
+export default Register;
