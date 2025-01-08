@@ -1,17 +1,18 @@
-
-import  { useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
-import MuiLogin from './components/Login&Registration/MuiLogin';
-import MuiRegister from './components/Login&Registration/MuiRegister';
+import {useState} from 'react';
+import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
+import {createTheme, ThemeProvider, CssBaseline} from '@mui/material';
+import Login from './Components/Login&Registration/Login.jsx';
+import Register from './Components/Login&Registration/Register.jsx';
 import Error404 from './components/ErrorPages/Error404';
 import CombinedDashboard from './Components/Dashboard/CombinedDashboard';
 import PracticePage from './Components/Practice/PracticePage';
-import { LOGIN_URL, REGISTER_URL } from './Utils/Constants.js';
+import {DASHBOARD_URL, LOGIN_URL, PRACTICE_URL, REGISTER_URL} from './Utils/Constants.js';
+import NavBar from "./Components/NavBar/NavBar.jsx";
+
 
 function App() {
     const [token, setToken] = useState(localStorage.getItem('jwtToken') || null);
-    const [role, setRole]   = useState(localStorage.getItem('role') || null);
+    const [role, setRole] = useState(localStorage.getItem('role') || null);
 
     const theme = createTheme({
         palette: {
@@ -22,7 +23,7 @@ function App() {
                 main: '#0c8686',
             },
             secondary: {
-                main: '#ad51b4',
+                main: '#00ffd7',
             },
         }
     });
@@ -48,38 +49,39 @@ function App() {
 
                     <Routes>
 
-                        <Route path="/" element={<Navigate to={LOGIN_URL} replace />} />
-
-                        <Route
-                            path={LOGIN_URL}
-                            element={<MuiLogin onLoginSuccess={handleLoginSuccess} />}
-                        />
-                        <Route
-                            path={REGISTER_URL}
-                            element={<MuiRegister />}
-                        />
+                        <Route path="*" element={<Error404/>}/>
 
                         {!token && (
                             <>
-                                <Route path="/dashboard" element={<Navigate to={LOGIN_URL} />} />
-                                <Route path="/practice" element={<Navigate to={LOGIN_URL} />} />
+                                <Route
+                                    path={LOGIN_URL}
+                                    element={<Login onLoginSuccess={handleLoginSuccess}/>}
+                                />
+                                <Route
+                                    path={REGISTER_URL}
+                                    element={<Register/>}
+                                />
                             </>
                         )}
 
                         {token && (
-                            <>
                                 <Route
-                                    path="/dashboard"
-                                    element={<CombinedDashboard role={role} onLogout={handleLogout} />}
-                                />
-                                <Route
-                                    path="/practice"
-                                    element={<PracticePage onLogout={handleLogout} />}
-                                />
-                            </>
+                                    element={<NavBar/>}
+                                >
+                                    <Route
+                                        path={DASHBOARD_URL}
+                                        element={<CombinedDashboard role={role} onLogout={handleLogout}/>}
+                                    />
+
+                                    <Route
+                                        path={PRACTICE_URL}
+                                        element={<PracticePage/>}
+                                    />
+
+                                </Route>
                         )}
 
-                        <Route path="*" element={<Error404 />} />
+                        <Route path="*" element={<Error404/>}/>
                     </Routes>
 
                 </BrowserRouter>

@@ -7,7 +7,7 @@ import AppIcon from "../AppIcon.jsx";
 import axios from "axios";
 import PropTypes from 'prop-types';
 
-function MuiLogin({onLoginSuccess}) {
+function Login({onLoginSuccess}) {
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -106,9 +106,9 @@ function MuiLogin({onLoginSuccess}) {
     );
 }
 
-MuiLogin.propTypes = {
+Login.propTypes = {
     onLoginSuccess: PropTypes.func,
 };
 
 
-export default MuiLogin;
+export default Login;

@@ -5,7 +5,7 @@ import PasswordTextField from "./PasswordTextField.jsx";
 import {LOGIN_URL} from "../../Utils/Constants.js";
 import { registerUser } from '../../api/UserAPI';
 
-function MuiRegister() {
+function Register() {
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
@@ -191,4 +191,4 @@ function MuiRegister() {
     );
 }
 
-    export default MuiRegister;
+    export default Register;
