@@ -24,7 +24,7 @@ function Error404() {
                 Not Found
             </Typography>
 
-            <Link to={"/"}>
+            <Link to={-1}>
                 <Button
                     variant={'contained'}
                     color={'error'}

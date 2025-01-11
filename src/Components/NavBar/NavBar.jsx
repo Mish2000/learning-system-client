@@ -18,7 +18,7 @@ function NavBar(props) {
 
 
     return (
-        <Stack spacing={10}>
+        <Stack spacing={7}>
             <AppBar position="fixed" color="primary">
                 <Toolbar>
                     <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%'}}>

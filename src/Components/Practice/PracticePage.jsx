@@ -10,7 +10,7 @@ function PracticePage({ onLogout }) {
     const navigate = useNavigate();
 
     return (
-        <Box sx={{ padding: 4 }}>
+        <Box >
             <Typography variant="h3" mb={2}>Practice Section</Typography>
 
             <QuestionGenerator />

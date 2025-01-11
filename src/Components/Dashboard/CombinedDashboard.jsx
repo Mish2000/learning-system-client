@@ -8,15 +8,11 @@ function CombinedDashboard({ role, onLogout }) {
     const navigate = useNavigate();
 
     return (
-        <Box sx={{ marginTop: 4, width: '100%', textAlign: 'center' }}>
-            <Typography variant="h3" mb={2}>
-                Welcome to the Dashboard!
-            </Typography>
+        <Box sx={{ marginTop: 0, width: '100%', textAlign: 'center' }}>
 
             {role === 'USER' && (
-                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                     <UserDashboardSSE />
-                </Box>
+
             )}
 
             {role === 'ADMIN' && (
@@ -37,26 +33,6 @@ function CombinedDashboard({ role, onLogout }) {
                 </Box>
             )}
 
-            <Box sx={{ display: 'flex', gap: 2, marginTop: 3, justifyContent: 'center' }}>
-                <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => navigate('/practice')}
-                >
-                    Practice Section
-                </Button>
-
-                <Button
-                    variant="contained"
-                    color="error"
-                    onClick={() => {
-                        onLogout();
-                        navigate('/login');
-                    }}
-                >
-                    Logout
-                </Button>
-            </Box>
         </Box>
     );
 }
