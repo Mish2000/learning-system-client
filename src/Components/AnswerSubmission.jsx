@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import {Box, Stack, TextField, Typography} from "@mui/material";
 
 function AnswerSubmission() {
     const [questionId, setQuestionId] = useState('');
@@ -34,34 +35,34 @@ function AnswerSubmission() {
     };
 
     return (
-        <div>
-            <h2>Submit an Answer</h2>
-            <form onSubmit={handleSubmitAnswer}>
-                <label>Question ID:</label>
-                <input
+        <Box>
+            <Typography>Submit an Answer</Typography>
+            <Stack onSubmit={handleSubmitAnswer}>
+                <Typography>Question ID:</Typography>
+                <TextField
                     type="number"
                     value={questionId}
                     onChange={(e) => setQuestionId(e.target.value)}
                 />
 
-                <label>Your Answer:</label>
-                <input
+                <Typography>Your Answer:</Typography>
+                <TextField
                     type="text"
                     value={userAnswer}
                     onChange={(e) => setUserAnswer(e.target.value)}
                 />
 
                 <button type="submit">Submit Answer</button>
-            </form>
+            </Stack>
 
             {responseData && (
-                <div>
-                    <p>Correct? {responseData.correct ? 'Yes' : 'No'}</p>
-                    <p>Correct Answer: {responseData.correctAnswer}</p>
-                    <p>Solution Steps: {responseData.solutionSteps}</p>
-                </div>
+                <Box>
+                    <Typography>Correct? {responseData.correct ? 'Yes' : 'No'}</Typography>
+                    <Typography>Correct Answer: {responseData.correctAnswer}</Typography>
+                    <Typography>Solution Steps: {responseData.solutionSteps}</Typography>
+                </Box>
             )}
-        </div>
+        </Box>
     );
 }
 

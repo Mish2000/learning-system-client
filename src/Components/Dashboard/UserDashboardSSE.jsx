@@ -1,8 +1,8 @@
 import {useEffect, useState} from 'react';
-import {Box} from "@mui/material";
-import AppIcon from "../AppIcon.jsx";
-import QuestionGenerator from "../QuestionGenerator.jsx";
-import AnswerSubmission from "../AnswerSubmission.jsx";
+import {Box, ImageList, ImageListItem} from "@mui/material";
+import ChartTotalSuccessRate from "../Statistics/ChartTotalSuccessRate.jsx";
+import ChartSuccessRateByTopic from "../Statistics/ChartSuccessRateByTopic.jsx";
+
 
 function UserDashboardSSE() {
     const [dashboardData, setDashboardData] = useState(null);
@@ -40,39 +40,32 @@ function UserDashboardSSE() {
 
 
     return (
-        <Box
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                minHeight: '100vh',
-                padding: {xs: 0, sm: 4, md: 4, lg: 4},
-                width: '100%',
-                maxWidth: {xs: '90%', sm: '800px'},
-                mx: 'auto',
-            }}>
-            <AppIcon size={80}/>
-            <h2>User Dashboard</h2>
-            <p>User ID: {dashboardData.userId}</p>
-            <p>Total Attempts: {dashboardData.totalAttempts}</p>
-            <p>Correct Attempts: {dashboardData.correctAttempts}</p>
-            <p>Success Rate: {(dashboardData.successRate * 100).toFixed(1)}%</p>
-            <h3>Attempts by Topic</h3>
-            <ul>
-                {Object.entries(dashboardData.attemptsByTopic).map(([topic, count]) => (
-                    <li key={topic}>{topic}: {count}</li>
-                ))}
-            </ul>
-            <h3>Success Rate by Topic</h3>
-            <ul>
-                {Object.entries(dashboardData.successRateByTopic).map(([topic, rate]) => (
-                    <li key={topic}>{topic}: {(rate * 100).toFixed(1)}%</li>
-                ))}
-            </ul>
-            <QuestionGenerator/>
-            <AnswerSubmission/>
+        <Box >
+            <ImageList cols={6}   rowHeight={280}
+                        sx={{width: "100%", height: "100%", overflow: 'clip'}}>
+                <ImageListItem cols={2} rows={1}>
+                    <ChartSuccessRateByTopic topic={"math"} data={data}/>
+                </ImageListItem>
+
+                <ImageListItem   cols={2} rows={2}>
+                    <ChartTotalSuccessRate data={data}/>
+                </ImageListItem>
+
+                <ImageListItem cols={2} rows={1}>
+                    <ChartTotalSuccessRate data={data}/>
+                </ImageListItem>
+
+                <ImageListItem cols={2} rows={1}>
+                    <ChartTotalSuccessRate data={data}/>
+                </ImageListItem>
+
+                <ImageListItem cols={2} rows={1}>
+                    <ChartTotalSuccessRate data={data}/>
+                </ImageListItem>
+
+            </ImageList>
         </Box>
+
     );
 }
 

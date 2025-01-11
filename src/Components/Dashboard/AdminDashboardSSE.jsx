@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react';
+import {Table, TableCell, Typography} from "@mui/material";
 
 function AdminDashboardSSE() {
     const [dashboardData, setDashboardData] = useState(null);
@@ -20,27 +21,27 @@ function AdminDashboardSSE() {
     }, []);
 
     if (!dashboardData) {
-        return <div>Loading admin dashboard ...</div>;
+        return <Typography>Loading admin dashboard ...</Typography>;
     }
 
     return (
         <div>
-            <h2>Admin Dashboard</h2>
-            <p>Total Users: {dashboardData.totalUsers}</p>
-            <p>Total Attempts: {dashboardData.totalAttempts}</p>
-            <p>Overall Success Rate: {(dashboardData.overallSuccessRate * 100).toFixed(1)}%</p>
-            <h3>Attempts by Topic</h3>
-            <ul>
+            <Typography>Admin Dashboard</Typography>
+            <Typography>Total Users: {dashboardData.totalUsers}</Typography>
+            <Typography>Total Attempts: {dashboardData.totalAttempts}</Typography>
+            <Typography>Overall Success Rate: {(dashboardData.overallSuccessRate * 100).toFixed(1)}%</Typography>
+            <Typography>Attempts by Topic</Typography>
+            <Table>
                 {Object.entries(dashboardData.attemptsByTopic).map(([topic, count]) => (
-                    <li key={topic}>{topic}: {count}</li>
+                    <TableCell key={topic}>{topic}: {count}</TableCell>
                 ))}
-            </ul>
-            <h3>Success Rate by Topic</h3>
-            <ul>
+            </Table>
+            <Typography>Success Rate by Topic</Typography>
+            <Table>
                 {Object.entries(dashboardData.successRateByTopic).map(([topic, rate]) => (
-                    <li key={topic}>{topic}: {(rate * 100).toFixed(1)}%</li>
+                    <TableCell key={topic}>{topic}: {(rate * 100).toFixed(1)}%</TableCell>
                 ))}
-            </ul>
+            </Table>
         </div>
     );
 }

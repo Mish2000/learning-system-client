@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import TopicList from "./TopicList.jsx";
+import {Box, Button, MenuItem, Select, Typography} from "@mui/material";
 
 function QuestionGenerator() {
     const [difficulty, setDifficulty] = useState('BASIC');
@@ -53,11 +54,11 @@ function QuestionGenerator() {
     };
 
     return (
-        <div>
-            <h2>Generate a Question</h2>
-            <div>
+        <Box>
+            <Typography>Generate a Question</Typography>
+            <Box>
                 <TopicList/>
-                <label>Parent Topic: </label>
+                <Typography>Parent Topic: </Typography>
                 <select
                     value={selectedParent}
                     onChange={(e) => setSelectedParent(e.target.value)}
@@ -67,42 +68,42 @@ function QuestionGenerator() {
                         <option key={topic.id} value={topic.id}>{topic.name}</option>
                     ))}
                 </select>
-            </div>
+            </Box>
 
-            <div>
-                <label>Subtopic: </label>
-                <select
+            <Box>
+                <Typography>Subtopic: </Typography>
+                <Select
                     value={selectedSubtopic}
                     onChange={(e) => setSelectedSubtopic(e.target.value)}
                     disabled={!selectedParent}
                 >
-                    <option value="">-- Select Subtopic --</option>
+                    <MenuItem value="">-- Select Subtopic --</MenuItem>
                     {subTopics.map(topic => (
-                        <option key={topic.id} value={topic.id}>{topic.name}</option>
+                        <MenuItem key={topic.id} value={topic.id}>{topic.name}</MenuItem>
                     ))}
-                </select>
-            </div>
+                </Select>
+            </Box>
 
-            <div>
-                <label>Difficulty: </label>
-                <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
-                    <option value="BASIC">BASIC</option>
-                    <option value="EASY">EASY</option>
-                    <option value="MEDIUM">MEDIUM</option>
-                    <option value="ADVANCED">ADVANCED</option>
-                </select>
-            </div>
+            <Box>
+                <Typography>Difficulty: </Typography>
+                <Select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
+                    <MenuItem value="BASIC">BASIC</MenuItem>
+                    <MenuItem value="EASY">EASY</MenuItem>
+                    <MenuItem value="MEDIUM">MEDIUM</MenuItem>
+                    <MenuItem value="ADVANCED">ADVANCED</MenuItem>
+                </Select>
+            </Box>
 
-            <button onClick={handleGenerate}>Generate</button>
+            <Button onClick={handleGenerate}>Generate</Button>
 
             {generatedQuestion && (
-                <div style={{ marginTop: 20 }}>
-                    <p><strong>Question ID:</strong> {generatedQuestion.id}</p>
-                    <p><strong>Question Text:</strong> {generatedQuestion.questionText}</p>
-                    <p><strong>Difficulty:</strong> {generatedQuestion.difficultyLevel}</p>
-                </div>
+                <Box style={{ marginTop: 20 }}>
+                    <Typography>Question ID:{generatedQuestion.id}</Typography>
+                    <Typography>Question Text:{generatedQuestion.questionText}</Typography>
+                    <Typography>Difficulty:{generatedQuestion.difficultyLevel}</Typography>
+                </Box>
             )}
-        </div>
+        </Box>
     );
 }
 

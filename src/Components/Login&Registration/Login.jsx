@@ -43,8 +43,9 @@ function Login({onLoginSuccess}) {
                 mx: 'auto',
             }}
         >
-            <AppIcon size={250}/>
-            <Typography variant={"h2"}>self learning math</Typography>
+            <AppIcon size={150}/>
+            <Typography variant={"h4"}>Quick Math</Typography>
+            <Typography variant={"h7"}>a website for self learning math</Typography>
             <Card
                 sx={{
                     width: '100%',

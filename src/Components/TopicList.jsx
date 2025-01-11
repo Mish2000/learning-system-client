@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import axios from 'axios';
-import {Box, Typography} from "@mui/material";
+import {Box, Table, TableCell, Typography} from "@mui/material";
 
 function TopicList() {
     const [topics, setTopics] = useState([]);
@@ -31,14 +31,14 @@ function TopicList() {
                     mx: 'auto',
                 }}>
                 <Typography variant="h4" gutterBottom>All Topics</Typography>
-                <ul>
+                <Table>
                     {topics.map(topic => (
-                        <li key={topic.id}>
-                            <strong>{topic.name}</strong> - {topic.description}
-                            <em> (Difficulty: {topic.difficultyLevel})</em>
-                        </li>
+                        <TableCell key={topic.id}>
+                            <Typography variant={"h6"}>{topic.name}</Typography> - {topic.description}
+                            <Typography variant="em"> (Difficulty: {topic.difficultyLevel})</Typography>
+                        </TableCell>
                     ))}
-                </ul>
+                </Table>
             </Box>
     );
 }

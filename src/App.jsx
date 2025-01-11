@@ -6,8 +6,9 @@ import Register from './Components/Login&Registration/Register.jsx';
 import Error404 from './components/ErrorPages/Error404';
 import CombinedDashboard from './Components/Dashboard/CombinedDashboard';
 import PracticePage from './Components/Practice/PracticePage';
-import {DASHBOARD_URL, LOGIN_URL, PRACTICE_URL, REGISTER_URL} from './Utils/Constants.js';
+import {DASHBOARD_URL, HOME_URL, LOGIN_URL, PRACTICE_URL, REGISTER_URL} from './Utils/Constants.js';
 import NavBar from "./Components/NavBar/NavBar.jsx";
+import Home from "./Components/Dashboard/Home.jsx";
 
 
 function App() {
@@ -76,6 +77,10 @@ function App() {
                                     <Route
                                         path={PRACTICE_URL}
                                         element={<PracticePage/>}
+                                    />
+                                    <Route
+                                        path={HOME_URL}
+                                        element={<Home/>}
                                     />
 
                                 </Route>

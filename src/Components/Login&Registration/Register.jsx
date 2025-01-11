@@ -11,8 +11,6 @@ function Register() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [repeat, setRepeat] = useState("");
-    const [phone, setPhone] = useState("");
-    const [phoneError, setPhoneError] = useState(false);
     const [usernameError, setUsernameError] = useState(false);
     const [emailError, setEmailError] = useState(false);
     const [passwordError, setPasswordError] = useState(false);
@@ -22,10 +20,10 @@ function Register() {
     const [success, setSuccess] = useState(false);
 
     const regex = /^[a-zA-Z0-9]{4,30}$/;
+    //const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$%*])[a-zA-Z\d@$%*]{8,30}$/;//TODO do not forget add this for production
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    const phoneRegex = /^05\d{1}-?\d{3}-?\d{4}$/;
-    const noError = (!usernameError && !phoneError && !emailError && !passwordError && !repeatError);
-    const notEmpty = (username.length >= 1 && phone.length >= 1 && email.length >= 1 && password.length >= 1 && repeat === password && repeat.length >=1);
+    const noError = (!usernameError && !emailError && !passwordError && !repeatError);
+    const notEmpty = (username.length >= 1  && email.length >= 1 && password.length >= 1 && repeat === password && repeat.length >=1);
 
     useEffect(() => {
         if (username.length >= 1) {
@@ -49,19 +47,6 @@ function Register() {
             setEmailError(!emailRegex.test(email));
         }
     }, [email]);
-
-    useEffect(() => {
-        if (phone.length >= 1) {
-            setPhoneError(!phoneRegex.test(phone));
-        }
-    }, [phone]);
-
-    const handlePhoneChange = (event) => {
-        const inputValue = event.target.value;
-        const formattedValue = inputValue.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2$3');
-        setPhone(formattedValue);
-        event.target.value = formattedValue;
-    };
 
     async function createAccount() {
         try {
@@ -131,21 +116,6 @@ function Register() {
                         label={"Email"}
                         value={email}
                         onChange={(event) => setEmail(event.target.value)}
-                    />
-                    <TextField
-                        error={phoneError}
-                        variant={"outlined"}
-                        type={"text"}
-                        helperText={"10 characters only in format of 05xxxxxxxx"}
-                        label={"Phone Number"}
-                        value={phone}
-                        onChange={(event) => {
-                            setPhone(event.target.value)
-                            {
-                                handlePhoneChange(event)
-                            }
-                        }
-                        }
                     />
                     <PasswordTextField
                         error={passwordError}
