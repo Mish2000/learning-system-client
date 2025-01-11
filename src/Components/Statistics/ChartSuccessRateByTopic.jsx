@@ -1,45 +1,41 @@
-import React, {useState} from 'react';
-import {AgCharts} from "ag-charts-react";
-import PropTypes from "prop-types";
+import { Box, Typography } from '@mui/material';
+import {
+    BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer
+} from 'recharts';
+import PropTypes from 'prop-types';
 
-
-ChartSuccessRateByTopic.propTypes = {
-    data: PropTypes.array.isRequired,
-    topic: PropTypes.string.isRequired,
-};
-function ChartSuccessRateByTopic(props) {
-    const options={
-        theme: "ag-polychroma",
-        title: { text: 'Success Rate By Topic' },
-        subtitle: { text: props.topic },
-        data: props.data,
-        series: [{ type: "pie", angleKey: 'avgTemp', legendItemKey:"month",  sectorLabelKey: 'avgTemp', sectorLabel: {
-                color: 'white',
-                fontWeight: 'bold',
-            }, }],
-        legend: {
-            toggleSeries: false,
-            position: "top",
-            item: {
-                maxWidth: 130,
-                paddingX: 20,
-                paddingY: 8,
-                marker: {
-                    padding: 8,
-                }
-            }
-        },
+function ChartSuccessRateByTopic({ data }) {
+    if (!data || !data.successRateByTopic) {
+        return <Typography>No topic data available</Typography>;
     }
 
-
+    const chartData = Object.entries(data.successRateByTopic).map(([topic, rate]) => ({
+        name: topic,
+        rate: Math.round(rate * 100)
+    }));
 
     return (
-        <>
-            <AgCharts  style={{width: "100%", height: "100%" }} options={options} />
-        </>
-
-
+        <Box sx={{ width: '100%', height: 300, marginTop: 2 }}>
+            <Typography variant="h6" gutterBottom>Success Rate by Topic</Typography>
+            <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis domain={[0, 100]} />
+                    <Tooltip />
+                    <Bar dataKey="rate" fill="#8884d8" />
+                </BarChart>
+            </ResponsiveContainer>
+        </Box>
     );
 }
 
+ChartSuccessRateByTopic.propTypes = {
+    data: PropTypes.shape({
+        successRateByTopic: PropTypes.object
+    })
+};
+
 export default ChartSuccessRateByTopic;
+
+

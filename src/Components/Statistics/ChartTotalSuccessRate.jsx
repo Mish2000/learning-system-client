@@ -1,32 +1,38 @@
-import React, {useState} from 'react';
-import {AgCharts} from "ag-charts-react";
 import PropTypes from "prop-types";
+import {Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
+import {Box, Typography} from "@mui/material";
 
-
-ChartTotalSuccessRate.propTypes = {
-    data: PropTypes.array.isRequired,
-};
-function ChartTotalSuccessRate(props) {
-    const options={
-        theme: "ag-polychroma",
-        title: { text: 'Success Rate' },
-        subtitle: { text: 'All subjects' },
-        data: props.data,
-        series: [{ type: "pie", angleKey: 'avgTemp', legendItemKey:"month",  sectorLabelKey: 'avgTemp', sectorLabel: {
-                color: 'white',
-                fontWeight: 'bold',
-            }, }],
+function ChartTotalSuccessRate({ data }) {
+    if (!data || typeof data.successRate !== 'number') {
+        return <Typography>No overall success data</Typography>;
     }
 
-
+    const chartData = [
+        { name: 'Overall Success', value: Math.round(data.successRate * 100) },
+    ];
 
     return (
-        <>
-                <AgCharts  style={{width: "100%", height: "100%" }} options={options} />
-        </>
-
-
-);
+        <Box sx={{ marginTop: 2 }}>
+            <Typography variant="h6" gutterBottom>Overall Success Rate</Typography>
+            <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis domain={[0, 100]} />
+                    <Tooltip />
+                    <Bar dataKey="value" fill="#82ca9d" />
+                </BarChart>
+            </ResponsiveContainer>
+        </Box>
+    );
 }
+
+ChartTotalSuccessRate.propTypes = {
+    data: PropTypes.shape({
+        successRate: PropTypes.number,
+        totalAttempts: PropTypes.number,
+
+    })
+};
 
 export default ChartTotalSuccessRate;

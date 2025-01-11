@@ -50,43 +50,36 @@ function App() {
 
                     <Routes>
 
-                        <Route path="*" element={<Error404/>}/>
+                        {/* Public */}
+                        <Route path={HOME_URL} element={<Home />} />
 
+                        {/*If the user logged in, he cannot access the login screen */}
+                        {token ? (
+                            <Route path={LOGIN_URL} element={<Navigate to="/" />} />
+                        ) : (
+                            <Route path={LOGIN_URL} element={<Login onLoginSuccess={handleLoginSuccess} />} />
+                        )}
+                        <Route path={REGISTER_URL} element={<Register />} />
+
+                        {/* Not giving accesses to dashboard or practice sections before the user logs in */}
                         {!token && (
                             <>
-                                <Route
-                                    path={LOGIN_URL}
-                                    element={<Login onLoginSuccess={handleLoginSuccess}/>}
-                                />
-                                <Route
-                                    path={REGISTER_URL}
-                                    element={<Register/>}
-                                />
+                                <Route path={DASHBOARD_URL} element={<Navigate to={LOGIN_URL} />} />
+                                <Route path={PRACTICE_URL} element={<Navigate to={LOGIN_URL} />} />
                             </>
                         )}
 
                         {token && (
-                                <Route
-                                    element={<NavBar/>}
-                                >
-                                    <Route
-                                        path={DASHBOARD_URL}
-                                        element={<CombinedDashboard role={role} onLogout={handleLogout}/>}
-                                    />
-
-                                    <Route
-                                        path={PRACTICE_URL}
-                                        element={<PracticePage/>}
-                                    />
-                                    <Route
-                                        path={HOME_URL}
-                                        element={<Home/>}
-                                    />
-
-                                </Route>
+                            <Route element={<NavBar />}>
+                                <Route path={DASHBOARD_URL} element={
+                                    <CombinedDashboard role={role} onLogout={handleLogout} />
+                                }/>
+                                <Route path={PRACTICE_URL} element={<PracticePage onLogout={handleLogout} />} />
+                            </Route>
                         )}
 
-                        <Route path="*" element={<Error404/>}/>
+                        <Route path="*" element={<Error404 />} />
+
                     </Routes>
 
                 </BrowserRouter>

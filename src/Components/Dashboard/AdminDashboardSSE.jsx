@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {Table, TableCell, Typography} from "@mui/material";
+import {Box, Stack, Table, TableBody, TableCell, TableRow, Typography} from "@mui/material";
 
 function AdminDashboardSSE() {
     const [dashboardData, setDashboardData] = useState(null);
@@ -25,26 +25,47 @@ function AdminDashboardSSE() {
     }
 
     return (
-        <div>
-            <Typography>Admin Dashboard</Typography>
-            <Typography>Total Users: {dashboardData.totalUsers}</Typography>
-            <Typography>Total Attempts: {dashboardData.totalAttempts}</Typography>
-            <Typography>Overall Success Rate: {(dashboardData.overallSuccessRate * 100).toFixed(1)}%</Typography>
-            <Typography>Attempts by Topic</Typography>
-            <Table>
-                {Object.entries(dashboardData.attemptsByTopic).map(([topic, count]) => (
-                    <TableCell key={topic}>{topic}: {count}</TableCell>
-                ))}
-            </Table>
-            <Typography>Success Rate by Topic</Typography>
-            <Table>
-                {Object.entries(dashboardData.successRateByTopic).map(([topic, rate]) => (
-                    <TableCell key={topic}>{topic}: {(rate * 100).toFixed(1)}%</TableCell>
-                ))}
-            </Table>
-        </div>
+        <Box sx={{ padding: 2 }}>
+            <Typography variant="h5" mb={2}>Admin Dashboard</Typography>
+            <Stack spacing={2}>
+                <Typography>Total Users: {dashboardData.totalUsers}</Typography>
+                <Typography>Total Attempts: {dashboardData.totalAttempts}</Typography>
+                <Typography>
+                    Overall Success Rate: {(dashboardData.overallSuccessRate * 100).toFixed(1)}%
+                </Typography>
+
+                <Box>
+                    <Typography variant="subtitle1">Attempts by Topic:</Typography>
+                    <Table>
+                        <TableBody>
+                            {Object.entries(dashboardData.attemptsByTopic).map(([topic, count]) => (
+                                <TableRow key={topic}>
+                                    <TableCell>{topic}</TableCell>
+                                    <TableCell>{count}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </Box>
+
+                <Box>
+                    <Typography variant="subtitle1">Success Rate by Topic:</Typography>
+                    <Table>
+                        <TableBody>
+                            {Object.entries(dashboardData.successRateByTopic).map(([topic, rate]) => (
+                                <TableRow key={topic}>
+                                    <TableCell>{topic}</TableCell>
+                                    <TableCell>{(rate * 100).toFixed(1)}%</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </Box>
+            </Stack>
+        </Box>
     );
 }
 
 export default AdminDashboardSSE;
+
 

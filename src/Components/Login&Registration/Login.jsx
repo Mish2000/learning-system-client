@@ -1,7 +1,7 @@
 import  {useState} from 'react';
 import {Box, Button, Card, Stack, TextField, Typography} from "@mui/material";
 import { useNavigate } from 'react-router-dom';
-import {REGISTER_URL} from "../../Utils/Constants.js";
+import {HOME_URL, REGISTER_URL} from "../../Utils/Constants.js";
 import PasswordTextField from "./PasswordTextField.jsx";
 import AppIcon from "../AppIcon.jsx";
 import axios from "axios";
@@ -22,7 +22,8 @@ function Login({onLoginSuccess}) {
             const { token, role } = response.data;
             onLoginSuccess(token, role);
             setLoginError(false);
-            navigate("/dashboard");
+            navigate(HOME_URL);
+            // eslint-disable-next-line no-unused-vars
         } catch (err) {
             setLoginError(true);
         }

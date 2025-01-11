@@ -1,6 +1,7 @@
 import {Button, Stack, Typography} from "@mui/material";
 import ErrorIcon from '@mui/icons-material/Error';
 import {Link} from "react-router-dom";
+import {HOME_URL} from "../../Utils/Constants.js";
 
 
 function Error404() {
@@ -24,7 +25,7 @@ function Error404() {
                 Not Found
             </Typography>
 
-            <Link to={-1}>
+            <Link to={HOME_URL}>
                 <Button
                     variant={'contained'}
                     color={'error'}

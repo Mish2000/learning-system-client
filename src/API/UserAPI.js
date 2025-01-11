@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 
 export async function registerUser(username, email, password) {
@@ -14,6 +13,7 @@ export async function getUsername(token) {
     return response.data;
 
 }
+
 
 
 
