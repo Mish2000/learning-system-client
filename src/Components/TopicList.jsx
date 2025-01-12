@@ -24,14 +24,15 @@ function TopicList() {
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    minHeight: '100vh',
+                    minHeight: '10vh',
                     padding: {xs: 0, sm: 4, md: 4, lg: 4},
                     width: '100%',
                     maxWidth: {xs: '90%', sm: '800px'},
                     mx: 'auto',
                 }}>
-                <Typography variant="h4" gutterBottom>All Topics</Typography>
+
                 <Table>
+                    <Typography variant="h6" gutterBottom>Here is a list of recommended type of questions for you:</Typography>
                     {topics.map(topic => (
                         <TableCell key={topic.id}>
                             <Typography variant={"h6"}>{topic.name}</Typography> - {topic.description}

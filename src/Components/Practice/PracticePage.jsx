@@ -20,12 +20,11 @@ function PracticePage({ onLogout }) {
                 alignItems: 'center'
             }}
         >
-            <Typography variant="h3" mb={2}>Practice Section</Typography>
+            <Typography variant="h3" mb={2}>Time to practice!</Typography>
 
             <Stack spacing={4} sx={{ width: '100%', maxWidth: '800px' }}>
                 <QuestionGenerator />
                 <AnswerSubmission />
-                <TopicList />
             </Stack>
 
             <Box mt={4} sx={{ display: 'flex', gap: 2 }}>

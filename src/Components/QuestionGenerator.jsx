@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react';
+import {useState, useEffect} from 'react';
 import axios from 'axios';
 import TopicList from "./TopicList.jsx";
-import {Box, Button, MenuItem, Select, Typography} from "@mui/material";
+import '../App.css'
+import Grid from '@mui/material/Grid2';
+import {Box, Button, Card, FormControl, InputLabel, MenuItem, Select, Typography} from "@mui/material";
 
 function QuestionGenerator() {
     const [difficulty, setDifficulty] = useState('BASIC');
     const [parentTopics, setParentTopics] = useState([]);
-    const [subTopics, setSubTopics]     = useState([]);
+    const [subTopics, setSubTopics] = useState([]);
     const [selectedParent, setSelectedParent] = useState('');
     const [selectedSubtopic, setSelectedSubtopic] = useState('');
     const [generatedQuestion, setGeneratedQuestion] = useState(null);
@@ -52,58 +54,77 @@ function QuestionGenerator() {
             console.error('Failed to generate question', err);
         }
     };
-
     return (
-        <Box>
-            <Typography>Generate a Question</Typography>
-            <Box>
+        <Card sx={{display: 'flex', flexDirection: 'column'}}>
+            <Typography sx={{marginTop:"20px"}} variant={"h5"} align={"center"}>please generate a question</Typography>
+            <Box sx={{marginLeft:"30px",minWidth: 120}}>
                 <TopicList/>
-                <Typography>Parent Topic: </Typography>
-                <select
-                    value={selectedParent}
-                    onChange={(e) => setSelectedParent(e.target.value)}
-                >
-                    <option value="">-- Select Parent --</option>
-                    {parentTopics.map(topic => (
-                        <option key={topic.id} value={topic.id}>{topic.name}</option>
-                    ))}
-                </select>
+                <Grid container spacing={2}>
+                    <Grid size={4}>
+                        <Box >
+                            <Typography>Question type: </Typography>
+                            <FormControl variant="standard" sx={{m: 1, minWidth: 150}}>
+                                <InputLabel id={"question-label"}>-- Select Type --</InputLabel>
+                                <Select
+                                    labelId="question-label"
+                                    id="question"
+                                    value={selectedParent}
+                                    label="-- Select question Type--"
+                                    onChange={(e) => setSelectedParent(e.target.value)}
+                                >
+                                    <MenuItem value="-- Select qurstio type --">-- Select question Type --</MenuItem>
+                                    {parentTopics.map(topic => (
+                                        <MenuItem key={topic.id} value={topic.id}>{topic.name}</MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Box>
+                    </Grid>
+                    <Grid size={4}>
+                        <Box>
+                            <Typography> Operator type: </Typography>
+                            <FormControl variant="standard" sx={{m: 1, minWidth: 150}}>
+                                <InputLabel id={"operator-label"}>-- Select Type --</InputLabel>
+                                <Select
+                                    labelId="operator-label"
+                                    id="operator"
+                                    value={selectedSubtopic}
+                                    onChange={(e) => setSelectedSubtopic(e.target.value)}
+                                    disabled={!selectedParent}
+                                >
+                                    <MenuItem value="-- Select Subtopic --">-- Select operator type --</MenuItem>
+                                    {subTopics.map(topic => (
+                                        <MenuItem key={topic.id} value={topic.id}>{topic.name}</MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Box>
+                    </Grid>
+                    <Grid size={4}>
+                        <Box>
+                            <Typography>Difficulty: </Typography>
+                            <Select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
+                                <MenuItem value="BASIC">BASIC</MenuItem>
+                                <MenuItem value="EASY">EASY</MenuItem>
+                                <MenuItem value="MEDIUM">MEDIUM</MenuItem>
+                                <MenuItem value="ADVANCED">ADVANCED</MenuItem>
+                            </Select>
+                        </Box>
+                    </Grid>
+                </Grid>
             </Box>
-
-            <Box>
-                <Typography>Subtopic: </Typography>
-                <Select
-                    value={selectedSubtopic}
-                    onChange={(e) => setSelectedSubtopic(e.target.value)}
-                    disabled={!selectedParent}
-                >
-                    <MenuItem value="">-- Select Subtopic --</MenuItem>
-                    {subTopics.map(topic => (
-                        <MenuItem key={topic.id} value={topic.id}>{topic.name}</MenuItem>
-                    ))}
-                </Select>
-            </Box>
-
-            <Box>
-                <Typography>Difficulty: </Typography>
-                <Select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
-                    <MenuItem value="BASIC">BASIC</MenuItem>
-                    <MenuItem value="EASY">EASY</MenuItem>
-                    <MenuItem value="MEDIUM">MEDIUM</MenuItem>
-                    <MenuItem value="ADVANCED">ADVANCED</MenuItem>
-                </Select>
-            </Box>
-
-            <Button onClick={handleGenerate}>Generate</Button>
-
+            <br/>
+            <Button variant="contained" sx={{ display:"flex",alignContent:"center",position:"flex",justifyContent:"center"}} onClick={handleGenerate}>Generate</Button>
             {generatedQuestion && (
-                <Box style={{ marginTop: 20 }}>
+                <Box sx={{marginLeft:"20px"}} className={"container"} style={{marginTop: 20}}>
                     <Typography>Question ID:{generatedQuestion.id}</Typography>
-                    <Typography>Question Text:{generatedQuestion.questionText}</Typography>
+                    <br/>
+                    <Typography sx={{wordSpacing: 12}}>Question Text: {generatedQuestion.questionText}</Typography>
+                    <br/>
                     <Typography>Difficulty:{generatedQuestion.difficultyLevel}</Typography>
                 </Box>
             )}
-        </Box>
+        </Card>
     );
 }
 

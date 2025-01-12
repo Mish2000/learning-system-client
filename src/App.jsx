@@ -51,7 +51,7 @@ function App() {
                     <Routes>
 
                         {/* Public */}
-                        <Route path={HOME_URL} element={<Home />} />
+
 
                         {/*If the user logged in, he cannot access the login screen */}
                         {token ? (
@@ -71,6 +71,7 @@ function App() {
 
                         {token && (
                             <Route element={<NavBar />}>
+                                <Route path={HOME_URL} element={<Home />} />
                                 <Route path={DASHBOARD_URL} element={
                                     <CombinedDashboard role={role} onLogout={handleLogout} />
                                 }/>
