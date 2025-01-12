@@ -49,13 +49,9 @@ function App() {
                 <BrowserRouter>
 
                     <Routes>
-
-                        {/* Public */}
-
-
                         {/*If the user logged in, he cannot access the login screen */}
                         {token ? (
-                            <Route path={LOGIN_URL} element={<Navigate to="/" />} />
+                            <Route path={LOGIN_URL} element={<Navigate to={HOME_URL} />} />
                         ) : (
                             <Route path={LOGIN_URL} element={<Login onLoginSuccess={handleLoginSuccess} />} />
                         )}

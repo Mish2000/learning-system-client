@@ -11,81 +11,78 @@ import CalculateIcon from '@mui/icons-material/Calculate';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import HomeIcon from '@mui/icons-material/Home';
 import {handleLogout} from "../../API/Logout.js";
+import Loading from "../Loading.jsx";
 
-function NavBar(props) {
+function NavBar() {
     const location = useLocation();
     const navigate = useNavigate();
 
 
-    return (
-        <Stack spacing={7}>
-            <AppBar position="fixed" color="primary">
-                <Toolbar>
-                    <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%'}}>
-                        <Stack direction="row" spacing={2} alignItems="center">
-                            <AppIcon size={50}/>
-                            <Typography variant="h6" component="div">
-                                Quick Math
-                            </Typography>
-                        </Stack>
+    return (<Stack spacing={7}>
+        <AppBar position="fixed" color="primary">
+            <Toolbar>
+                <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%'}}>
+                    <Stack direction="row" spacing={2} alignItems="center">
+                        <AppIcon size={50}/>
+                        <Typography variant="h6" component="div">
+                            Quick Math
+                        </Typography>
+                    </Stack>
 
-                        <Stack direction="row" spacing={4}>
-                            <Button
-                                sx={{
-                                    textTransform: 'inherit',
-                                    color: location.pathname === HOME_URL ? "secondary.light" : "inherit"
-                                }}
+                    <Stack direction="row" spacing={4}>
+                        <Button
+                            sx={{
+                                textTransform: 'inherit',
+                                color: location.pathname === HOME_URL ? "secondary.light" : "inherit"
+                            }}
+                            onClick={() => {
+                                navigate(HOME_URL)
+                            }}
+                        >
+                            <HomeIcon/>
+                            Home</Button>
+
+                        <Button sx={{
+                            textTransform: 'inherit',
+                            color: location.pathname === PRACTICE_URL ? "secondary.light" : "inherit"
+                        }}
                                 onClick={() => {
-                                    navigate(HOME_URL)
+                                    navigate(PRACTICE_URL)
                                 }}
-                            >
-                                <HomeIcon/>
-                                Home</Button>
+                        >
+                            <CalculateIcon/>
+                            Practice
+                        </Button>
 
-                            <Button sx={{
-                                textTransform: 'inherit',
-                                color: location.pathname === PRACTICE_URL ? "secondary.light" : "inherit"
-                            }}
-                                    onClick={() => {
-                                        navigate(PRACTICE_URL)
-                                    }}
-                            >
-                                <CalculateIcon/>
-                                Practice
-                            </Button>
+                        <Button sx={{
+                            textTransform: 'inherit',
+                            color: location.pathname === DASHBOARD_URL ? "secondary.light" : "inherit"
+                        }}
+                                onClick={() => {
+                                    navigate(DASHBOARD_URL)
+                                }}
+                        >
+                            <BarChartIcon/>
+                            Statistics
+                        </Button>
 
-                            <Button sx={{
-                                textTransform: 'inherit',
-                                color: location.pathname === DASHBOARD_URL ? "secondary.light" : "inherit"
-                            }}
-                                    onClick={() => {
-                                        navigate(DASHBOARD_URL)
-                                    }}
-                            >
-                                <BarChartIcon/>
-                                Statistics
-                            </Button>
-
-                            <Button sx={{textTransform: 'inherit'}}
-                                    color="inherit"
-                                    onClick={() => {
-                                        handleLogout()
-
-                                        window.location.reload()
-                                        navigate(LOGIN_URL)
-                                    }
-                                    }
-                            >
-                                <LogoutIcon/>
-                                Log Out
-                            </Button>
-                        </Stack>
-                    </Box>
-                </Toolbar>
-            </AppBar>
-            <Outlet/>
-        </Stack>
-    );
+                        <Button sx={{textTransform: 'inherit'}}
+                                color="inherit"
+                                onClick={() => {
+                                    handleLogout()
+                                    navigate(LOGIN_URL)
+                                    window.location.reload()
+                                }}
+                        >
+                            <LogoutIcon/>
+                            Log Out
+                        </Button>
+                    </Stack>
+                </Box>
+            </Toolbar>
+        </AppBar>
+        <Outlet/>
+    </Stack>);
 }
 
 export default NavBar;
