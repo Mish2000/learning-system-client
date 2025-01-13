@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-import {Box, Button, Stack, TextField, Typography} from "@mui/material";
+import {Box, Button, Card, Stack, TextField, Typography} from "@mui/material";
 
 function AnswerSubmission() {
     const [questionId, setQuestionId] = useState('');
@@ -51,14 +51,17 @@ function AnswerSubmission() {
                     onChange={(e) => setUserAnswer(e.target.value)}
                 />
 
-                <Button variant="contained" onChange={handleSubmitAnswer}>Submit Answer</Button>
+                <Button variant="contained" onClick={handleSubmitAnswer}>Submit Answer</Button>
             </Stack>
+            <br/>
             {responseData && (
-                <Box>
-                    <Typography>Correct? {responseData.correct ? 'Yes' : 'No'}</Typography>
-                    <Typography>Correct Answer: {responseData.correctAnswer}</Typography>
-                    <Typography>Solution Steps: {responseData.solutionSteps}</Typography>
-                </Box>
+                <Card>
+                    <Box sx={{marginLeft:"10px",padding: '10px'}}>
+                        <Typography>Correct? {responseData.correct ? 'Yes' : 'No'}</Typography>
+                        <Typography>Correct Answer: {responseData.correctAnswer}</Typography>
+                        <Typography>Solution Steps: {responseData.solutionSteps}</Typography>
+                    </Box>
+                </Card>
             )}
         </Box>
     );

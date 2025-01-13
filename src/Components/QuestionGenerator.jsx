@@ -116,12 +116,14 @@ function QuestionGenerator() {
             <br/>
             <Button variant="contained" sx={{ display:"flex",alignContent:"center",position:"flex",justifyContent:"center"}} onClick={handleGenerate}>Generate</Button>
             {generatedQuestion && (
-                <Box sx={{marginLeft:"20px"}} className={"container"} style={{marginTop: 20}}>
-                    <Typography>Question ID:{generatedQuestion.id}</Typography>
-                    <br/>
-                    <Typography sx={{wordSpacing: 12}}>Question Text: {generatedQuestion.questionText}</Typography>
-                    <br/>
-                    <Typography>Difficulty:{generatedQuestion.difficultyLevel}</Typography>
+                <Box  className={"container"} style={{marginTop: 15,marginBottom:15 ,insetBlockEnd:"revert-layer"}}>
+                    <Box sx={{marginLeft:"20px",marginTop:"23px",marginBottom:"15px"}}>
+                        <Typography >Question ID:{generatedQuestion.id}</Typography>
+                        <br/>
+                        <Typography sx={{wordSpacing: 15}}>Question Text: {generatedQuestion.questionText}</Typography>
+                        <br/>
+                        <Typography>Difficulty:{generatedQuestion.difficultyLevel}</Typography>
+                    </Box>
                 </Box>
             )}
         </Card>

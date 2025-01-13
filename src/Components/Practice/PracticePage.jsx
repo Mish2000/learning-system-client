@@ -26,26 +26,6 @@ function PracticePage({ onLogout }) {
                 <QuestionGenerator />
                 <AnswerSubmission />
             </Stack>
-
-            <Box mt={4} sx={{ display: 'flex', gap: 2 }}>
-                <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => navigate(DASHBOARD_URL)}
-                >
-                    Back to Dashboard
-                </Button>
-                <Button
-                    variant="contained"
-                    color="error"
-                    onClick={() => {
-                        onLogout();
-                        navigate('/');
-                    }}
-                >
-                    Logout
-                </Button>
-            </Box>
         </Box>
     );
 }
