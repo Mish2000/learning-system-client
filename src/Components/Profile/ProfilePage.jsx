@@ -93,7 +93,7 @@ function ProfilePage() {
     }
 
     return (
-        <Box sx={{ padding: 4, maxWidth: '600px', margin: '0 auto' }}>
+        <Box sx={{ padding: 4, maxWidth: '400px', margin: '0 auto' }}>
             <Typography variant="h4" gutterBottom>Profile Management</Typography>
             <Typography variant="body1">Username: {profile.username}</Typography>
             <Typography variant="body1">Email: {profile.email}</Typography>
