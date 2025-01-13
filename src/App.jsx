@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
-import {createTheme, ThemeProvider, CssBaseline} from '@mui/material';
+import {createTheme, ThemeProvider, CssBaseline, Button} from '@mui/material';
 import Login from './Components/Login&Registration/Login.jsx';
 import Register from './Components/Login&Registration/Register.jsx';
 import Error404 from './components/ErrorPages/Error404';
@@ -15,6 +15,7 @@ import ProfilePage from "./Components/Profile/ProfilePage.jsx";
 function App() {
     const [token, setToken] = useState(localStorage.getItem('jwtToken') || null);
     const [role, setRole] = useState(localStorage.getItem('role') || null);
+
 
     const theme = createTheme({
         palette: {
@@ -53,6 +54,7 @@ function App() {
                         {/*If the user logged in, he cannot access the login screen */}
                         {token ? (
                             <Route path={LOGIN_URL} element={<Navigate to={HOME_URL} />} />
+
                         ) : (
                             <Route path={LOGIN_URL} element={<Login onLoginSuccess={handleLoginSuccess} />} />
                         )}
@@ -70,6 +72,7 @@ function App() {
                         {token && (
                             <Route element={<NavBar />}>
                                 <Route path={HOME_URL} element={<Home />} />
+
                                 <Route path={DASHBOARD_URL} element={
                                     <CombinedDashboard role={role} onLogout={handleLogout} />
                                 }/>
@@ -77,6 +80,7 @@ function App() {
                                 <Route path={PROFILE_URL} element={<ProfilePage />}/>
                             </Route>
                         )}
+
 
                         <Route path="*" element={<Error404 />} />
 
