@@ -85,6 +85,9 @@ function ProfilePage() {
     const buttonColorClass = (language !== originalLanguage || detailLevel !== originalDetailLevel)
         ? 'primary' : 'default';
 
+    // Disable button when the current values are the same as the original
+    const isButtonDisabled = (language === originalLanguage && detailLevel === originalDetailLevel);
+
     if (!profile) {
         return <Typography>Loading Profile...</Typography>;
     }
@@ -168,6 +171,7 @@ function ProfilePage() {
                     variant="contained"
                     color={buttonColorClass}
                     onClick={handleUpdate}
+                    disabled={isButtonDisabled} // Disable the button if no changes have been made
                 >
                     Save Profile
                 </Button>
