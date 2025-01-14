@@ -6,47 +6,52 @@ import {LOGIN_URL} from "../../Utils/Constants.js";
 import { registerUser } from '../../api/UserAPI';
 
 function Register() {
+    const regex = /^[a-zA-Z0-9]{4,30}$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+//const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$%*])[a-zA-Z\d@$%*]{8,30}$/;//TODO do not forget add this for production
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [repeat, setRepeat] = useState("");
-    const [usernameError, setUsernameError] = useState(false);
-    const [emailError, setEmailError] = useState(false);
-    const [passwordError, setPasswordError] = useState(false);
-    const [repeatError, setRepeatError] = useState(false);
+    // const [usernameError, setUsernameError] = useState(false);
+    const usernameError = !regex.test(username) && username.length > 0;
+    // const [emailError, setEmailError] = useState(false);
+    const emailError = !emailRegex.test(email) && email.length > 0;
+    // const [passwordError, setPasswordError] = useState(false);
+    const passwordError = !regex.test(password) && password.length > 0;
+
+    // const [repeatError, setRepeatError] = useState(false);
+    const repeatError = repeat !== password && repeat.length > 0
     const [alert, setAlert] = useState(false);
+
     const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);
-
-    const regex = /^[a-zA-Z0-9]{4,30}$/;
-    //const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$%*])[a-zA-Z\d@$%*]{8,30}$/;//TODO do not forget add this for production
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const noError = (!usernameError && !emailError && !passwordError && !repeatError);
     const notEmpty = (username.length >= 1  && email.length >= 1 && password.length >= 1 && repeat === password && repeat.length >=1);
 
-    useEffect(() => {
-        if (username.length >= 1) {
-            setUsernameError(!regex.test(username))
-        }
-    }, [username]);
+    // useEffect(() => {
+    //     if (username.length >= 1) {
+    //         setUsernameError(!regex.test(username))
+    //     }
+    // }, [username]);
 
 
-    useEffect(() => {
-        if (password.length >= 1) {
-            setPasswordError(!regex.test(password))
-        }
-    }, [password]);
+    // useEffect(() => {
+    //     if (password.length >= 1) {
+    //         setPasswordError(!regex.test(password))
+    //     }
+    // }, [password]);
 
-    useEffect(() => {
-        setRepeatError(repeat !== password && repeat.length > 0)
-    }, [password, repeat]);
+    // useEffect(() => {
+    //     setRepeatError(repeat !== password && repeat.length > 0)
+    // }, [password, repeat]);
 
-    useEffect(() => {
-        if (email.length >= 1) {
-            setEmailError(!emailRegex.test(email));
-        }
-    }, [email]);
+    // useEffect(() => {
+    //     if (email.length >= 1) {
+    //         setEmailError(!emailRegex.test(email));
+    //     }
+    // }, [email]);
 
     async function createAccount() {
 
