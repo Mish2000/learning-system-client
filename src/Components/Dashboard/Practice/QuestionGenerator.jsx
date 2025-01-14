@@ -136,19 +136,9 @@ function QuestionGenerator({ onQuestionGenerated }) {
             </Button>
 
             {generatedQuestion && (
-                <Box className="container" style={{ marginTop: 15, marginBottom: 15 }}>
-                    <Box sx={{ marginLeft: "20px", marginTop: "23px", marginBottom: "15px" }}>
-                        <Typography>Question ID: {generatedQuestion.id}</Typography>
-                        <br />
                         <Typography sx={{ wordSpacing: 15 }}>
-                            Question Text: {generatedQuestion.questionText}
+                            Question: {generatedQuestion.questionText}
                         </Typography>
-                        <br />
-                        <Typography>Difficulty: {generatedQuestion.difficultyLevel}</Typography>
-                    </Box>
-                </Box>
-
-
             )}
         </Box>
     );
