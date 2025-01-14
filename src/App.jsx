@@ -1,19 +1,21 @@
 import {useState} from 'react';
 import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
-import {createTheme, ThemeProvider, CssBaseline} from '@mui/material';
+import {createTheme, ThemeProvider, CssBaseline, Button} from '@mui/material';
 import Login from './Components/Login&Registration/Login.jsx';
 import Register from './Components/Login&Registration/Register.jsx';
 import Error404 from './components/ErrorPages/Error404';
 import CombinedDashboard from './Components/Dashboard/CombinedDashboard';
 import PracticePage from './Components/Practice/PracticePage';
-import {DASHBOARD_URL, HOME_URL, LOGIN_URL, PRACTICE_URL, REGISTER_URL} from './Utils/Constants.js';
+import {DASHBOARD_URL, HOME_URL, LOGIN_URL, PRACTICE_URL, PROFILE_URL, REGISTER_URL} from './Utils/Constants.js';
 import NavBar from "./Components/NavBar/NavBar.jsx";
 import Home from "./Components/Dashboard/Home.jsx";
+import ProfilePage from "./Components/Profile/ProfilePage.jsx";
 
 
 function App() {
     const [token, setToken] = useState(localStorage.getItem('jwtToken') || null);
     const [role, setRole] = useState(localStorage.getItem('role') || null);
+
 
     const theme = createTheme({
         palette: {
@@ -52,6 +54,7 @@ function App() {
                         {/*If the user logged in, he cannot access the login screen */}
                         {token ? (
                             <Route path={LOGIN_URL} element={<Navigate to={HOME_URL} />} />
+
                         ) : (
                             <Route path={LOGIN_URL} element={<Login onLoginSuccess={handleLoginSuccess} />} />
                         )}
@@ -61,19 +64,23 @@ function App() {
                         {!token && (
                             <>
                                 <Route path={DASHBOARD_URL} element={<Navigate to={LOGIN_URL} />} />
-                                <Route path={PRACTICE_URL} element={<Navigate to={LOGIN_URL} />} />
+                                <Route path={PRACTICE_URL} element={<Navigate to={LOGIN_URL} />}/>
+                                <Route path={PROFILE_URL} element={<Navigate to={LOGIN_URL} />} />
                             </>
                         )}
 
                         {token && (
                             <Route element={<NavBar />}>
                                 <Route path={HOME_URL} element={<Home />} />
+
                                 <Route path={DASHBOARD_URL} element={
                                     <CombinedDashboard role={role} onLogout={handleLogout} />
                                 }/>
                                 <Route path={PRACTICE_URL} element={<PracticePage onLogout={handleLogout} />} />
+                                <Route path={PROFILE_URL} element={<ProfilePage />}/>
                             </Route>
                         )}
+
 
                         <Route path="*" element={<Error404 />} />
 

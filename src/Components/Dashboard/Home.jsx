@@ -1,11 +1,18 @@
 import { Box, Typography, Button, Stack } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { LOGIN_URL, REGISTER_URL } from '../../utils/Constants';
+import {useState} from "react";
 
 function Home() {
     const navigate = useNavigate();
     const token = localStorage.getItem('jwtToken');
     const role  = localStorage.getItem('role');
+    // const [showProfile, setShowProfile] = useState(false);
+    // const navigate = useNavigate();
+
+    // const handleNavigate = () => {
+    //     navigate('/profile');
+    // };
 
     return (
         <Box
@@ -19,6 +26,7 @@ function Home() {
             }}
         >
             <Typography variant="h4">Welcome to Quick Math!</Typography>
+
             <Typography variant="body1">
                 This is a platform for self-learning and practicing math topics, with dynamic question generation
                 and personalized dashboards.
@@ -48,6 +56,10 @@ function Home() {
                         onClick={() => navigate('/Practice')}
                     >
                         Start Practicing
+                    </Button>
+                    <Button onClick={() => navigate(('/Profile'))}
+                    >
+                        Go to Profile Page
                     </Button>
                     <Button
                         variant="outlined"
