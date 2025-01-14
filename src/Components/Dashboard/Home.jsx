@@ -21,15 +21,21 @@ function Home() {
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                minHeight: '80vh',
-                gap: 3
+                minHeight: '60vh',
+                gap: 8
             }}
         >
             <Typography variant="h4">Welcome to Quick Math!</Typography>
 
-            <Typography variant="body1">
-                This is a platform for self-learning and practicing math topics, with dynamic question generation
-                and personalized dashboards.
+            <Typography
+                sx={{
+                    fontFamily: "cursive"
+                }}
+            >
+                This is a platform for self-learning and practicing math with wide variety of topics,
+                <br/> we have a detector that will see with what you are getting difficult at and match the exercises for your level,
+                <br/> this is all for you to understood the way to solve the problem and then move on to an higher difficulty <br/> so can improve your math,
+                 we also have a dynamic question generation and personalized dashboards.
             </Typography>
 
             {!token && (
@@ -57,15 +63,17 @@ function Home() {
                     >
                         Start Practicing
                     </Button>
-                    <Button onClick={() => navigate(('/Profile'))}
+                    <Button
+                        variant="contained"
+                        onClick={() => navigate(('/Profile'))}
                     >
                         Go to Profile Page
                     </Button>
                     <Button
-                        variant="outlined"
+                        variant="contained"
                         onClick={() => navigate('/Statistics')}
                     >
-                        View My Dashboard
+                        see your statistics
                     </Button>
                 </Stack>
             )}

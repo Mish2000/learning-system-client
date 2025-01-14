@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import {Button, Box, Typography, Stack} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import QuestionGenerator from "../QuestionGenerator.jsx";
-import AnswerSubmission from "../AnswerSubmission.jsx";
-import {DASHBOARD_URL} from "../../Utils/Constants.js";
+import QuestionGenerator from "./QuestionGenerator.jsx";
+import AnswerSubmission from "./AnswerSubmission.jsx";
+import {DASHBOARD_URL} from "../../../Utils/Constants.js";
 import {useState} from "react";
 
 function PracticePage({ onLogout }) {

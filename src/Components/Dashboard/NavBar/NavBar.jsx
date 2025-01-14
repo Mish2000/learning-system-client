@@ -2,15 +2,15 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import {Box, Button, Stack} from "@mui/material";
-import AppIcon from "../AppIcon.jsx";
+import AppIcon from "../../../Utils/AppIcon.jsx";
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
 import {Outlet, useLocation, useNavigate} from "react-router-dom";
-import {DASHBOARD_URL, HOME_URL, LOGIN_URL, PRACTICE_URL} from "../../Utils/Constants.js";
+import {DASHBOARD_URL, HOME_URL, LOGIN_URL, PRACTICE_URL} from "../../../Utils/Constants.js";
 import CalculateIcon from '@mui/icons-material/Calculate';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import HomeIcon from '@mui/icons-material/Home';
-import {handleLogout} from "../../API/Logout.js";
+import {handleLogout} from "../../../API/Logout.js";
 
 function NavBar() {
     const location = useLocation();

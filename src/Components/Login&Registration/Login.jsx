@@ -3,7 +3,7 @@ import {Box, Button, Card, Stack, TextField, Typography} from "@mui/material";
 import { useNavigate } from 'react-router-dom';
 import {HOME_URL, REGISTER_URL} from "../../Utils/Constants.js";
 import PasswordTextField from "./PasswordTextField.jsx";
-import AppIcon from "../AppIcon.jsx";
+import AppIcon from "../../Utils/AppIcon.jsx";
 import axios from "axios";
 import PropTypes from 'prop-types';
 

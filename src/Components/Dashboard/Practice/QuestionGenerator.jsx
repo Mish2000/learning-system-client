@@ -1,7 +1,7 @@
 import {useState, useEffect} from 'react';
 import axios from 'axios';
 import TopicList from "./TopicList.jsx";
-import '../App.css'
+import '../../../CSS/App.css'
 import Grid from '@mui/material/Grid2';
 import {Box, Button, Card, FormControl, InputLabel, MenuItem, Select, Typography} from "@mui/material";
 import PropTypes from "prop-types";
@@ -75,15 +75,11 @@ function QuestionGenerator({ onQuestionGenerated }) {
                     <Grid item xs={12} sm={4}>
                         <Typography>Question type:</Typography>
                         <FormControl variant="standard" sx={{ m: 1, minWidth: 150 }}>
-                            <InputLabel id="question-label">-- Select Type --</InputLabel>
+                            <InputLabel>-- Select Type --</InputLabel>
                             <Select
-                                labelId="question-label"
-                                id="question"
                                 value={selectedParent}
-                                label="-- Select question Type--"
                                 onChange={(e) => setSelectedParent(e.target.value)}
                             >
-                                <MenuItem value="">-- Select question Type --</MenuItem>
                                 {parentTopics.map(topic => (
                                     <MenuItem key={topic.id} value={topic.id}>
                                         {topic.name}
@@ -96,15 +92,12 @@ function QuestionGenerator({ onQuestionGenerated }) {
                     <Grid item xs={12} sm={4}>
                         <Typography>Operator type:</Typography>
                         <FormControl variant="standard" sx={{ m: 1, minWidth: 150 }}>
-                            <InputLabel id="operator-label">-- Select Type --</InputLabel>
+                            <InputLabel >-- Select Type --</InputLabel>
                             <Select
-                                labelId="operator-label"
-                                id="operator"
                                 value={selectedSubtopic}
                                 onChange={(e) => setSelectedSubtopic(e.target.value)}
                                 disabled={!selectedParent}
                             >
-                                <MenuItem value="">-- Select operator type --</MenuItem>
                                 {subTopics.map(topic => (
                                     <MenuItem key={topic.id} value={topic.id}>
                                         {topic.name}
@@ -127,6 +120,7 @@ function QuestionGenerator({ onQuestionGenerated }) {
             </Box>
             <br />
             <Button
+                disabled={!selectedParent}
                 variant="contained"
                 sx={{ display: "flex", alignContent: "center", justifyContent: "center" }}
                 onClick={handleGenerate}

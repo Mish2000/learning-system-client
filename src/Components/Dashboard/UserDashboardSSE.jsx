@@ -1,8 +1,9 @@
 import {useEffect, useState} from 'react';
 import {Box, Typography} from "@mui/material";
-import ChartTotalSuccessRate from "../Statistics/ChartTotalSuccessRate.jsx";
-import ChartSuccessRateByTopic from "../Statistics/ChartSuccessRateByTopic.jsx";
-import Loading from "../Loading.jsx";
+import ChartTotalSuccessRate from "./Statistics/ChartTotalSuccessRate.jsx";
+import ChartSuccessRateByTopic from "./Statistics/ChartSuccessRateByTopic.jsx";
+import LoadingIcon from "../../Utils/Loading/LoadingIcon.jsx";
+import Loading from "../../Utils/Loading/Loading.jsx";
 
 
 function UserDashboardSSE() {
@@ -26,12 +27,10 @@ function UserDashboardSSE() {
 
     if (!dashboardData) {
         return (
-            <>
+            <Box>
                 <Typography variant={"h3"} sx={{margin:10}}>Loading user dashboard ...</Typography>
-                <Box sx={{ display:"ruby-text",width:'100%', height:'100%'}}>
-                    <Loading style={{width:"100%",alignItems: "center", justifyContent:"center"}} />
-                </Box>
-            </>
+                <Loading/>
+            </Box>
         );
     }
 

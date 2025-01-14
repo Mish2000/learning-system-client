@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { Typography, Box, TextField, Button, Stack, Menu, MenuItem } from '@mui/material';
+import Loading from "../../../Utils/Loading/Loading.jsx";
+import LoadingIcon from "../../../Utils/Loading/LoadingIcon.jsx";
 
 function ProfilePage() {
     const [profile, setProfile] = useState(null);
@@ -89,7 +91,13 @@ function ProfilePage() {
     const isButtonDisabled = (language === originalLanguage && detailLevel === originalDetailLevel);
 
     if (!profile) {
-        return <Typography>Loading Profile...</Typography>;
+        return(
+            <Box>
+                <Typography variant={"h3"} sx={{display:"flex",margin:10,alignItems: "center", justifyContent:"center"}}>Loading Profile...</Typography>
+               <Loading/>
+            </Box>
+
+        );
     }
 
     return (

@@ -1,6 +1,6 @@
-import '../CSS/Loading.css' ;
+import '../../CSS/Loading.css' ;
 
-function Loading() {
+function LoadingIcon() {
     return (
         <svg xmlns="http://www.w3.org/2000/svg" display={"ruby-text"} height="200px" width="200px" viewBox="0 0 200 200" className="pencil">
             <defs>
@@ -34,4 +34,4 @@ function Loading() {
             </g>
         </svg>
     );
-}export default Loading;
+}export default LoadingIcon;
