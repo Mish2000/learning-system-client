@@ -13,6 +13,7 @@ function QuestionGenerator({ onQuestionGenerated }) {
     const [selectedParent, setSelectedParent] = useState('');
     const [selectedSubtopic, setSelectedSubtopic] = useState('');
     const [generatedQuestion, setGeneratedQuestion] = useState(null);
+    const [buttonClicked, setButtonClicked] = useState(false);
 
     useEffect(() => {
         const fetchParents = async () => {
@@ -54,6 +55,7 @@ function QuestionGenerator({ onQuestionGenerated }) {
                     difficultyLevel: difficulty
                 }
             );
+            console.log(response);
             setGeneratedQuestion(response.data);
             if (onQuestionGenerated) {
                 onQuestionGenerated(response.data);
@@ -64,7 +66,7 @@ function QuestionGenerator({ onQuestionGenerated }) {
     };
 
     return (
-        <Card sx={{ display: 'flex', flexDirection: 'column' }}>
+        <Box sx={{ margin:"10px", display: 'flex', flexDirection: 'column' }}>
             <Typography sx={{ marginTop: "20px" }} variant="h5" align="center">
                 please generate a question
             </Typography>
@@ -123,7 +125,12 @@ function QuestionGenerator({ onQuestionGenerated }) {
                 disabled={!selectedParent}
                 variant="contained"
                 sx={{ display: "flex", alignContent: "center", justifyContent: "center" }}
-                onClick={handleGenerate}
+                onClick={()=>{
+                    handleGenerate()
+                    setButtonClicked(true)
+                }
+
+            }
             >
                 Generate
             </Button>
@@ -140,8 +147,10 @@ function QuestionGenerator({ onQuestionGenerated }) {
                         <Typography>Difficulty: {generatedQuestion.difficultyLevel}</Typography>
                     </Box>
                 </Box>
+
+
             )}
-        </Card>
+        </Box>
     );
 }
 

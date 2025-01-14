@@ -32,7 +32,7 @@ function TopicList() {
                 }}>
 
                 <Table>
-                    <Typography variant="h6" gutterBottom>Here is a list of recommended type of questions for you:</Typography>
+                    <Typography  gutterBottom> Bank of Question types:</Typography>
                     {topics.map(topic => (
                         <TableCell key={topic.id}>
                             <Typography variant={"h6"}>{topic.name}</Typography> - {topic.description}

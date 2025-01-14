@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-import {Box, Button, Card, FormControl, InputLabel, Stack, TextField, Typography} from "@mui/material";
+import {Box, Button, Stack, TextField, Typography} from "@mui/material";
 import PropTypes from "prop-types";
 
 function AnswerSubmission({ lastQuestionId }) {
@@ -32,7 +32,7 @@ function AnswerSubmission({ lastQuestionId }) {
     };
 
     return (
-        <Card sx={{ marginLeft: "30px", padding: "10px" }}>
+        <Box sx={{ margin: "10px", padding: "10px" }}>
             <Stack spacing={2}>
                 <Typography>Your Answer:</Typography>
                     <TextField
@@ -47,15 +47,13 @@ function AnswerSubmission({ lastQuestionId }) {
             </Stack>
             <br />
             {responseData && (
-                <Card>
                     <Box sx={{ marginLeft: "10px", padding: "10px" }}>
                         <Typography>Correct? {responseData.correct ? 'Yes' : 'No'}</Typography>
                         <Typography>Correct Answer: {responseData.correctAnswer}</Typography>
                         <Typography>Solution Steps: {responseData.solutionSteps}</Typography>
                     </Box>
-                </Card>
             )}
-        </Card>
+        </Box>
     );
 }
 
