@@ -49,15 +49,20 @@ function Register() {
     }, [email]);
 
     async function createAccount() {
-        try {
-            await registerUser(username, email, password);
-            setSuccess(true);
-            setTimeout(() => {
-                navigate(LOGIN_URL);
-            }, 2250);
-        } catch (e) {
-            setError("Registration failed.");
-        }
+
+         const data = await registerUser(username, email, password);
+         console.log(data);
+         if (data.status === 200) {
+             setSuccess(true);
+             setTimeout(() => {
+                 navigate(LOGIN_URL);
+             }, 2250);
+
+         }else{
+             setError(data.response.data.message);
+         }
+
+
     }
 
     return (
