@@ -17,14 +17,15 @@ function QuestionGenerator({ onQuestionGenerated }) {
     const [generatedQuestion, setGeneratedQuestion] = useState(null);
     const navigate = useNavigate();
 
+    const hasSubtopics = subTopics.length > 0;
 
     useEffect(() => {
         const fetchParents = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/api/topics');
+                const response = await axios.get("http://localhost:8080/api/topics");
                 setParentTopics(response.data);
             } catch (error) {
-                console.error('Failed to fetch parent topics', error);
+                console.error("Failed to fetch parent topics", error);
             }
         };
         fetchParents();
@@ -34,7 +35,7 @@ function QuestionGenerator({ onQuestionGenerated }) {
         const fetchSubTopics = async () => {
             if (!selectedParent) {
                 setSubTopics([]);
-                setSelectedSubtopic('');
+                setSelectedSubtopic("");
                 return;
             }
             try {
@@ -43,7 +44,7 @@ function QuestionGenerator({ onQuestionGenerated }) {
                 );
                 setSubTopics(response.data);
             } catch (error) {
-                console.error('Failed to fetch subtopics', error);
+                console.error("Failed to fetch subtopics", error);
             }
         };
         fetchSubTopics();
@@ -51,20 +52,22 @@ function QuestionGenerator({ onQuestionGenerated }) {
 
     const handleGenerate = async () => {
         try {
-            const response = await axios.post(
-                'http://localhost:8080/api/questions/generate',
-                {
-                    topicId: selectedSubtopic ? parseInt(selectedSubtopic) : null,
-                    difficultyLevel: difficulty
-                }
-            );
+            const response = await axios.post("http://localhost:8080/api/questions/generate", {
+                topicId: selectedSubtopic ? parseInt(selectedSubtopic) : null,
+                difficultyLevel: difficulty
+            });
             console.log(response);
-            setGeneratedQuestion(response.data);
+
+            const questionData = response.data;
+            setGeneratedQuestion(questionData);
+
             if (onQuestionGenerated) {
-                onQuestionGenerated(response.data);
+                onQuestionGenerated(questionData);
             }
+
+            navigate(`${PRACTICE_URL}/${questionData.id}`);
         } catch (err) {
-            console.error('Failed to generate question', err);
+            console.error("Failed to generate question", err);
         }
     };
 
@@ -128,11 +131,12 @@ function QuestionGenerator({ onQuestionGenerated }) {
                 disabled={!selectedParent}
                 variant="contained"
                 sx={{ display: "flex", alignContent: "center", justifyContent: "center" }}
-                onClick={ ()=>{
-                   handleGenerate().then(()=>
-                   navigate(PRACTICE_URL + "/" + generatedQuestion.id));
-                }
-            }
+                onClick={async () => {
+                    const questionData = await handleGenerate();
+                    if (questionData) {
+                        navigate(PRACTICE_URL + "/" + questionData.id);
+                    }
+                }}
             >
                 Generate
             </Button>

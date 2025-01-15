@@ -7,12 +7,6 @@ function Home() {
     const navigate = useNavigate();
     const token = localStorage.getItem('jwtToken');
     const role  = localStorage.getItem('role');
-    // const [showProfile, setShowProfile] = useState(false);
-    // const navigate = useNavigate();
-
-    // const handleNavigate = () => {
-    //     navigate('/profile');
-    // };
 
     return (
         <Box

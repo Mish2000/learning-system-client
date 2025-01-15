@@ -78,6 +78,7 @@ function App() {
                                     <CombinedDashboard role={role} onLogout={handleLogout} />
                                 }/>
                                 <Route path={PRACTICE_URL} element={<PracticePage onLogout={handleLogout} />} />
+                                <Route path={`${PRACTICE_URL}/:questionId`} element={<NoteBook />} />
                                 <Route path={PRACTICE_URL+"/:id"}  element={<NoteBook/>} />
 
                                 <Route path={PROFILE_URL} element={<ProfilePage />}/>
