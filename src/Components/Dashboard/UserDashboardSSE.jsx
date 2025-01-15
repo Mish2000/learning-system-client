@@ -2,7 +2,6 @@ import {useEffect, useState} from 'react';
 import {Box, Typography} from "@mui/material";
 import ChartTotalSuccessRate from "./Statistics/ChartTotalSuccessRate.jsx";
 import ChartSuccessRateByTopic from "./Statistics/ChartSuccessRateByTopic.jsx";
-import LoadingIcon from "../../Utils/Loading/LoadingIcon.jsx";
 import Loading from "../../Utils/Loading/Loading.jsx";
 
 

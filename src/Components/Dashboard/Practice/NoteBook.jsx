@@ -3,6 +3,7 @@ import {Box, Button, TextField, Typography} from "@mui/material";
 import axios from "axios";
 import {useLocation} from "react-router-dom";
 import "../../../CSS/Fonts.css";
+
 function NoteBook() {
     const location = useLocation();
     const myFont = "Gloria Hallelujah"
@@ -52,34 +53,46 @@ function NoteBook() {
         <Box className="container"
              sx={{position: "absolute", width: "95%", height: "95%", marginTop: 15, marginBottom: 15}}>
             {generatedQuestion && (
-                <>
+                <Box sx={{display:"flex",flexDirection:"column" ,wordSpacing: 15, fontFamily: myFont}}>
 
-                    <Typography sx={{wordSpacing: 15 , fontFamily: myFont}}>
+                    <Typography sx={{wordSpacing: 15, fontFamily: myFont}}>
                         Question: {generatedQuestion.questionText}
                     </Typography>
-
-                    <Typography>Your Answer:</Typography>
-
+                    <br/>
+                    <Typography sx={{wordSpacing: 15, fontFamily: myFont}}>Your Answer:</Typography>
+                    <br/>
                     <TextField sx={{fontFamily: myFont}}
-                        placeholder="Write your answer here"
-                        type="text"
-                        value={userAnswer}
-                        onChange={(e) => setUserAnswer(e.target.value)}
-                    />
+                               variant="standard"
+                               placeholder="Write your answer here"
+                               type="text"
+                               value={userAnswer}
 
-                    <Button variant="contained" onClick={handleSubmitAnswer}>
+                               onChange={(e) => {
+                                   e.target.style.fontFamily = myFont;
+                                   setUserAnswer(e.target.value);
+
+                               }
+                    }
+                    />
+                    <br/><br/>
+                    <Button
+                        sx={{wordSpacing: 15 , fontFamily: myFont ,color:"black",fontSize:25}}
+                        variant="text" onClick={handleSubmitAnswer}>
                         Submit Answer
                     </Button>
 
                     {responseData && (
-                        <Box sx={{ marginLeft: "10px", padding: "10px" }}>
-                            <Typography sx={{fontFamily: myFont}}>Correct? {responseData.correct ? 'Yes' : 'No'}</Typography>
-                            <Typography sx={{fontFamily: myFont}}>Correct Answer: {responseData.correctAnswer}</Typography>
-                            <Typography sx={{fontFamily: myFont}}>Solution Steps: {responseData.solutionSteps}</Typography>
+                        <Box sx={{marginLeft: "10px", padding: "10px"}}>
+                            <Typography
+                                sx={{fontFamily: myFont}}>Correct? {responseData.correct ? 'Yes' : 'No'}</Typography>
+                            <Typography sx={{fontFamily: myFont}}>Correct
+                                Answer: {responseData.correctAnswer}</Typography>
+                            <Typography sx={{fontFamily: myFont}}>Solution
+                                Steps: {responseData.solutionSteps}</Typography>
                         </Box>
                     )}
 
-                </>
+                </Box>
             )}
         </Box>
     );
