@@ -5,6 +5,8 @@ import '../../../CSS/App.css'
 import Grid from '@mui/material/Grid2';
 import {Box, Button, Card, FormControl, InputLabel, MenuItem, Select, Typography} from "@mui/material";
 import PropTypes from "prop-types";
+import {useNavigate, useNavigation} from "react-router-dom";
+import {PRACTICE_URL} from "../../../Utils/Constants.js";
 
 function QuestionGenerator({ onQuestionGenerated }) {
     const [difficulty, setDifficulty] = useState('BASIC');
@@ -13,7 +15,8 @@ function QuestionGenerator({ onQuestionGenerated }) {
     const [selectedParent, setSelectedParent] = useState('');
     const [selectedSubtopic, setSelectedSubtopic] = useState('');
     const [generatedQuestion, setGeneratedQuestion] = useState(null);
-    const [buttonClicked, setButtonClicked] = useState(false);
+    const navigate = useNavigate();
+
 
     useEffect(() => {
         const fetchParents = async () => {
@@ -125,21 +128,14 @@ function QuestionGenerator({ onQuestionGenerated }) {
                 disabled={!selectedParent}
                 variant="contained"
                 sx={{ display: "flex", alignContent: "center", justifyContent: "center" }}
-                onClick={()=>{
-                    handleGenerate()
-                    setButtonClicked(true)
+                onClick={ ()=>{
+                   handleGenerate().then(()=>
+                   navigate(PRACTICE_URL + "/" + generatedQuestion.id));
                 }
-
             }
             >
                 Generate
             </Button>
-
-            {generatedQuestion && (
-                        <Typography sx={{ wordSpacing: 15 }}>
-                            Question: {generatedQuestion.questionText}
-                        </Typography>
-            )}
         </Box>
     );
 }

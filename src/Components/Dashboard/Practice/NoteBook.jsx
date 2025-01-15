@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {Box, Button, TextField, Typography} from "@mui/material";
 import axios from "axios";
-import {useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import "../../../CSS/Fonts.css";
+import {PRACTICE_URL} from "../../../Utils/Constants.js";
 
 function NoteBook() {
     const location = useLocation();
@@ -10,6 +11,7 @@ function NoteBook() {
     const [generatedQuestion, setGeneratedQuestion] = useState(null);
     const [userAnswer, setUserAnswer] = useState("")
     const [responseData, setResponseData] = useState("");
+    const navigate = useNavigate();
 
     const handleGenerate = async () => {
         try {
@@ -51,7 +53,7 @@ function NoteBook() {
 
     return (
         <Box className="container"
-             sx={{position: "absolute", width: "95%", height: "95%", marginTop: 15, marginBottom: 15}}>
+             sx={{position: "absolute", width: "95%", height: "95%", marginTop: 15, marginBottom: 15, padding:2}}>
             {generatedQuestion && (
                 <Box sx={{display:"flex",flexDirection:"column" ,wordSpacing: 15, fontFamily: myFont}}>
 
@@ -80,15 +82,26 @@ function NoteBook() {
                         variant="text" onClick={handleSubmitAnswer}>
                         Submit Answer
                     </Button>
-
+                    <br/>
                     {responseData && (
-                        <Box sx={{marginLeft: "10px", padding: "10px"}}>
+                        <Box >
                             <Typography
                                 sx={{fontFamily: myFont}}>Correct? {responseData.correct ? 'Yes' : 'No'}</Typography>
                             <Typography sx={{fontFamily: myFont}}>Correct
                                 Answer: {responseData.correctAnswer}</Typography>
                             <Typography sx={{fontFamily: myFont}}>Solution
                                 Steps: {responseData.solutionSteps}</Typography>
+                            <br/><br/>
+                            <Box sx={{display: "flex",flexDirection:"row-reverse", justifyContent:"center",gap:15}}>
+                                <Button
+                                sx={{wordSpacing: 15 , fontFamily: myFont ,color:"black",fontSize:25}}
+                                onClick={handleGenerate}
+                                >Next Question</Button>
+                                <Button
+                                    sx={{wordSpacing: 15 , fontFamily: myFont ,color:"black",fontSize:25}}
+                                    onClick={()=>navigate(PRACTICE_URL)}
+                                >change Subject</Button>
+                            </Box>
                         </Box>
                     )}
 

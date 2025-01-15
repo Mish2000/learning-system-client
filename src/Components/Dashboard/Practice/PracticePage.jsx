@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import {Box, Typography, Stack, Card} from '@mui/material';
 import QuestionGenerator from "./QuestionGenerator.jsx";
-import AnswerSubmission from "./AnswerSubmission.jsx";
 import {useState} from "react";
 
 function PracticePage({ onLogout }) {
@@ -15,7 +14,7 @@ function PracticePage({ onLogout }) {
             sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: 3,
+                gap: 0,
                 marginTop: 4,
                 alignItems: 'center'
             }}
@@ -23,12 +22,9 @@ function PracticePage({ onLogout }) {
             <Typography variant="h3" mb={2}>
                 Time to practice!
             </Typography>
-
-            <Stack spacing={4} sx={{ width: '100%', maxWidth: '800px' }}>
+            <Stack spacing={4} sx={{marginTop:0, width: '100%', maxWidth: '800px' }}>
                 <Card>
                     <QuestionGenerator onQuestionGenerated={handleQuestionGenerated} />
-
-                    <AnswerSubmission lastQuestionId={lastQuestionId} />
                 </Card>
             </Stack>
         </Box>
