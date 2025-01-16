@@ -8,7 +8,7 @@ import {registerUser} from '../../api/UserAPI';
 function Register() {
     const regex = /^[a-zA-Z0-9]{4,30}$/;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$%*])[a-zA-Z\d@$%*]{8,30}$/;//TODO do not forget add this for production
+    const passwordRegex =  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+={}'":;?.<>,-])[\w\d~!@#$%^&*()_+={}'":;?.<>,-]{8,30}$/;
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
@@ -100,7 +100,7 @@ function Register() {
                     />
                     <PasswordTextField
                         error={passwordError}
-                        helperText={"Between 4 -30 characters long,Can contain only numbers and english characters! "}
+                        helperText={"8-30 characters, must include: lowercase, uppercase, number, and one special character"}
                         variant={"outlined"}
                         type={"password"}
                         label={"Password"}
