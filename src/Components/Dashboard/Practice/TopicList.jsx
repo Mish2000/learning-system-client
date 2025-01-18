@@ -1,9 +1,11 @@
 import {useEffect, useState} from 'react';
 import axios from 'axios';
 import {Box, Table, TableBody, TableCell, TableRow, Typography} from "@mui/material";
+import {useTranslation} from "react-i18next";
 
 function TopicList() {
     const [topics, setTopics] = useState([]);
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchTopics = async () => {
@@ -31,14 +33,14 @@ function TopicList() {
                     mx: 'auto',
                 }}>
 
-                <Typography gutterBottom>Bank of Question types:</Typography>
+                <Typography gutterBottom>{t('bankOfQuestionTypes')}</Typography>
                 <Table>
                     <TableBody>
                         {topics.map(topic => (
                             <TableRow key={topic.id}>
                                 <TableCell>
-                                    <Typography variant="h6">{topic.name}</Typography> - {topic.description}
-                                    <Typography variant="body2"> (Difficulty: {topic.difficultyLevel})</Typography>
+                                    <Typography variant="h6">{t(topic.name)}</Typography> - {topic.description}
+                                    <Typography variant="body2">({t('difficulty')}: {t(topic.difficultyLevel)})</Typography>
                                 </TableCell>
                             </TableRow>
                         ))}

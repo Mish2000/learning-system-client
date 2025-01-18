@@ -14,11 +14,7 @@ return error;
     }
 }
 
-export async function getUsername(token) {
-    const response = await axios.get('http://localhost:8080/api/sse/user-dashboard', {token});
-    return response.data;
 
-}
 
 
 

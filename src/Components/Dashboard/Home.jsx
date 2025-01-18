@@ -1,12 +1,13 @@
 import { Box, Typography, Button, Stack } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { LOGIN_URL, REGISTER_URL } from '../../utils/Constants';
-import {useState} from "react";
+import {DASHBOARD_URL, LOGIN_URL, PRACTICE_URL, PROFILE_URL, REGISTER_URL} from '../../utils/Constants';
+import {useTranslation} from "react-i18next";
 
 function Home() {
     const navigate = useNavigate();
     const token = localStorage.getItem('jwtToken');
     const role  = localStorage.getItem('role');
+    const { t } = useTranslation();
 
     return (
         <Box
@@ -19,17 +20,14 @@ function Home() {
                 gap: 8
             }}
         >
-            <Typography variant="h4">Welcome to Quick Math!</Typography>
+            <Typography variant="h4">{t('welcomeQuickMath')}</Typography>
 
             <Typography
                 sx={{
                     fontFamily: "cursive"
                 }}
             >
-                This is a platform for self-learning and practicing math with wide variety of topics,
-                <br/> we have a detector that will see with what you are getting difficult at and match the exercises for your level,
-                <br/> this is all for you to understood the way to solve the problem and then move on to an higher difficulty <br/> so can improve your math,
-                 we also have a dynamic question generation and personalized dashboards.
+                {t('selfLearningMath')}
             </Typography>
 
             {!token && (
@@ -38,13 +36,13 @@ function Home() {
                         variant="contained"
                         onClick={() => navigate(LOGIN_URL)}
                     >
-                        Login
+                        {t('login')}
                     </Button>
                     <Button
                         variant="outlined"
                         onClick={() => navigate(REGISTER_URL)}
                     >
-                        Register
+                        {t('register')}
                     </Button>
                 </Stack>
             )}
@@ -53,27 +51,28 @@ function Home() {
                 <Stack spacing={2} direction="row">
                     <Button
                         variant="contained"
-                        onClick={() => navigate('/Practice')}
+                        onClick={() => navigate(PRACTICE_URL)}
                     >
-                        Start Practicing
+                        {t('startPracticing')}
                     </Button>
                     <Button
                         variant="contained"
-                        onClick={() => navigate(('/Profile'))}
+                        onClick={() => navigate(PROFILE_URL)}
                     >
-                        Go to Profile Page
+                        {t('goToProfilePage')}
                     </Button>
                     <Button
                         variant="contained"
-                        onClick={() => navigate('/Statistics')}
+                        onClick={() => navigate(DASHBOARD_URL)}
                     >
-                        see your statistics
+                        {t('seeYourStatistics')}
                     </Button>
                 </Stack>
             )}
         </Box>
     );
 }
+
 
 export default Home;
 

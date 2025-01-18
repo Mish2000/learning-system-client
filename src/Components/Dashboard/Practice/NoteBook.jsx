@@ -6,17 +6,16 @@ import "../../../CSS/Fonts.css";
 import {PRACTICE_URL} from "../../../Utils/Constants.js";
 import Loading from "../../../Utils/Loading/Loading.jsx";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-
+import {useTranslation} from "react-i18next";
 
 function NoteBook() {
     const {questionId} = useParams();
     const myFont = "Gloria Hallelujah";
-
     const [question, setQuestion] = useState(null);
     const [userAnswer, setUserAnswer] = useState("");
     const [responseData, setResponseData] = useState(null);
-
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     useEffect(() => {
         async function fetchQuestion() {
@@ -57,7 +56,7 @@ function NoteBook() {
     if (!question) {
         return (
             <Box sx={{margin: 4}}>
-                <Typography>Loading question data...</Typography>
+                <Typography>{t('loadingQuestionData')}</Typography>
                 <Loading/>
             </Box>
         );
@@ -77,14 +76,14 @@ function NoteBook() {
         >
             <Box sx={{display: "flex", flexDirection: "column", wordSpacing: 15, fontFamily: myFont}}>
                 <Typography sx={{wordSpacing: 15, fontFamily: myFont}}>
-                    Question: {question.questionText}
+                    {t('question')}: {question.questionText}
                 </Typography>
                 <br/>
-                <Typography sx={{wordSpacing: 15, fontFamily: myFont}}>Your Answer:</Typography>
+                <Typography sx={{wordSpacing: 15, fontFamily: myFont}}>{t('yourAnswer')}</Typography>
                 <br/>
                 <TextField
                     variant="standard"
-                    placeholder="Write your answer here"
+                    placeholder={t('writeYourAnswerHere')}
                     type="text"
                     value={userAnswer}
                     onChange={(e) => {
@@ -99,14 +98,14 @@ function NoteBook() {
                     variant="text"
                     onClick={handleSubmitAnswer}
                 >
-                    Submit Answer
+                    {t('submitAnswer')}
                 </Button>
 
                 <br/>
                 {responseData && (
                     <Box>
                         <Typography sx={{fontFamily: myFont}}>
-                            Correct? {responseData.correct ? "Yes" : "No"}
+                            {t('correct')}: {responseData.correct ? t('yes') : t('no')}
                         </Typography>
                         <br/>
                         <Accordion sx={{
@@ -124,17 +123,15 @@ function NoteBook() {
                                 aria-controls="panel1-content"
                                 id="panel1-header"
                             >
-                                <Typography sx={{fontFamily: myFont}} component="span">See steps and correct
-                                    answer</Typography>
+                                <Typography sx={{fontFamily: myFont}} component="span">{t('seeStepsAndAnswer')}</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
-
                                 <Typography sx={{fontFamily: myFont}}>
-                                    Correct Answer: {responseData.correctAnswer}
+                                    {t('correctAnswer')}: {responseData.correctAnswer}
                                 </Typography>
                                 <br/>
                                 <Typography sx={{fontFamily: myFont}}>
-                                    Solution Steps: {responseData.solutionSteps}
+                                    {t('solutionSteps')}: {responseData.solutionSteps}
                                 </Typography>
                             </AccordionDetails>
                         </Accordion>
@@ -163,13 +160,13 @@ function NoteBook() {
                                     }
                                 }}
                             >
-                                Next Question
+                                {t('nextQuestion')}
                             </Button>
                             <Button
                                 sx={{wordSpacing: 15, fontFamily: myFont, color: "black", fontSize: 25}}
                                 onClick={() => navigate(PRACTICE_URL)}
                             >
-                                change Subject
+                                {t('changeSubject')}
                             </Button>
                         </Box>
                     </Box>

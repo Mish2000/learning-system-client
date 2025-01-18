@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types';
 import {Box, Typography, Stack, Card} from '@mui/material';
 import QuestionGenerator from "./QuestionGenerator.jsx";
+import {useTranslation} from "react-i18next";
 
 function PracticePage({ onLogout }) {
+    const { t } = useTranslation();
     return (
         <Box
             sx={{
@@ -14,7 +16,7 @@ function PracticePage({ onLogout }) {
             }}
         >
             <Typography variant="h3" mb={2}>
-                Time to practice!
+                {t('timeToPractice')}
             </Typography>
 
             <Stack spacing={4} sx={{ marginTop: 0, width: "100%", maxWidth: "800px" }}>

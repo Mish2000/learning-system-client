@@ -1,8 +1,10 @@
 import {useEffect, useState} from 'react';
 import {Box, Stack, Table, TableBody, TableCell, TableRow, Typography} from "@mui/material";
+import {useTranslation} from "react-i18next";
 
 function AdminDashboardSSE() {
     const [dashboardData, setDashboardData] = useState(null);
+    const { t } = useTranslation();
 
     useEffect(() => {
         const token = localStorage.getItem('jwtToken');
@@ -21,26 +23,26 @@ function AdminDashboardSSE() {
     }, []);
 
     if (!dashboardData) {
-        return <Typography>Loading admin dashboard ...</Typography>;
+        return <Typography>{t('loadingAdminDashboard')}</Typography>;
     }
 
     return (
         <Box sx={{ padding: 2 }}>
-            <Typography variant="h5" mb={2}>Admin Dashboard</Typography>
+            <Typography variant="h5" mb={2}>{t('adminDashboard')}</Typography>
             <Stack spacing={2}>
-                <Typography>Total Users: {dashboardData.totalUsers}</Typography>
-                <Typography>Total Attempts: {dashboardData.totalAttempts}</Typography>
+                <Typography>{t('totalUsersAdmin')} {dashboardData.totalUsers}</Typography>
+                <Typography>{t('totalAttemptsAdmin')} {dashboardData.totalAttempts}</Typography>
                 <Typography>
-                    Overall Success Rate: {(dashboardData.overallSuccessRate * 100).toFixed(1)}%
+                    {t('overallSuccessRateAdmin')} {(dashboardData.overallSuccessRate * 100).toFixed(1)}%
                 </Typography>
 
                 <Box>
-                    <Typography variant="subtitle1">Attempts by Topic:</Typography>
+                    <Typography variant="subtitle1">{t('attemptsByTopicAdmin')}</Typography>
                     <Table>
                         <TableBody>
                             {Object.entries(dashboardData.attemptsByTopic).map(([topic, count]) => (
                                 <TableRow key={topic}>
-                                    <TableCell>{topic}</TableCell>
+                                    <TableCell>{t(topic)}</TableCell>
                                     <TableCell>{count}</TableCell>
                                 </TableRow>
                             ))}
@@ -49,12 +51,12 @@ function AdminDashboardSSE() {
                 </Box>
 
                 <Box>
-                    <Typography variant="subtitle1">Success Rate by Topic:</Typography>
+                    <Typography variant="subtitle1">{t('successRateByTopicAdmin')}</Typography>
                     <Table>
                         <TableBody>
                             {Object.entries(dashboardData.successRateByTopic).map(([topic, rate]) => (
                                 <TableRow key={topic}>
-                                    <TableCell>{topic}</TableCell>
+                                    <TableCell>{t(topic)}</TableCell>
                                     <TableCell>{(rate * 100).toFixed(1)}%</TableCell>
                                 </TableRow>
                             ))}

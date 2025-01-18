@@ -11,8 +11,11 @@ import CalculateIcon from '@mui/icons-material/Calculate';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import HomeIcon from '@mui/icons-material/Home';
 import {handleLogout} from "../../../API/Logout.js";
+import { useTranslation } from 'react-i18next';
+
 
 function NavBar() {
+    const { t } = useTranslation();
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -20,11 +23,11 @@ function NavBar() {
         <Stack spacing={7}>
             <AppBar position="fixed" color="primary">
                 <Toolbar>
-                    <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%'}}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
                         <Stack direction="row" spacing={2} alignItems="center">
-                            <AppIcon size={50}/>
+                            <AppIcon size={50} />
                             <Typography variant="h6" component="div">
-                                Quick Math
+                                {t('quickMath')}
                             </Typography>
                         </Stack>
 
@@ -34,36 +37,32 @@ function NavBar() {
                                     textTransform: 'inherit',
                                     color: location.pathname === HOME_URL ? "secondary.light" : "inherit"
                                 }}
-                                onClick={() => {
-                                    navigate(HOME_URL);
+                                onClick={() => navigate(HOME_URL)}
+                            >
+                                <HomeIcon />
+                                {t('home')}
+                            </Button>
+
+                            <Button
+                                sx={{
+                                    textTransform: 'inherit',
+                                    color: location.pathname === PRACTICE_URL ? "secondary.light" : "inherit"
                                 }}
+                                onClick={() => navigate(PRACTICE_URL)}
                             >
-                                <HomeIcon/>
-                                Home
+                                <CalculateIcon />
+                                {t('practice')}
                             </Button>
 
-                            <Button sx={{
-                                textTransform: 'inherit',
-                                color: location.pathname === PRACTICE_URL ? "secondary.light" : "inherit"
-                            }}
-                                    onClick={() => {
-                                        navigate(PRACTICE_URL);
-                                    }}
+                            <Button
+                                sx={{
+                                    textTransform: 'inherit',
+                                    color: location.pathname === DASHBOARD_URL ? "secondary.light" : "inherit"
+                                }}
+                                onClick={() => navigate(DASHBOARD_URL)}
                             >
-                                <CalculateIcon/>
-                                Practice
-                            </Button>
-
-                            <Button sx={{
-                                textTransform: 'inherit',
-                                color: location.pathname === DASHBOARD_URL ? "secondary.light" : "inherit"
-                            }}
-                                    onClick={() => {
-                                        navigate(DASHBOARD_URL);
-                                    }}
-                            >
-                                <BarChartIcon/>
-                                Statistics
+                                <BarChartIcon />
+                                {t('statistics')}
                             </Button>
 
                             <Button
@@ -71,12 +70,10 @@ function NavBar() {
                                     textTransform: 'inherit',
                                     color: location.pathname === "/profile" ? "secondary.light" : "inherit"
                                 }}
-                                onClick={() => {
-                                    navigate("/profile");
-                                }}
+                                onClick={() => navigate("/profile")}
                             >
-                                <PersonIcon/>
-                                Profile
+                                <PersonIcon />
+                                {t('profile')}
                             </Button>
 
                             <Button
@@ -88,14 +85,14 @@ function NavBar() {
                                     window.location.reload();
                                 }}
                             >
-                                <LogoutIcon/>
-                                Log Out
+                                <LogoutIcon />
+                                {t('logOut')}
                             </Button>
                         </Stack>
                     </Box>
                 </Toolbar>
             </AppBar>
-            <Outlet/>
+            <Outlet />
         </Stack>
     );
 }

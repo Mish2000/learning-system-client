@@ -3,10 +3,12 @@ import {Box, Typography} from "@mui/material";
 import ChartTotalSuccessRate from "./Statistics/ChartTotalSuccessRate.jsx";
 import ChartSuccessRateByTopic from "./Statistics/ChartSuccessRateByTopic.jsx";
 import Loading from "../../Utils/Loading/Loading.jsx";
+import {useTranslation} from "react-i18next";
 
 
 function UserDashboardSSE() {
     const [dashboardData, setDashboardData] = useState(null);
+    const { t } = useTranslation();
 
     useEffect(() => {
         const token = localStorage.getItem('jwtToken');
@@ -27,7 +29,7 @@ function UserDashboardSSE() {
     if (!dashboardData) {
         return (
             <Box>
-                <Typography variant={"h3"} sx={{margin:10}}>Loading user dashboard ...</Typography>
+                <Typography variant={"h3"} sx={{margin:10}}>{t('loadingUserDashboard')}</Typography>
                 <Loading/>
             </Box>
         );
@@ -35,7 +37,7 @@ function UserDashboardSSE() {
 
     return (
         <Box>
-            <Typography variant="h5">User Dashboard</Typography>
+            <Typography variant="h5">{t('userDashboard')}</Typography>
             <ChartSuccessRateByTopic data={dashboardData}/>
             <ChartTotalSuccessRate data={dashboardData}/>
         </Box>
