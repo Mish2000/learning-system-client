@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import axios from 'axios';
-import {Box, Table, TableCell, Typography} from "@mui/material";
+import {Box, Table, TableBody, TableCell, TableRow, Typography} from "@mui/material";
 
 function TopicList() {
     const [topics, setTopics] = useState([]);
@@ -31,14 +31,18 @@ function TopicList() {
                     mx: 'auto',
                 }}>
 
+                <Typography gutterBottom>Bank of Question types:</Typography>
                 <Table>
-                    <Typography  gutterBottom> Bank of Question types:</Typography>
-                    {topics.map(topic => (
-                        <TableCell key={topic.id}>
-                            <Typography variant={"h6"}>{topic.name}</Typography> - {topic.description}
-                            <Typography variant="em"> (Difficulty: {topic.difficultyLevel})</Typography>
-                        </TableCell>
-                    ))}
+                    <TableBody>
+                        {topics.map(topic => (
+                            <TableRow key={topic.id}>
+                                <TableCell>
+                                    <Typography variant="h6">{topic.name}</Typography> - {topic.description}
+                                    <Typography variant="body2"> (Difficulty: {topic.difficultyLevel})</Typography>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
                 </Table>
             </Box>
     );

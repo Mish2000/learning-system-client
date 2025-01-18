@@ -2,10 +2,9 @@ import {useState, useEffect} from 'react';
 import axios from 'axios';
 import TopicList from "./TopicList.jsx";
 import '../../../CSS/App.css'
-import Grid from '@mui/material/Grid2';
-import {Box, Button, Card, FormControl, InputLabel, MenuItem, Select, Typography} from "@mui/material";
+import {Box, Grid, Button, FormControl, InputLabel, MenuItem, Select, Typography} from "@mui/material";
 import PropTypes from "prop-types";
-import {useNavigate, useNavigation} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {PRACTICE_URL} from "../../../Utils/Constants.js";
 
 function QuestionGenerator({ onQuestionGenerated }) {
@@ -16,8 +15,6 @@ function QuestionGenerator({ onQuestionGenerated }) {
     const [selectedSubtopic, setSelectedSubtopic] = useState('');
     const [generatedQuestion, setGeneratedQuestion] = useState(null);
     const navigate = useNavigate();
-
-    const hasSubtopics = subTopics.length > 0;
 
     useEffect(() => {
         const fetchParents = async () => {
@@ -52,11 +49,16 @@ function QuestionGenerator({ onQuestionGenerated }) {
 
     const handleGenerate = async () => {
         try {
+            const topicId = selectedSubtopic
+                ? parseInt(selectedSubtopic)
+                : selectedParent
+                    ? parseInt(selectedParent)
+                    : null;
+
             const response = await axios.post("http://localhost:8080/api/questions/generate", {
-                topicId: selectedSubtopic ? parseInt(selectedSubtopic) : null,
+                topicId: topicId,
                 difficultyLevel: difficulty
             });
-            console.log(response);
 
             const questionData = response.data;
             setGeneratedQuestion(questionData);
@@ -72,7 +74,7 @@ function QuestionGenerator({ onQuestionGenerated }) {
     };
 
     return (
-        <Box sx={{ margin:"10px", display: 'flex', flexDirection: 'column' }}>
+        <Box sx={{ margin: "10px", display: 'flex', flexDirection: 'column' }}>
             <Typography sx={{ marginTop: "20px" }} variant="h5" align="center">
                 please generate a question
             </Typography>
@@ -100,7 +102,7 @@ function QuestionGenerator({ onQuestionGenerated }) {
                     <Grid item xs={12} sm={4}>
                         <Typography>Operator type:</Typography>
                         <FormControl variant="standard" sx={{ m: 1, minWidth: 150 }}>
-                            <InputLabel >-- Select Type --</InputLabel>
+                            <InputLabel>-- Select Type --</InputLabel>
                             <Select
                                 value={selectedSubtopic}
                                 onChange={(e) => setSelectedSubtopic(e.target.value)}
@@ -117,7 +119,10 @@ function QuestionGenerator({ onQuestionGenerated }) {
 
                     <Grid item xs={12} sm={4}>
                         <Typography>Difficulty:</Typography>
-                        <Select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
+                        <Select
+                            value={difficulty}
+                            onChange={(e) => setDifficulty(e.target.value)}
+                        >
                             <MenuItem value="BASIC">BASIC</MenuItem>
                             <MenuItem value="EASY">EASY</MenuItem>
                             <MenuItem value="MEDIUM">MEDIUM</MenuItem>
@@ -128,15 +133,10 @@ function QuestionGenerator({ onQuestionGenerated }) {
             </Box>
             <br />
             <Button
-                disabled={!selectedParent}
+                disabled={!selectedSubtopic}
                 variant="contained"
                 sx={{ display: "flex", alignContent: "center", justifyContent: "center" }}
-                onClick={async () => {
-                    const questionData = await handleGenerate();
-                    if (questionData) {
-                        navigate(PRACTICE_URL + "/" + questionData.id);
-                    }
-                }}
+                onClick={handleGenerate}
             >
                 Generate
             </Button>
