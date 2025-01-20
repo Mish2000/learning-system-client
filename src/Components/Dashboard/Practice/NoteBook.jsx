@@ -47,6 +47,7 @@ function NoteBook() {
                 }
             );
             setResponseData(res.data);
+            // setDisableSubmitAnswer(!disableSubmitAnswer);
         } catch (error) {
             console.error("Error submitting answer:", error);
             alert("Failed to submit answer");
@@ -94,6 +95,7 @@ function NoteBook() {
                 <br/>
                 <br/>
                 <Button
+                    disabled={userAnswer.length===0 || responseData !== null}
                     sx={{wordSpacing: 15, fontFamily: myFont, color: "black", fontSize: 25}}
                     variant="text"
                     onClick={handleSubmitAnswer}

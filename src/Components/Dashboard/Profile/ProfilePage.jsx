@@ -1,8 +1,11 @@
-import { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
-import { Typography, Box, TextField, Button, Stack, Menu, MenuItem } from '@mui/material';
+import { Typography, Box,CardMedia, TextField, Button, Stack, Menu, MenuItem } from '@mui/material';
 import Loading from "../../../Utils/Loading/Loading.jsx";
 import { useTranslation } from 'react-i18next';
+import CheckIcon from '@mui/icons-material/Check';
+import CancelIcon from '@mui/icons-material/Cancel';
+import CustomAccountCircleIcon from "../../../Utils/CustomAccountCircleIcon.jsx";
 
 function ProfilePage() {
     const { t, i18n } = useTranslation();
@@ -14,6 +17,8 @@ function ProfilePage() {
     const languageRef = useRef(null);
     const [newUsername, setNewUsername] = useState('');
     const [newPassword, setNewPassword] = useState('');
+    const [userImage, setUserImage] = useState(null);
+
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -98,67 +103,154 @@ function ProfilePage() {
     }
 
     return (
-        <Box sx={{ padding: 4, maxWidth: '400px', margin: '0 auto' }}>
-            <Typography variant="h4" gutterBottom>{t('profileManagement')}</Typography>
-            <Typography variant="body1">{t('username')}: {profile.username}</Typography>
-            <Typography variant="body1">{t('email')}: {profile.email}</Typography>
 
-            <Stack spacing={2} mt={2}>
-                <TextField
-                    label={t('newUsername')}
-                    value={newUsername}
-                    onChange={(e) => setNewUsername(e.target.value)}
-                    fullWidth
-                />
-                <TextField
-                    label={t('newPassword')}
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    fullWidth
-                />
 
-                <div>
+        <Box
+            sx={{
+                // Full height of the viewport
+                display: 'flex',
+                flexDirection: 'column',
+                height: "100%", width: '100%' ,
+            }}
+        >
+            {/* Header Section */}
+            <Box
+                sx={{
+                    flex:"column",
+                    gap:5,
+                    textAlign: 'center',
+                 // Keep the header at the top without stretching
+                }}
+            >
+                <Typography variant="h4" gutterBottom>
+                    {t('profileManagement')}
+                </Typography>
+            </Box>
+
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center', // Center the form vertically
+                    alignItems: 'center', // Center the form horizontally
+                }}
+            >
+                <Box
+                    sx={{
+                        margin: '5px', // Space outside the box
+                        border: '5px solid #0c8686', // Black border
+                        display: 'flex',
+                        justifyContent: 'center',
+                        // transform: 'translateX(-225px)',
+                        alignItems: 'center',
+                        width: '100px', // Adjusted box width
+                        height: '100px', // Fixed box height
+                        marginBottom: '10px',
+                    }}
+                >
+                    <Box style={{display: 'flex', justifyContent: 'center'}}>
+                        {!userImage?
+                        <CustomAccountCircleIcon
+                        style={{width:'100%',
+                            maxWidth:'100px',
+                             height:'100px'}}
+                        />
+                        :
+                        <CardMedia
+                        image={userImage}
+                        />
+                        }
+                    </Box>
+
+                </Box>
+
+
+                <Stack spacing={5} sx={{height: "100%", width: '100%', maxWidth : '600px'}}>
                     <TextField
-                        label={t('interfaceLanguage')}
-                        value={language}
-                        onClick={handleLanguageMenuOpen}
-                        InputProps={{
-                            readOnly: true,
-                        }}
+                        label={t('newUsername')}
+                        value={newUsername}
+                        onChange={(e) => setNewUsername(e.target.value)}
                         fullWidth
-                        inputRef={languageRef}
                     />
-                    <Menu
-                        anchorEl={languageAnchorEl}
-                        open={Boolean(languageAnchorEl)}
-                        onClose={handleMenuClose}
-                        PaperProps={{
-                            style: {
-                                width: languageRef.current ? languageRef.current.offsetWidth : 'auto',
-                            },
+                    <TextField
+                        label={t('newPassword')}
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        fullWidth
+                    />
+
+                    <div>
+                        <TextField
+                            label={t('interfaceLanguage')}
+                            value={language}
+                            onClick={handleLanguageMenuOpen}
+                            InputProps={{
+                                readOnly: true,
+                            }}
+                            fullWidth
+                            inputRef={languageRef}
+                        />
+                        <Menu
+                            anchorEl={languageAnchorEl}
+                            open={Boolean(languageAnchorEl)}
+                            onClose={handleMenuClose}
+                            PaperProps={{
+                                style: {
+                                    width: languageRef.current ? languageRef.current.offsetWidth : 'auto',
+                                },
+                            }}
+                        >
+                            <MenuItem onClick={() => handleLanguageSelect('English')}>
+                                English
+                            </MenuItem>
+                            <MenuItem onClick={() => handleLanguageSelect('Hebrew')}>
+                                Hebrew
+                            </MenuItem>
+                        </Menu>
+                    </div>
+
+
+                    <Button
+                        variant="contained"
+                        color={buttonColorClass}
+                        onClick={handleUpdate}
+                        disabled={isButtonDisabled}
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center', // Align icon and text
+                            justifyContent: 'center',
                         }}
                     >
-                        <MenuItem onClick={() => handleLanguageSelect('English')}>
-                            English
-                        </MenuItem>
-                        <MenuItem onClick={() => handleLanguageSelect('Hebrew')}>
-                            Hebrew
-                        </MenuItem>
-                    </Menu>
-                </div>
+                        {t('saveProfile')}
+                        {isButtonDisabled ? (
+                            <CancelIcon
+                                color = {'#FF0000'}
+                                sx={{
+                                    width: '100%',
+                                    maxWidth: '200px',
+                                    height: '40px',
+                                    marginLeft: 1, // Add spacing between text and icon
+                                }}
+                            />
+                        ) : (
+                            <CheckIcon
+                                sx={{
+                                    width: '100%',
+                                    maxWidth: '200px',
+                                    height: '40px',
+                                    marginLeft: 1, // Add spacing between text and icon
+                                }}/>
+                        )}
+                    </Button>
 
-                <Button
-                    variant="contained"
-                    color={buttonColorClass}
-                    onClick={handleUpdate}
-                    disabled={isButtonDisabled}
-                >
-                    {t('saveProfile')}
-                </Button>
-            </Stack>
+                </Stack>
+
+            </Box>
         </Box>
+
     );
+
 }
 
 export default ProfilePage;

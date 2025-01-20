@@ -1,6 +1,6 @@
 import { Box, Typography, Button, Stack } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import {DASHBOARD_URL, LOGIN_URL, PRACTICE_URL, PROFILE_URL, REGISTER_URL} from '../../utils/Constants';
+import {STATISTICS_URL, LOGIN_URL, PRACTICE_URL, PROFILE_URL, REGISTER_URL} from '../../utils/Constants';
 import {useTranslation} from "react-i18next";
 
 function Home() {
@@ -24,7 +24,11 @@ function Home() {
 
             <Typography
                 sx={{
-                    fontFamily: "cursive"
+                    fontFamily: "cursive",
+                    maxWidth: "600px",
+                    textAlign: "center",
+                    lineHeight: 1.6,
+                    wordBreak: "break-word"
                 }}
             >
                 {t('selfLearningMath')}
@@ -63,7 +67,7 @@ function Home() {
                     </Button>
                     <Button
                         variant="contained"
-                        onClick={() => navigate(DASHBOARD_URL)}
+                        onClick={() => navigate(STATISTICS_URL)}
                     >
                         {t('seeYourStatistics')}
                     </Button>

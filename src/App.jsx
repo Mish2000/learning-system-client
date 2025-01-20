@@ -6,7 +6,7 @@ import Register from './Components/Login&Registration/Register.jsx';
 import Error404 from './components/ErrorPages/Error404';
 import CombinedDashboard from './Components/Dashboard/CombinedDashboard';
 import PracticePage from './Components/Dashboard/Practice/PracticePage';
-import {DASHBOARD_URL, HOME_URL, LOGIN_URL, PRACTICE_URL, PROFILE_URL, REGISTER_URL} from './Utils/Constants.js';
+import {STATISTICS_URL, HOME_URL, LOGIN_URL, PRACTICE_URL, PROFILE_URL, REGISTER_URL} from './Utils/Constants.js';
 import NavBar from "./Components/Dashboard/NavBar/NavBar.jsx";
 import Home from "./Components/Dashboard/Home.jsx";
 import ProfilePage from "./Components/Dashboard/Profile/ProfilePage.jsx";
@@ -144,7 +144,7 @@ function App() {
                         {/* Not giving accesses to dashboard or practice sections before the user logs in */}
                         {!token && (
                             <>
-                                <Route path={DASHBOARD_URL} element={<Navigate to={LOGIN_URL} />} />
+                                <Route path={STATISTICS_URL} element={<Navigate to={LOGIN_URL} />} />
                                 <Route path={PRACTICE_URL} element={<Navigate to={LOGIN_URL} />}/>
                                 <Route path={PROFILE_URL} element={<Navigate to={LOGIN_URL} />} />
                             </>
@@ -154,7 +154,7 @@ function App() {
                             <Route element={<NavBar />}>
                                 <Route path={HOME_URL} element={<Home />} />
 
-                                <Route path={DASHBOARD_URL} element={
+                                <Route path={STATISTICS_URL} element={
                                     <CombinedDashboard role={role} onLogout={handleLogout} />
                                 }/>
                                 <Route path={PRACTICE_URL} element={<PracticePage onLogout={handleLogout} />} />
