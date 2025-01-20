@@ -120,7 +120,7 @@ function QuestionGenerator({ onQuestionGenerated }) {
             </Box>
             <br />
             <Button
-                disabled={!selectedSubtopic || !difficulty}
+                disabled={!selectedParent }
                 variant="contained"
                 sx={{ display: "flex", alignContent: "center", justifyContent: "center" }}
                 onClick={handleGenerate}

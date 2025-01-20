@@ -136,7 +136,7 @@ function NoteBook() {
                             </AccordionDetails>
                         </Accordion>
 
-                        <Box sx={{display: "flex", flexDirection: "row-reverse", justifyContent: "center", gap: 3}}>
+                        <Box sx={{display: "flex", flexDirection: "row-reverse", justifyContent: "center", gap:3}}>
                             <Button
                                 sx={{wordSpacing: 15, fontFamily: myFont, color: "black", fontSize: 25}}
                                 onClick={async () => {
@@ -160,13 +160,13 @@ function NoteBook() {
                                     }
                                 }}
                             >
-                                {t('nextQuestion')}
+                                {t('Next Question ->')}
                             </Button>
                             <Button
                                 sx={{wordSpacing: 15, fontFamily: myFont, color: "black", fontSize: 25}}
                                 onClick={() => navigate(PRACTICE_URL)}
                             >
-                                {t('changeSubject')}
+                                {t('<- Change Subject')}
                             </Button>
                         </Box>
                     </Box>

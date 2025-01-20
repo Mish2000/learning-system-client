@@ -1,6 +1,6 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
-import {createTheme, ThemeProvider, CssBaseline, Button} from '@mui/material';
+import {createTheme, ThemeProvider, CssBaseline} from '@mui/material';
 import Login from './Components/Login&Registration/Login.jsx';
 import Register from './Components/Login&Registration/Register.jsx';
 import Error404 from './components/ErrorPages/Error404';
@@ -17,8 +17,88 @@ function App() {
     const [token, setToken] = useState(localStorage.getItem('jwtToken') || null);
     const [role, setRole] = useState(localStorage.getItem('role') || null);
 
+        useEffect(() => {
+            document.body.style.cursor = ' url(src/Assets/img.png) , pointer';
+            document.body.style.cursor = ' url(src/Assets/img.png) , move';
+        }, []);
 
-    const theme = createTheme({
+        const theme = createTheme({
+        components: {
+            MuiButtonBase: {
+                styleOverrides: {
+                    root: {
+                        cursor: 'url(src/Assets/img.png)',
+                    },
+                },
+            },
+            MuiButton: {
+                styleOverrides: {
+                    root: {
+                        cursor: 'url(src/Assets/img.png), pointer',
+                        '&:hover': {
+                            cursor: 'url(src/Assets/img.png), pointer',
+                        },
+                        '&[type="submit"]': {
+                            cursor: 'url(src/Assets/pointer.png), pointer',
+                            '&:hover': {
+                                cursor: 'url(src/Assets/pointer.png), pointer',
+                            },
+                        },
+                    },
+                },
+                MuiSelect: {
+                    styleOverrides: {
+                        root: {
+                            cursor: 'url(src/Assets/img.png), pointer',
+                            '&:hover': {
+                                cursor: 'url(src/Assets/img.png), hand',
+                            },
+                        },
+                        select: {
+                            cursor: 'url(src/Assets/img.png), pointer',
+                            '&:hover': {
+                                cursor: 'url(src/Assets/img.png), pointer',
+                            },
+                            '&:focus': {
+                                cursor: 'url(src/Assets/img.png), pointer',
+                            },
+                        },
+                    },
+                },
+                MuiMenuItem: {
+                    styleOverrides: {
+                        root: {
+                            '&:hover': {
+                                cursor: 'url(src/Assets/img.png), pointer',
+                            },
+                        },
+                    },
+                },
+                MuiInputBase: {
+                    styleOverrides: {
+                        input: {
+                            cursor: 'url(src/Assets/img.png), text',
+                            '&:hover': {
+                                cursor: 'url(src/Assets/img.png), text',
+                            },
+                            '&:focus': {
+                                cursor: 'url(src/Assets/img.png), text',
+                            },
+                        },
+                    },
+                },
+                MuiTextField: {
+                    styleOverrides: {
+                        root: {
+                            '& textarea.MuiInputBase-input.MuiTextarea-input': {
+                                cursor: 'url(src/Assets/img.png), text',
+                            },
+                        },
+                    },
+                },
+
+            },
+        },
         palette: {
             background: {
                 default: '#f0f0f0',
