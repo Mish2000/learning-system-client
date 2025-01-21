@@ -132,8 +132,8 @@ function NoteBook() {
                                     {t('correctAnswer')}: {responseData.correctAnswer}
                                 </Typography>
                                 <br/>
-                                <Typography sx={{fontFamily: myFont}}>
-                                    {t('solutionSteps')}: {responseData.solutionSteps}
+                                <Typography sx={{whiteSpace: "break-spaces", fontFamily: myFont}}>
+                                    {t('solutionSteps')}:<br/><br/>{responseData.solutionSteps}
                                 </Typography>
                             </AccordionDetails>
                         </Accordion>
