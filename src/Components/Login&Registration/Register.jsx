@@ -4,8 +4,11 @@ import {useNavigate} from 'react-router-dom';
 import PasswordTextField from "./PasswordTextField.jsx";
 import {LOGIN_URL} from "../../Utils/Constants.js";
 import {registerUser} from '../../api/UserAPI';
+import {useTranslation} from "react-i18next";
+import LanguageSwitcher from "./LanguageSwitcher.jsx";
 
 function Register() {
+    const { t } = useTranslation();
     const regex = /^[a-zA-Z0-9]{4,30}$/;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const passwordRegex =  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+={}'":;?.<>,-])[\w\d~!@#$%^&*()_+={}'":;?.<>,-]{8,30}$/;
@@ -55,6 +58,9 @@ function Register() {
                 mx: 'auto',
             }}
         >
+            <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
+                <LanguageSwitcher />
+            </Box>
             <Card sx={{
                 width: '100%',
                 boxShadow: 3,
@@ -66,7 +72,7 @@ function Register() {
                 >
                     <Typography
                         variant="h4">
-                        Create Account
+                        {t('registerPageTitle')}
                     </Typography>
                     {success ? (
                         <Alert variant="filled" severity="success">
@@ -84,8 +90,8 @@ function Register() {
                         error={usernameError}
                         variant={"outlined"}
                         type={"text"}
-                        helperText={"Between 4 -30 characters long,Can contain only numbers and english characters!"}
-                        label={"Username"}
+                        helperText={t('usernameHelperText')}
+                        label={t('username')}
                         value={username}
                         onChange={(event) => setUsername(event.target.value)}
                     />
@@ -93,17 +99,17 @@ function Register() {
                         error={emailError}
                         variant={"outlined"}
                         type={"text"}
-                        helperText={"in format of xxx@xxx.xxx"}
-                        label={"Email"}
+                        helperText={t('emailHelperText')}
+                        label={t('email')}
                         value={email}
                         onChange={(event) => setEmail(event.target.value)}
                     />
                     <PasswordTextField
                         error={passwordError}
-                        helperText={"8-30 characters, must include: lowercase, uppercase, number, and one special character"}
+                        helperText={t('RegisterPasswordHelperText')}
                         variant={"outlined"}
                         type={"password"}
-                        label={"Password"}
+                        label={t('password')}
                         value={password}
                         onChange={(event) => setPassword(event.target.value)}
                     />
@@ -113,12 +119,12 @@ function Register() {
                         helperText={repeatError ? "Passwords must be the same!" : ""}
                         variant={"outlined"}
                         type={"password"}
-                        label={"Repeat Password"}
+                        label={t('repeatPassword')}
                         value={repeat}
                         onChange={(event) => setRepeat(event.target.value)}
                     />
                     {alert ? <Alert variant="filled" severity="error">
-                            Please check if all fields are filled correctly
+                            {t('registrationError')}
                         </Alert>
                         :
                         <></>
@@ -134,7 +140,7 @@ function Register() {
                                 setAlert(true)
                             }
                         }}
-                    >Create Account</Button>
+                    >{t('createAccount')}</Button>
                     <Stack>
                         <Button
                             sx={{textTransform: 'inherit'}}
@@ -142,9 +148,9 @@ function Register() {
                             onClick={() => {
                                 navigate(LOGIN_URL)
                             }}
-                        >Login </Button>
+                        >{t('login')} </Button>
                         <Typography variant={"caption"} sx={{justifyContent: 'center', display: 'flex'}}>
-                            already have account? click here 👆
+                            {t('alreadyHaveAccount')}
                         </Typography>
                     </Stack>
                 </Stack>

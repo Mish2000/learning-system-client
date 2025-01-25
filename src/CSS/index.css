@@ -1,8 +1,8 @@
 :root {
-  --pointer-cursor: url(src/Assets/img.png), pointer;
-  --edit-cursor: url(src/Assets/img.png), text;
-  --text-cursor: url(src/Assets/img.png), text;
-  --button: url(src/Assets/img.png), text;
+  --pointer-cursor: url(../../public/Assets/pointer.png), pointer;
+  --edit-cursor: url(../../public/Assets/pointer.png), text;
+  --text-cursor: url(../../public/Assets/pointer.png), text;
+  --button: url(../../public/Assets/pointer.png), text;
 }
 * {
   cursor: var(--pointer-cursor);
@@ -12,27 +12,3 @@ body {
   margin: 0;
 }
 
-select {
-  cursor: url(src/Assets/img.png), pointer !important;
-}
-
-select:hover {
-  cursor: url(src/Assets/img.png), pointer !important;
-}
-MuiButtonBase:hover{
-  cursor: url(src/Assets/img.png), pointer !important;
-}
-body{
-  cursor: url(src/Assets/img.png) 16 16, auto;
-}
-button, a {
-  cursor: url('src/Assets/img.png'), pointer;
-}
-
-input, textarea, [contenteditable="true"] {
-  cursor: url('src/Assets/img.png'), text;
-}
-
-select {
-  cursor: url('src/Assets/img.png'), pointer;
-}

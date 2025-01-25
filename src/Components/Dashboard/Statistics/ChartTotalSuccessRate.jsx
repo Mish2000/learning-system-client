@@ -1,19 +1,22 @@
 import PropTypes from "prop-types";
 import {Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
 import {Box, Typography} from "@mui/material";
+import {useTranslation} from "react-i18next";
 
 function ChartTotalSuccessRate({ data }) {
+    const { t } = useTranslation();
+
     if (!data || typeof data.successRate !== 'number') {
-        return <Typography>No overall success data</Typography>;
+        return <Typography>{t('noOverallSuccessData')}</Typography>;
     }
 
     const chartData = [
-        { name: 'Overall Success', value: Math.round(data.successRate * 100) },
+        { name: t('overallSuccess'), value: Math.round(data.successRate * 100) },
     ];
 
     return (
         <Box sx={{ marginTop: 2 }}>
-            <Typography variant="h6" gutterBottom>Overall Success Rate</Typography>
+            <Typography variant="h6" gutterBottom>{t('overallSuccessTitle')}</Typography>
             <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -28,11 +31,7 @@ function ChartTotalSuccessRate({ data }) {
 }
 
 ChartTotalSuccessRate.propTypes = {
-    data: PropTypes.shape({
-        successRate: PropTypes.number,
-        totalAttempts: PropTypes.number,
-
-    })
+    data: PropTypes.object.isRequired,
 };
 
 export default ChartTotalSuccessRate;

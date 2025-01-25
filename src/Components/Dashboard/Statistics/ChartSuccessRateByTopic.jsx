@@ -3,20 +3,23 @@ import {
     BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer
 } from 'recharts';
 import PropTypes from 'prop-types';
+import {useTranslation} from "react-i18next";
 
 function ChartSuccessRateByTopic({ data }) {
+    const { t } = useTranslation();
+
     if (!data || !data.successRateByTopic) {
-        return <Typography>No topic data available</Typography>;
+        return <Typography>{t('noTopicData')}</Typography>;
     }
 
     const chartData = Object.entries(data.successRateByTopic).map(([topic, rate]) => ({
-        name: topic,
+        name: t(topic),
         rate: Math.round(rate * 100)
     }));
 
     return (
         <Box sx={{ width: '100%', height: 300, marginTop: 2 }}>
-            <Typography variant="h6" gutterBottom>Success Rate by Topic</Typography>
+            <Typography variant="h6" gutterBottom>{t('successRateTitle')}</Typography>
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -31,9 +34,7 @@ function ChartSuccessRateByTopic({ data }) {
 }
 
 ChartSuccessRateByTopic.propTypes = {
-    data: PropTypes.shape({
-        successRateByTopic: PropTypes.object
-    })
+    data: PropTypes.object.isRequired,
 };
 
 export default ChartSuccessRateByTopic;

@@ -14,7 +14,6 @@ function QuestionGenerator({ onQuestionGenerated }) {
     const [subTopics, setSubTopics] = useState([]);
     const [selectedParent, setSelectedParent] = useState('');
     const [selectedSubtopic, setSelectedSubtopic] = useState('');
-    const [generatedQuestion, setGeneratedQuestion] = useState(null);
     const navigate = useNavigate();
     const { t } = useTranslation();
 
@@ -63,8 +62,6 @@ function QuestionGenerator({ onQuestionGenerated }) {
             });
 
             const questionData = response.data;
-            setGeneratedQuestion(questionData);
-
             if (onQuestionGenerated) {
                 onQuestionGenerated(questionData);
             }
@@ -81,13 +78,13 @@ function QuestionGenerator({ onQuestionGenerated }) {
                 {t('pleaseGenerateQuestion')}
             </Typography>
             <Box sx={{ marginLeft: "30px", minWidth: 120 }}>
-                <TopicList />
+                <TopicList topics={subTopics} />
 
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={4}>
                         <Typography>{t('questionType')}:</Typography>
                         <FormControl variant="standard" sx={{ m: 1, minWidth: 150 }}>
-                            <InputLabel>{t('-- Select Type --')}</InputLabel>
+                            <InputLabel>{t('selectType')}</InputLabel>
                             <Select
                                 value={selectedParent}
                                 onChange={(e) => setSelectedParent(e.target.value)}
@@ -102,9 +99,27 @@ function QuestionGenerator({ onQuestionGenerated }) {
                     </Grid>
 
                     <Grid item xs={12} sm={4}>
+                        <Typography>{t('questionType')}:</Typography>
+                        <FormControl variant="standard" sx={{ m: 1, minWidth: 150 }}>
+                            <InputLabel>{t('selectType')}</InputLabel>
+                            <Select
+                                value={selectedSubtopic}
+                                onChange={(e) => setSelectedSubtopic(e.target.value)}
+                                disabled={!selectedParent}
+                            >
+                                {subTopics.map(topic => (
+                                    <MenuItem key={topic.id} value={topic.id}>
+                                        {t(topic.name)}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+
+                    <Grid item xs={12} sm={4}>
                         <Typography>{t('difficulty')}:</Typography>
                         <FormControl variant="standard" sx={{ m: 1, minWidth: 150 }}>
-                            <InputLabel>{t('-- Select Difficulty --')}</InputLabel>
+                            <InputLabel>{t('selectDifficulty')}</InputLabel>
                             <Select
                                 value={difficulty}
                                 onChange={(e) => setDifficulty(e.target.value)}
@@ -120,7 +135,7 @@ function QuestionGenerator({ onQuestionGenerated }) {
             </Box>
             <br />
             <Button
-                disabled={!selectedParent }
+                disabled={!selectedParent && !selectedSubtopic}
                 variant="contained"
                 sx={{ display: "flex", alignContent: "center", justifyContent: "center" }}
                 onClick={handleGenerate}

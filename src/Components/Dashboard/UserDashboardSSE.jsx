@@ -5,10 +5,9 @@ import ChartSuccessRateByTopic from "./Statistics/ChartSuccessRateByTopic.jsx";
 import Loading from "../../Utils/Loading/Loading.jsx";
 import {useTranslation} from "react-i18next";
 
-
 function UserDashboardSSE() {
     const [dashboardData, setDashboardData] = useState(null);
-    const { t } = useTranslation();
+    const {t} = useTranslation();
 
     useEffect(() => {
         const token = localStorage.getItem('jwtToken');
@@ -29,17 +28,17 @@ function UserDashboardSSE() {
     if (!dashboardData) {
         return (
             <Box>
-                <Typography variant={"h3"} sx={{margin:10}}>{t('loadingUserDashboard')}</Typography>
-                <Loading/>
+                <Typography variant={"h3"} sx={{ margin: 10 }}>{t('loadingUserDashboardPage')}</Typography>
+                <Loading />
             </Box>
         );
     }
 
     return (
         <Box>
-            <Typography variant="h5">{t('userDashboard')}</Typography>
-            <ChartSuccessRateByTopic data={dashboardData}/>
-            <ChartTotalSuccessRate data={dashboardData}/>
+            <Typography variant="h5">{t('userDashboardTitle')}</Typography>
+            <ChartSuccessRateByTopic data={dashboardData} />
+            <ChartTotalSuccessRate data={dashboardData} />
         </Box>
     );
 }

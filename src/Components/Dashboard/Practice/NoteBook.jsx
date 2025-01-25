@@ -9,13 +9,14 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import {useTranslation} from "react-i18next";
 
 function NoteBook() {
-    const {questionId} = useParams();
+    const { questionId } = useParams();
     const myFont = "Gloria Hallelujah";
+    const { t } = useTranslation();
+    const navigate = useNavigate();
+
     const [question, setQuestion] = useState(null);
     const [userAnswer, setUserAnswer] = useState("");
     const [responseData, setResponseData] = useState(null);
-    const navigate = useNavigate();
-    const { t } = useTranslation();
 
     useEffect(() => {
         async function fetchQuestion() {
@@ -31,7 +32,7 @@ function NoteBook() {
 
     const handleSubmitAnswer = async () => {
         if (!question) {
-            alert("No question loaded yet.");
+            alert(t('noQuestionLoaded'));
             return;
         }
         try {
@@ -43,22 +44,21 @@ function NoteBook() {
                     userAnswer
                 },
                 {
-                    headers: {Authorization: `Bearer ${token}`}
+                    headers: { Authorization: `Bearer ${token}` }
                 }
             );
             setResponseData(res.data);
-            // setDisableSubmitAnswer(!disableSubmitAnswer);
         } catch (error) {
             console.error("Error submitting answer:", error);
-            alert("Failed to submit answer");
+            alert(t('failedToSubmitAnswer'));
         }
     };
 
     if (!question) {
         return (
-            <Box sx={{margin: 4}}>
+            <Box sx={{ margin: 4 }}>
                 <Typography>{t('loadingQuestionData')}</Typography>
-                <Loading/>
+                <Loading />
             </Box>
         );
     }
@@ -75,13 +75,13 @@ function NoteBook() {
                 padding: 2
             }}
         >
-            <Box sx={{display: "flex", flexDirection: "column", wordSpacing: 15, fontFamily: myFont}}>
-                <Typography sx={{wordSpacing: 15, fontFamily: myFont}}>
+            <Box sx={{ display: "flex", flexDirection: "column", wordSpacing: 15, fontFamily: myFont }}>
+                <Typography sx={{ wordSpacing: 15, fontFamily: myFont }}>
                     {t('question')}: {question.questionText}
                 </Typography>
-                <br/>
-                <Typography sx={{wordSpacing: 15, fontFamily: myFont}}>{t('yourAnswer')}</Typography>
-                <br/>
+                <br />
+                <Typography sx={{ wordSpacing: 15, fontFamily: myFont }}>{t('yourAnswer')}</Typography>
+                <br />
                 <TextField
                     variant="standard"
                     placeholder={t('writeYourAnswerHere')}
@@ -92,24 +92,24 @@ function NoteBook() {
                         setUserAnswer(e.target.value);
                     }}
                 />
-                <br/>
-                <br/>
+                <br />
+                <br />
                 <Button
-                    disabled={userAnswer.length===0 || responseData !== null}
-                    sx={{wordSpacing: 15, fontFamily: myFont, color: "black", fontSize: 25}}
+                    disabled={userAnswer.length === 0 || responseData !== null}
                     variant="text"
+                    sx={{ wordSpacing: 15, fontFamily: myFont, color: "black", fontSize: 25 }}
                     onClick={handleSubmitAnswer}
                 >
                     {t('submitAnswer')}
                 </Button>
 
-                <br/>
+                <br />
                 {responseData && (
                     <Box>
-                        <Typography sx={{fontFamily: myFont}}>
+                        <Typography sx={{ fontFamily: myFont }}>
                             {t('correct')}: {responseData.correct ? t('yes') : t('no')}
                         </Typography>
-                        <br/>
+                        <br />
                         <Accordion sx={{
                             bgcolor: 'transparent',
                             '& .MuiAccordionSummary-root': {
@@ -121,29 +121,28 @@ function NoteBook() {
                             border: '2px solid #000000',
                         }}>
                             <AccordionSummary
-                                expandIcon={<ArrowDropDownIcon/>}
+                                expandIcon={<ArrowDropDownIcon />}
                                 aria-controls="panel1-content"
                                 id="panel1-header"
                             >
-                                <Typography sx={{fontFamily: myFont}} component="span">{t('seeStepsAndAnswer')}</Typography>
+                                <Typography sx={{ fontFamily: myFont }}>{t('seeStepsAndAnswer')}</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
-                                <Typography sx={{fontFamily: myFont}}>
+                                <Typography sx={{ fontFamily: myFont }}>
                                     {t('correctAnswer')}: {responseData.correctAnswer}
                                 </Typography>
-                                <br/>
-                                <Typography sx={{whiteSpace: "break-spaces", fontFamily: myFont}}>
-                                    {t('solutionSteps')}:<br/><br/>{responseData.solutionSteps}
+                                <br />
+                                <Typography sx={{ whiteSpace: "break-spaces", fontFamily: myFont }}>
+                                    {t('solutionSteps')}:<br /><br />{responseData.solutionSteps}
                                 </Typography>
                             </AccordionDetails>
                         </Accordion>
 
-                        <Box sx={{display: "flex", flexDirection: "row-reverse", justifyContent: "center", gap:3}}>
+                        <Box sx={{ display: "flex", flexDirection: "row-reverse", justifyContent: "center", gap: 3 }}>
                             <Button
-                                sx={{wordSpacing: 15, fontFamily: myFont, color: "black", fontSize: 25}}
+                                sx={{ wordSpacing: 15, fontFamily: myFont, color: "black", fontSize: 25 }}
                                 onClick={async () => {
                                     try {
-                                        console.log(question)
                                         const token = localStorage.getItem("jwtToken");
                                         const res = await axios.post(
                                             "http://localhost:8080/api/questions/generate",
@@ -151,7 +150,7 @@ function NoteBook() {
                                                 topicId: question.topicId ?? null,
                                                 difficultyLevel: question.difficultyLevel
                                             },
-                                            {headers: {Authorization: `Bearer ${token}`}}
+                                            { headers: { Authorization: `Bearer ${token}` } }
                                         );
                                         const newQ = res.data;
                                         setQuestion(newQ);
@@ -162,13 +161,13 @@ function NoteBook() {
                                     }
                                 }}
                             >
-                                {t('Next Question ->')}
+                                {t('nextQuestion')}
                             </Button>
                             <Button
-                                sx={{wordSpacing: 15, fontFamily: myFont, color: "black", fontSize: 25}}
+                                sx={{ wordSpacing: 15, fontFamily: myFont, color: "black", fontSize: 25 }}
                                 onClick={() => navigate(PRACTICE_URL)}
                             >
-                                {t('<- Change Subject')}
+                                {t('changeSubject')}
                             </Button>
                         </Box>
                     </Box>

@@ -10,17 +10,3 @@
   linear-gradient(90deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%,transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%,transparent);
   background-size: 55px 55px;
 }
-body{
-  cursor: url(src/Assets/img.png) 16 16, auto;
-}
-button, a {
-  cursor: url('src/Assets/img.png'), pointer;
-}
-
-input, textarea, [contenteditable="true"] {
-  cursor: url('src/Assets/img.png'), text;
-}
-
-select {
-  cursor: url('src/Assets/img.png'), pointer;
-}

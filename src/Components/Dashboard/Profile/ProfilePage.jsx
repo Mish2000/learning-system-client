@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import  { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { Typography, Box,CardMedia, TextField, Button, Stack, Menu, MenuItem } from '@mui/material';
 import Loading from "../../../Utils/Loading/Loading.jsx";
@@ -18,7 +18,8 @@ function ProfilePage() {
     const [newUsername, setNewUsername] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [userImage, setUserImage] = useState(null);
-
+    const [errors, setErrors] = useState({ username: false, email: false, password: false, repeatPassword: false });
+    const [repeatPassword, setRepeatPassword] = useState('');
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -28,8 +29,8 @@ function ProfilePage() {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setProfile(response.data);
-                setLanguage(response.data.interfaceLanguage || '');
-                setOriginalLanguage(response.data.interfaceLanguage || '');
+                setLanguage(response.data.interfaceLanguage || 'English');
+                setOriginalLanguage(response.data.interfaceLanguage || 'English');
                 setNewUsername(response.data.username || '');
             } catch (error) {
                 console.error('Failed to fetch profile', error);
@@ -38,7 +39,39 @@ function ProfilePage() {
         fetchProfile();
     }, []);
 
+    const validateInputs = () => {
+        const newErrors = { username: false, email: false, password: false, repeatPassword: false };
+        let isValid = true;
+
+        if (newUsername.length < 4 || newUsername.length > 30 || !/^[A-Za-z0-9]+$/.test(newUsername)) {
+            newErrors.username = true;
+            isValid = false;
+        }
+
+        if (!/\S+@\S+\.\S+/.test(profile.email)) {
+            newErrors.email = true;
+            isValid = false;
+        }
+
+        if (newPassword && (!/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,30}/.test(newPassword))) {
+            newErrors.password = true;
+            isValid = false;
+        }
+
+        if (newPassword && newPassword !== repeatPassword) {
+            newErrors.repeatPassword = true;
+            isValid = false;
+        }
+
+        setErrors(newErrors);
+        return isValid;
+    };
+
     const handleUpdate = async () => {
+        if (!validateInputs()) {
+            alert(t('pleaseCheckFields'));
+            return;
+        }
         try {
             const token = localStorage.getItem('jwtToken');
             const payload = {
@@ -46,6 +79,14 @@ function ProfilePage() {
                 password: newPassword,
                 interfaceLanguage: language
             };
+            if (userImage) {
+                // Implement image upload logic here
+                const formData = new FormData();
+                formData.append('image', userImage);
+                await axios.post('http://localhost:8080/api/profile/uploadImage', formData, {
+                    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
+                });
+            }
             await axios.put(
                 'http://localhost:8080/api/profile',
                 payload,
@@ -58,6 +99,7 @@ function ProfilePage() {
             setButtonColor('default');
             setProfile(prev => ({ ...prev, username: newUsername }));
             setNewPassword('');
+            setRepeatPassword('');
         } catch (error) {
             console.error('Failed to update profile', error);
             alert(t('updateFailed'));
@@ -74,52 +116,47 @@ function ProfilePage() {
 
     const handleLanguageSelect = (selectedLanguage) => {
         setLanguage(selectedLanguage);
-        i18n.changeLanguage(selectedLanguage === 'Hebrew' ? 'he' : 'en');
+        const langCode = selectedLanguage === 'עברית' ? 'he' : 'en';
+        i18n.changeLanguage(langCode);
+        localStorage.setItem('language', langCode);
         setButtonColor('primary');
         handleMenuClose();
     };
 
     let buttonColorClass = 'default';
     let isButtonDisabled = true;
-    if(profile) {
+    if (profile) {
         const hasLanguageChanged = language !== originalLanguage;
         const hasUsernameChanged = newUsername !== profile.username;
         const hasPasswordEntered = newPassword !== '';
-        buttonColorClass = (hasLanguageChanged || hasUsernameChanged || hasPasswordEntered)
-            ? 'primary'
-            : 'default';
+        buttonColorClass = (hasLanguageChanged || hasUsernameChanged || hasPasswordEntered) ? 'primary' : 'default';
         isButtonDisabled = !(hasLanguageChanged || hasUsernameChanged || hasPasswordEntered);
     }
 
     if (!profile) {
-        return(
+        return (
             <Box>
-                <Typography variant="h3" sx={{display:"flex", margin:10, alignItems:"center", justifyContent:"center"}}>
+                <Typography variant="h3" sx={{ display: "flex", margin: 10, alignItems: "center", justifyContent: "center" }}>
                     {t('loadingProfile')}
                 </Typography>
-                <Loading/>
+                <Loading />
             </Box>
         );
     }
 
     return (
-
-
         <Box
             sx={{
-                // Full height of the viewport
                 display: 'flex',
                 flexDirection: 'column',
-                height: "100%", width: '100%' ,
+                height: "100%", width: '100%',
             }}
         >
-            {/* Header Section */}
             <Box
                 sx={{
-                    flex:"column",
-                    gap:5,
+                    flex: "column",
+                    gap: 5,
                     textAlign: 'center',
-                 // Keep the header at the top without stretching
                 }}
             >
                 <Typography variant="h4" gutterBottom>
@@ -131,46 +168,50 @@ function ProfilePage() {
                 sx={{
                     display: 'flex',
                     flexDirection: 'column',
-                    justifyContent: 'center', // Center the form vertically
-                    alignItems: 'center', // Center the form horizontally
+                    justifyContent: 'center',
+                    alignItems: 'center',
                 }}
             >
                 <Box
                     sx={{
-                        margin: '5px', // Space outside the box
-                        border: '5px solid #0c8686', // Black border
+                        margin: '5px',
+                        border: '5px solid #0c8686',
                         display: 'flex',
                         justifyContent: 'center',
-                        // transform: 'translateX(-225px)',
                         alignItems: 'center',
-                        width: '100px', // Adjusted box width
-                        height: '100px', // Fixed box height
+                        width: '100px',
+                        height: '100px',
                         marginBottom: '10px',
                     }}
                 >
-                    <Box style={{display: 'flex', justifyContent: 'center'}}>
-                        {!userImage?
-                        <CustomAccountCircleIcon
-                        style={{width:'100%',
-                            maxWidth:'100px',
-                             height:'100px'}}
-                        />
-                        :
-                        <CardMedia
-                        image={userImage}
-                        />
+                    <Box style={{ display: 'flex', justifyContent: 'center' }}>
+                        {!userImage ?
+                            <CustomAccountCircleIcon
+                                style={{
+                                    width: '100%',
+                                    maxWidth: '100px',
+                                    height: '100px'
+                                }}
+                            />
+                            :
+                            <CardMedia
+                                component="img"
+                                image={userImage}
+                                alt="User Profile"
+                                sx={{ width: '100%', height: '100px', objectFit: 'cover' }}
+                            />
                         }
                     </Box>
-
                 </Box>
 
-
-                <Stack spacing={5} sx={{height: "100%", width: '100%', maxWidth : '600px'}}>
+                <Stack spacing={5} sx={{ height: "100%", width: '100%', maxWidth: '600px' }}>
                     <TextField
                         label={t('newUsername')}
                         value={newUsername}
                         onChange={(e) => setNewUsername(e.target.value)}
                         fullWidth
+                        error={errors.username}
+                        helperText={errors.username ? t('usernameHelperText') : ''}
                     />
                     <TextField
                         label={t('newPassword')}
@@ -178,9 +219,20 @@ function ProfilePage() {
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         fullWidth
+                        error={errors.password}
+                        helperText={errors.password ? t('passwordHelperText') : ''}
+                    />
+                    <TextField
+                        label={t('repeatPassword')}
+                        type="password"
+                        value={repeatPassword}
+                        onChange={(e) => setRepeatPassword(e.target.value)}
+                        fullWidth
+                        error={errors.repeatPassword}
+                        helperText={errors.repeatPassword ? t('passwordsMustMatch') : ''}
                     />
 
-                    <div>
+                    <Box>
                         <TextField
                             label={t('interfaceLanguage')}
                             value={language}
@@ -204,12 +256,11 @@ function ProfilePage() {
                             <MenuItem onClick={() => handleLanguageSelect('English')}>
                                 English
                             </MenuItem>
-                            <MenuItem onClick={() => handleLanguageSelect('Hebrew')}>
-                                Hebrew
+                            <MenuItem onClick={() => handleLanguageSelect('עברית')}>
+                                עברית
                             </MenuItem>
                         </Menu>
-                    </div>
-
+                    </Box>
 
                     <Button
                         variant="contained"
@@ -218,19 +269,18 @@ function ProfilePage() {
                         disabled={isButtonDisabled}
                         sx={{
                             display: 'flex',
-                            alignItems: 'center', // Align icon and text
+                            alignItems: 'center',
                             justifyContent: 'center',
                         }}
                     >
                         {t('saveProfile')}
                         {isButtonDisabled ? (
                             <CancelIcon
-                                color = {'#FF0000'}
                                 sx={{
                                     width: '100%',
                                     maxWidth: '200px',
                                     height: '40px',
-                                    marginLeft: 1, // Add spacing between text and icon
+                                    marginLeft: 1,
                                 }}
                             />
                         ) : (
@@ -239,8 +289,8 @@ function ProfilePage() {
                                     width: '100%',
                                     maxWidth: '200px',
                                     height: '40px',
-                                    marginLeft: 1, // Add spacing between text and icon
-                                }}/>
+                                    marginLeft: 1,
+                                }} />
                         )}
                     </Button>
 
@@ -248,7 +298,6 @@ function ProfilePage() {
 
             </Box>
         </Box>
-
     );
 
 }
