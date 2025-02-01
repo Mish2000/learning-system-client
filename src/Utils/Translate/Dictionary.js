@@ -14,6 +14,7 @@ const resources = {
             logOut: "Log Out",
 
             // ProfilePage.jsx
+            pleaseCheckFields: "Please check that all fields are correct",
             loadingProfile: "Loading Profile...",
             profileManagement: "Profile Management",
             username: "Username",
@@ -92,7 +93,7 @@ const resources = {
             loginPageTitle: "Login",
             usernamePlaceholder: "Enter your username",
             passwordPlaceholder: "Enter your password",
-            passwordHelperText: "Do not share your password with anyone else",
+            loginPasswordHelperText: "Do not share your password with anyone else",
 
             // Register.jsx
             registerPageTitle: "Create New Account",
@@ -100,7 +101,8 @@ const resources = {
             registerSuccess: "Registration successful! Redirecting to login page...",
             registrationError: "Please check if all fields are filled correctly",
             alreadyHaveAccount: "Already have an account? Click here 👆",
-            usernameHelperText: "8-30 characters, must include: lowercase, uppercase, number, and one special character",
+            usernameHelperText: "At least four characters long, maximum 30",
+            RegisterPasswordHelperText: "8-30 characters, must include: lowercase, uppercase, number, and one special character",
             emailPlaceholder: "Enter your email address",
             emailHelperText: "In the format of xxx@xxx.xxx.",
             repeatPasswordPlaceholder: "Re-enter your password",
@@ -113,6 +115,13 @@ const resources = {
             startPracticing: "Start Practicing",
             goToProfilePage: "Go to Profile Page",
             seeYourStatistics: "See Your Statistics",
+
+            //PasswordStrengthIndicator.jsx
+            passwordStrength: "Password Strength:",
+            Invalid: "Invalid",
+            Weak: "Weak",
+            Normal: "Normal",
+            Strong: "Strong",
 
             // Dynamic Server Content - Topics and Descriptions
             Arithmetic: "Arithmetic",
@@ -190,6 +199,7 @@ const resources = {
             logOut: "התנתק",
 
             // ProfilePage.jsx
+            pleaseCheckFields: "אנא בדוק שכל השדות תקינים",
             loadingProfile: "טוען פרופיל...",
             profileManagement: "ניהול פרופיל",
             username: "שם משתמש",
@@ -270,7 +280,7 @@ const resources = {
             loginPageTitle: "התחברות",
             usernamePlaceholder: "הזן את שם המשתמש שלך",
             passwordPlaceholder: "הזן את הסיסמה שלך",
-            passwordHelperText: "נא לא לשתף את סיסמתך עם כל אדם אחר",
+            loginPasswordHelperText: "נא לא לשתף את סיסמתך עם כל אדם אחר",
 
             // Register.jsx
             registerPageTitle: "צור משתמש חדש",
@@ -278,7 +288,8 @@ const resources = {
             registerSuccess: "הרשמה הצליחה! מועבר לדף ההתחברות...",
             registrationError: "אנא בדוק אם כל השדות מולאו כראוי",
             alreadyHaveAccount: "כבר יש לך חשבון? לחץ כאן 👆",
-            usernameHelperText: "8-30 תווים, חייב לכלול: אותיות קטנות, רישיות, מספר ותו מיוחד אחד",
+            usernameHelperText: "באורך ארבעה תווים לפחות, שלושים לכל היותר",
+            RegisterPasswordHelperText: "בעלת 8 עד 30 תווים, חייבת לכלול לפחות: אות קטנה וגדולה, מספר ותו מיוחד ",
             emailPlaceholder: "הזן את כתובת הדוא\"ל שלך",
             emailHelperText: "בפורמט של xxx@xxx.xxx",
             repeatPasswordPlaceholder: "הזן שוב את הסיסמה שלך",
@@ -291,6 +302,13 @@ const resources = {
             startPracticing: "התחל לתרגל",
             goToProfilePage: "גש לדף הפרופיל",
             seeYourStatistics: "ראה את הסטטיסטיקות שלך",
+
+            //PasswordStrengthIndicator.jsx
+            passwordStrength: "חוזק סיסמה:",
+            Invalid: "לא תקין",
+            Weak: "חלש",
+            Normal: "רגיל",
+            Strong: "חזק",
 
             // Dynamic Server Content - Topics and Descriptions
             Arithmetic: "חשבון",
