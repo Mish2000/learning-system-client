@@ -1,5 +1,6 @@
+// src/Utils/Dictionary.js
 import i18n from 'i18next';
-import {initReactI18next} from 'react-i18next';
+import { initReactI18next } from 'react-i18next';
 
 const resources = {
     en: {
@@ -16,7 +17,7 @@ const resources = {
             loadingProfile: "Loading Profile...",
             profileManagement: "Profile Management",
             username: "Username",
-            password: "password",
+            password: "Password",
             email: "Email",
             newUsername: "New Username",
             newPassword: "New Password",
@@ -26,9 +27,11 @@ const resources = {
             pleaseGenerateQuestion: "Please generate a question",
             profileUpdatedSuccessfully: "Profile updated successfully!",
             updateFailed: "Update failed",
-            emailHelperText: "Enter a valid email address.",
+            ProfileEmailHelperText: "Enter a valid email address.",
 
             // NoteBook.jsx
+            solutionSteps:"Solution Steps",
+            correctAnswer: "Correct Answer:",
             question: "Question",
             yourAnswer: "Your Answer:",
             submitAnswer: "Submit Answer",
@@ -69,10 +72,10 @@ const resources = {
             loadingUserDashboardPage: "Loading user dashboard...",
             userDashboardTitle: "User Dashboard",
 
-            //ChartSuccessRateByTopic
+            // ChartSuccessRateByTopic.jsx
             successRateTitle: "Success Rate By Topic",
 
-            //ChartTotalSuccessRate
+            // ChartTotalSuccessRate.jsx
             overallSuccessTitle: "Overall Success Rate",
             overallSuccess: "Overall Success",
 
@@ -87,7 +90,9 @@ const resources = {
             createAccount: "Create Account",
             loginFailed: "Username or password are incorrect",
             loginPageTitle: "Login",
-            loginPasswordHelperText: "Do not share your password with anyone else",
+            usernamePlaceholder: "Enter your username",
+            passwordPlaceholder: "Enter your password",
+            passwordHelperText: "Do not share your password with anyone else",
 
             // Register.jsx
             registerPageTitle: "Create New Account",
@@ -96,19 +101,21 @@ const resources = {
             registrationError: "Please check if all fields are filled correctly",
             alreadyHaveAccount: "Already have an account? Click here 👆",
             usernameHelperText: "8-30 characters, must include: lowercase, uppercase, number, and one special character",
-            RegisterPasswordHelperText: "8-30 characters, must include: lowercase, uppercase, number, and one special character",
+            emailPlaceholder: "Enter your email address",
+            emailHelperText: "In the format of xxx@xxx.xxx.",
+            repeatPasswordPlaceholder: "Re-enter your password",
+            passwordsMustMatch: "Passwords must match.",
 
             // Home.jsx
             welcomeQuickMath: "Welcome to Quick Math!",
-            selfLearningMath: "This is a platform for self-learning and practicing math with a wide variety of topics. We have a detector that will identify what you are struggling with and match the exercises to your level. This is all designed to help you understand how to solve problems and then move on to higher difficulties to improve your math skills. We also offer dynamic question generation and personalized dashboards.",
+            selfLearningMath: "This is a platform for self-learning and practicing math with a wide variety of topics. We have a detector that identifies what you are struggling with and matches the exercises to your level. This is designed to help you understand how to solve problems and then move on to higher difficulties to improve your math skills. We also offer dynamic question generation and personalized dashboards.",
             homeDescription: "This is a platform for self-learning and practicing math with a wide variety of topics...",
             startPracticing: "Start Practicing",
             goToProfilePage: "Go to Profile Page",
             seeYourStatistics: "See Your Statistics",
 
-            //Dynamic Server Content
-            //Topics and Subtopics
-            Arithmetic: 'Arithmetic',
+            // Dynamic Server Content - Topics and Descriptions
+            Arithmetic: "Arithmetic",
             Addition: "Addition",
             Subtraction: "Subtraction",
             Multiplication: "Multiplication",
@@ -119,12 +126,6 @@ const resources = {
             Triangle: "Triangle",
             Circle: "Circle",
             Polygon: "Polygon",
-            //Difficulty Levels
-            BASIC: "Basic",
-            EASY: "Easy",
-            MEDIUM: "Medium",
-            ADVANCED: "Hard",
-
             AdditionDescription: "Adding numbers together",
             SubtractionDescription: "Subtracting numbers from each other",
             MultiplicationDescription: "Multiplying numbers",
@@ -136,6 +137,46 @@ const resources = {
             TriangleDescription: "Understanding triangles",
             CircleDescription: "Understanding circles",
             PolygonDescription: "Understanding generic polygons",
+
+            // Difficulty Levels
+            BASIC: "Basic",
+            EASY: "Easy",
+            MEDIUM: "Medium",
+            ADVANCED: "Hard",
+
+            // Translation keys for solution step phrases:
+            //General:
+            and: "and",
+            take: "take",
+            from: "from",
+            it: "it",
+            to: "to",
+            make: "make",
+            then: "then",
+            the: "the",
+            remaining: "remaining",
+            get: "get",
+
+            //Addition:
+            add: "add",
+
+            toAdd: "To add",
+            simplyAdd: "simply add",
+            step1: "Step 1:",
+            step2: "Step 2:",
+            step3: "Step 3:",
+            divide: "Divide",
+            applySign: "Apply the sign",
+            multiply: "Multiply",
+            area: "Area",
+            perimeter: "Perimeter",
+            circumference: "Circumference",
+            hypotenuse: "Hypotenuse",
+            combineParts: "Combine the parts",
+            combineOnes: "Combine the ones",
+            combineTens: "Combine the tens",
+            combineHundreds: "Combine the hundreds",
+            simplifiesTo: "which simplifies to"
         }
     },
     he: {
@@ -162,9 +203,11 @@ const resources = {
             pleaseGenerateQuestion: "אנא צור שאלה",
             profileUpdatedSuccessfully: "הפרופיל עודכן בהצלחה!",
             updateFailed: "עדכון נכשל",
-            emailHelperText: "הזן כתובת דוא\"ל חוקית.",
+            ProfileEmailHelperText: "הזן כתובת דוא\"ל חוקית.",
 
             // NoteBook.jsx
+            solutionSteps:"שלבי פתרון",
+            correctAnswer: "תשובה נכונה",
             question: "שאלה",
             yourAnswer: "התשובה שלך:",
             submitAnswer: "שלח תשובה",
@@ -205,12 +248,14 @@ const resources = {
             loadingUserDashboardPage: "טוען לוח מחוונים משתמש...",
             userDashboardTitle: "לוח מחוונים משתמש",
 
-            //ChartSuccessRateByTopic
+            // ChartSuccessRateByTopic.jsx
             successRateTitle: "אחוזי הצלחה לפי נושאים",
+            noTopicData: "אין נתוני נושאים זמינים.",
 
-            //ChartTotalSuccessRate
+            // ChartTotalSuccessRate.jsx
             overallSuccessTitle: "אחוז הצלחה כללי",
             overallSuccess: "הצלחה כללית",
+            noOverallSuccessData: "אין נתוני הצלחה כלליים.",
 
             // Error404.jsx
             error404: "שגיאה 404",
@@ -223,7 +268,9 @@ const resources = {
             createAccount: "צור חשבון",
             loginFailed: "שם משתמש או סיסמה שגויים",
             loginPageTitle: "התחברות",
-            loginPasswordHelperText: "נא לא לשתף את סיסמתך עם כל אדם אחר",
+            usernamePlaceholder: "הזן את שם המשתמש שלך",
+            passwordPlaceholder: "הזן את הסיסמה שלך",
+            passwordHelperText: "נא לא לשתף את סיסמתך עם כל אדם אחר",
 
             // Register.jsx
             registerPageTitle: "צור משתמש חדש",
@@ -232,19 +279,21 @@ const resources = {
             registrationError: "אנא בדוק אם כל השדות מולאו כראוי",
             alreadyHaveAccount: "כבר יש לך חשבון? לחץ כאן 👆",
             usernameHelperText: "8-30 תווים, חייב לכלול: אותיות קטנות, רישיות, מספר ותו מיוחד אחד",
-            RegisterPasswordHelperText: "8-30 תווים, חייב לכלול: אותיות קטנות, רישיות, מספר ותו מיוחד אחד",
+            emailPlaceholder: "הזן את כתובת הדוא\"ל שלך",
+            emailHelperText: "בפורמט של xxx@xxx.xxx",
+            repeatPasswordPlaceholder: "הזן שוב את הסיסמה שלך",
+            passwordsMustMatch: "הסיסמאות חייבות להתאים",
 
             // Home.jsx
             welcomeQuickMath: "ברוכים הבאים ל-Quick Math!",
-            selfLearningMath: "זו פלטפורמה ללימוד עצמי ותרגול מתמטיקה עם מגוון רחב של נושאים. יש לנו מגלה שיראה עם מה אתה מתקשה ויתאים את התרגילים לרמתך. כל זאת כדי שתבין את הדרך לפתור בעיות ולאחר מכן תעבור לרמות קושי גבוהות יותר כדי לשפר את כישורי המתמטיקה שלך. אנו מציעים גם יצירת שאלות דינמית ולוחות מחוונים מותאמים אישית.",
+            selfLearningMath: "זו פלטפורמה ללימוד עצמי ותרגול מתמטיקה עם מגוון רחב של נושאים. אנחנו עוזרים לך להבין עם מה אתה מתקשה ונתאים את התרגילים לרמתך. כל זאת כדי שתבין את הדרך לפתור בעיות ולאחר מכן תעבור לרמות קושי גבוהות יותר כדי לשפר את כישורי המתמטיקה שלך. אנו מציעים גם יצירת שאלות דינמית ולוח סטטיסטיקה אישי ונוח",
             homeDescription: "זו פלטפורמה ללימוד עצמי ותרגול מתמטיקה עם מגוון רחב של נושאים...",
             startPracticing: "התחל לתרגל",
             goToProfilePage: "גש לדף הפרופיל",
             seeYourStatistics: "ראה את הסטטיסטיקות שלך",
 
-            //Dynamic Server Content
-            //Topics and Subtopics
-            Arithmetic: 'חשבון',
+            // Dynamic Server Content - Topics and Descriptions
+            Arithmetic: "חשבון",
             Addition: "חיבור",
             Subtraction: "חיסור",
             Multiplication: "כפל",
@@ -255,12 +304,6 @@ const resources = {
             Triangle: "משולש",
             Circle: "מעגל",
             Polygon: "מצולע",
-            //Difficulty Levels
-            BASIC: "בסיסי",
-            EASY: "קל",
-            MEDIUM: "בינוני",
-            ADVANCED: "קשה",
-
             AdditionDescription: "חיבור מספרים יחד",
             SubtractionDescription: "חיסור מספרים זה מזה",
             MultiplicationDescription: "כפל מספרים",
@@ -272,6 +315,46 @@ const resources = {
             TriangleDescription: "הבנת משולשים",
             CircleDescription: "הבנת מעגלים",
             PolygonDescription: "הבנת מצולעים כלליים",
+
+            // Difficulty Levels
+            BASIC: "בסיסי",
+            EASY: "קל",
+            MEDIUM: "בינוני",
+            ADVANCED: "קשה",
+
+            // Translation keys for solution step phrases
+            //General:
+            and: "ו",
+            take: "קח",
+            from: "מ",
+            it: "זה",
+            to: "ל",
+            make: "צור",
+            then: "אז",
+            the: "את",
+            remaining: "נותרים",
+            get: "קבל",
+
+            //Addition:
+            add: "חבר",
+            //todo
+            toAdd: "כדי להוסיף",
+            simplyAdd: "פשוט תוסיף",
+            step1: "שלב 1:",
+            step2: "שלב 2:",
+            step3: "שלב 3:",
+            divide: "תחלק",
+            applySign: "השתמש בסימן",
+            multiply: "תכפול",
+            area: "שטח",
+            perimeter: "היקף",
+            circumference: "היקף",
+            hypotenuse: "אלכסון",
+            combineParts: "אחד את החלקים",
+            combineOnes: "שלב את האחדות",
+            combineTens: "שלב את העשרות",
+            combineHundreds: "שלב את המאות",
+            simplifiesTo: "מה שמתפשט ל"
         }
     }
 };
@@ -285,12 +368,14 @@ i18n
         lng: userLanguage,
         fallbackLng: 'en',
         interpolation: {
-            escapeValue: false,
+            escapeValue: false
         },
-        debug: false,
+        debug: false
     });
 
 export default i18n;
+
+
 
 
 

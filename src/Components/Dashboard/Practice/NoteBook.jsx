@@ -7,13 +7,13 @@ import {PRACTICE_URL} from "../../../Utils/Constants.js";
 import Loading from "../../../Utils/Loading/Loading.jsx";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import {useTranslation} from "react-i18next";
+import {translateSolutionSteps} from "../../../Utils/Translate/translateSolutionSteps.js";
 
 function NoteBook() {
     const { questionId } = useParams();
     const myFont = "Gloria Hallelujah";
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const navigate = useNavigate();
-
     const [question, setQuestion] = useState(null);
     const [userAnswer, setUserAnswer] = useState("");
     const [responseData, setResponseData] = useState(null);
@@ -39,13 +39,8 @@ function NoteBook() {
             const token = localStorage.getItem("jwtToken");
             const res = await axios.post(
                 "http://localhost:8080/api/questions/submit",
-                {
-                    questionId: question.id,
-                    userAnswer
-                },
-                {
-                    headers: { Authorization: `Bearer ${token}` }
-                }
+                { questionId: question.id, userAnswer },
+                { headers: { Authorization: `Bearer ${token}` } }
             );
             setResponseData(res.data);
         } catch (error) {
@@ -62,6 +57,14 @@ function NoteBook() {
             </Box>
         );
     }
+
+    // If the language is Hebrew, translate the solution steps.
+    const translatedSteps =
+        i18n.language === 'he' && responseData && responseData.solutionSteps
+            ? translateSolutionSteps(responseData.solutionSteps, t)
+            : responseData
+                ? responseData.solutionSteps
+                : "";
 
     return (
         <Box
@@ -92,8 +95,7 @@ function NoteBook() {
                         setUserAnswer(e.target.value);
                     }}
                 />
-                <br />
-                <br />
+                <br /><br />
                 <Button
                     disabled={userAnswer.length === 0 || responseData !== null}
                     variant="text"
@@ -102,7 +104,6 @@ function NoteBook() {
                 >
                     {t('submitAnswer')}
                 </Button>
-
                 <br />
                 {responseData && (
                     <Box>
@@ -112,12 +113,8 @@ function NoteBook() {
                         <br />
                         <Accordion sx={{
                             bgcolor: 'transparent',
-                            '& .MuiAccordionSummary-root': {
-                                bgcolor: 'transparent',
-                            },
-                            '& .MuiAccordionDetails-root': {
-                                bgcolor: 'transparent',
-                            },
+                            '& .MuiAccordionSummary-root': { bgcolor: 'transparent' },
+                            '& .MuiAccordionDetails-root': { bgcolor: 'transparent' },
                             border: '2px solid #000000',
                         }}>
                             <AccordionSummary
@@ -133,11 +130,10 @@ function NoteBook() {
                                 </Typography>
                                 <br />
                                 <Typography sx={{ whiteSpace: "break-spaces", fontFamily: myFont }}>
-                                    {t('solutionSteps')}:<br /><br />{responseData.solutionSteps}
+                                    {t('solutionSteps')}:<br /><br />{translatedSteps}
                                 </Typography>
                             </AccordionDetails>
                         </Accordion>
-
                         <Box sx={{ display: "flex", flexDirection: "row-reverse", justifyContent: "center", gap: 3 }}>
                             <Button
                                 sx={{ wordSpacing: 15, fontFamily: myFont, color: "black", fontSize: 25 }}
@@ -146,10 +142,7 @@ function NoteBook() {
                                         const token = localStorage.getItem("jwtToken");
                                         const res = await axios.post(
                                             "http://localhost:8080/api/questions/generate",
-                                            {
-                                                topicId: question.topicId ?? null,
-                                                difficultyLevel: question.difficultyLevel
-                                            },
+                                            { topicId: question.topicId ?? null, difficultyLevel: question.difficultyLevel },
                                             { headers: { Authorization: `Bearer ${token}` } }
                                         );
                                         const newQ = res.data;

@@ -5,6 +5,11 @@ import PropTypes from "prop-types";
 function TopicList({ topics }) {
     const { t } = useTranslation();
 
+    const normalizeKey = (str) => {
+        if (!str) return "";
+        return str.trim().charAt(0).toUpperCase() + str.trim().slice(1).toLowerCase();
+    };
+
     return (
         <Box
             sx={{
@@ -24,7 +29,7 @@ function TopicList({ topics }) {
                     {topics.map(topic => (
                         <TableRow key={topic.id}>
                             <TableCell>
-                                <Typography variant="h6">{t(topic.name)}</Typography> - {t(`${topic.name}Description`)}
+                                <Typography variant="h6">{t(normalizeKey(topic.name))}</Typography> - {t(normalizeKey(topic.name) + "Description")}
                                 <Typography variant="body2">({t('difficulty')}: {t(topic.difficultyLevel)})</Typography>
                             </TableCell>
                         </TableRow>
