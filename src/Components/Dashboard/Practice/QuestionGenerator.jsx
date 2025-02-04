@@ -9,7 +9,7 @@ import {PRACTICE_URL} from "../../../Utils/Constants.js";
 import {useTranslation} from "react-i18next";
 
 function QuestionGenerator({ onQuestionGenerated }) {
-    const [difficulty, setDifficulty] = useState('BASIC');
+    const [difficulty, setDifficulty] = useState('');
     const [parentTopics, setParentTopics] = useState([]);
     const [subTopics, setSubTopics] = useState([]);
     const [selectedParent, setSelectedParent] = useState('');
@@ -50,6 +50,7 @@ function QuestionGenerator({ onQuestionGenerated }) {
 
     const handleGenerate = async () => {
         try {
+            // progress();
             const topicId = selectedSubtopic
                 ? parseInt(selectedSubtopic)
                 : selectedParent
@@ -77,8 +78,9 @@ function QuestionGenerator({ onQuestionGenerated }) {
             <Typography sx={{ marginTop: "20px" }} variant="h5" align="center">
                 {t('pleaseGenerateQuestion')}
             </Typography>
+            <TopicList topics={subTopics} />
             <Box sx={{ marginLeft: "30px", minWidth: 120 }}>
-                <TopicList topics={subTopics} />
+
 
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={4}>
@@ -145,6 +147,8 @@ function QuestionGenerator({ onQuestionGenerated }) {
         </Box>
     );
 }
+
+
 
 QuestionGenerator.propTypes = {
     onQuestionGenerated: PropTypes.func

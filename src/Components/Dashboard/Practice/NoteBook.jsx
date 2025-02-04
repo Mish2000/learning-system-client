@@ -1,13 +1,14 @@
-import {useEffect, useState} from 'react';
-import {Accordion, AccordionDetails, AccordionSummary, Box, Button, TextField, Typography} from "@mui/material";
+// NoteBook.jsx
+import { useEffect, useState } from 'react';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, TextField, Typography } from "@mui/material";
 import axios from "axios";
-import {useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "../../../CSS/Fonts.css";
-import {PRACTICE_URL} from "../../../Utils/Constants.js";
+import { PRACTICE_URL } from "../../../Utils/Constants.js";
 import Loading from "../../../Utils/Loading/Loading.jsx";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import {useTranslation} from "react-i18next";
-import {translateSolutionSteps} from "../../../Utils/Translate/translateSolutionSteps.js";
+import { useTranslation } from "react-i18next";
+import { translateSolutionSteps } from "../../../Utils/Translate/translateSolutionSteps.js";
 
 function NoteBook() {
     const { questionId } = useParams();
@@ -17,17 +18,31 @@ function NoteBook() {
     const [question, setQuestion] = useState(null);
     const [userAnswer, setUserAnswer] = useState("");
     const [responseData, setResponseData] = useState(null);
+    const [color, setColor] = useState("inherit");
+    const [ difficulty, setDifficulty ] =useState('') ;
+    const [correctAnswerCounter, setCorrectAnswerCounter] = useState(0);
+    const [incorrectAnswerCounter, setIncorrectAnswerCounter] = useState(0);
+
+
+    useEffect(() => {
+        setColor(responseData?.correct ? 'green' : 'red');
+    }, [responseData]);
 
     useEffect(() => {
         async function fetchQuestion() {
             try {
                 const res = await axios.get(`http://localhost:8080/api/questions/${questionId}`);
                 setQuestion(res.data);
+                setDifficulty(res.data.difficultyLevel);
+                setCorrectAnswerCounter(0); // Reset counters for new question
+                setIncorrectAnswerCounter(0);
             } catch (err) {
                 console.error("Error fetching question:", err);
             }
         }
-        fetchQuestion();
+        if (questionId) { // Only fetch if questionId is available
+            fetchQuestion();
+        }
     }, [questionId]);
 
     const handleSubmitAnswer = async () => {
@@ -43,9 +58,46 @@ function NoteBook() {
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             setResponseData(res.data);
+
+            if (res.data.correct) {
+                setCorrectAnswerCounter(prev => prev + 1);
+                setIncorrectAnswerCounter(0);
+            } else {
+                setIncorrectAnswerCounter(prev => prev + 1);
+                setCorrectAnswerCounter(0);
+            }
+
+            if (correctAnswerCounter >= 2) { // Adjusted thresholds
+                increaseDifficulty();
+                setCorrectAnswerCounter(0);
+            } else if (incorrectAnswerCounter >= 2) { // Adjusted thresholds
+                decreaseDifficulty();
+                setIncorrectAnswerCounter(0);
+            }
+
         } catch (error) {
             console.error("Error submitting answer:", error);
             alert(t('failedToSubmitAnswer'));
+        }
+    };
+
+    const increaseDifficulty = () => {
+        const difficultyLevels = ['BASIC', 'EASY', 'MEDIUM', 'ADVANCED', 'EXPERT'];
+        const currentIndex = difficultyLevels.indexOf(difficulty);
+        if (currentIndex < difficultyLevels.length - 1) {
+            const newDifficulty = difficultyLevels[currentIndex + 1];
+            setDifficulty(newDifficulty);
+            console.log("Difficulty increased to:", difficultyLevels[currentIndex + 1]);
+        }
+    };
+
+    const decreaseDifficulty = () => {
+        const difficultyLevels = ['BASIC', 'EASY', 'MEDIUM', 'ADVANCED', 'EXPERT'];
+        const currentIndex = difficultyLevels.indexOf(difficulty);
+        if (currentIndex > 0) {
+            const newDifficulty = difficultyLevels[currentIndex - 1];
+            setDifficulty(newDifficulty);
+            console.log("Difficulty decreased to:", difficultyLevels[currentIndex - 1]);
         }
     };
 
@@ -58,13 +110,12 @@ function NoteBook() {
         );
     }
 
-    // If the language is Hebrew, translate the solution steps.
-    const translatedSteps =
-        i18n.language === 'he' && responseData && responseData.solutionSteps
-            ? translateSolutionSteps(responseData.solutionSteps, t)
-            : responseData
-                ? responseData.solutionSteps
-                : "";
+    const translatedSteps = i18n.language === 'he' && responseData && responseData.solutionSteps
+        ? translateSolutionSteps(responseData.solutionSteps, t)
+        : responseData
+            ? responseData.solutionSteps
+            : "";
+
 
     return (
         <Box
@@ -107,7 +158,7 @@ function NoteBook() {
                 <br />
                 {responseData && (
                     <Box>
-                        <Typography sx={{ fontFamily: myFont }}>
+                        <Typography sx={{ fontFamily: myFont , color}}>
                             {t('correct')}: {responseData.correct ? t('yes') : t('no')}
                         </Typography>
                         <br />
@@ -142,7 +193,7 @@ function NoteBook() {
                                         const token = localStorage.getItem("jwtToken");
                                         const res = await axios.post(
                                             "http://localhost:8080/api/questions/generate",
-                                            { topicId: question.topicId ?? null, difficultyLevel: question.difficultyLevel },
+                                            { topicId: question.topicId ?? null, difficultyLevel:difficulty },
                                             { headers: { Authorization: `Bearer ${token}` } }
                                         );
                                         const newQ = res.data;
