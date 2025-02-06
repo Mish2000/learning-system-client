@@ -14,6 +14,7 @@ function QuestionGenerator({ onQuestionGenerated }) {
     const [subTopics, setSubTopics] = useState([]);
     const [selectedParent, setSelectedParent] = useState('');
     const [selectedSubtopic, setSelectedSubtopic] = useState('');
+    const [isAdmin, setIsAdmin] = useState(localStorage.getItem('role') === "ADMIN");
     const navigate = useNavigate();
     const { t } = useTranslation();
 
@@ -74,14 +75,13 @@ function QuestionGenerator({ onQuestionGenerated }) {
     };
 
     return (
+
         <Box sx={{ margin: "10px", display: 'flex', flexDirection: 'column' }}>
             <Typography sx={{ marginTop: "20px" }} variant="h5" align="center">
                 {t('pleaseGenerateQuestion')}
             </Typography>
             <TopicList topics={subTopics} />
             <Box sx={{ marginLeft: "30px", minWidth: 120 }}>
-
-
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={4}>
                         <Typography>{t('questionType')}:</Typography>
@@ -101,7 +101,7 @@ function QuestionGenerator({ onQuestionGenerated }) {
                     </Grid>
 
                     <Grid item xs={12} sm={4}>
-                        <Typography>{t('questionType')}:</Typography>
+                        <Typography>{t(selectedSubtopic!="Geometry"?'Operator Type':'shape Type')}:</Typography>
                         <FormControl variant="standard" sx={{ m: 1, minWidth: 150 }}>
                             <InputLabel>{t('selectType')}</InputLabel>
                             <Select
@@ -135,6 +135,18 @@ function QuestionGenerator({ onQuestionGenerated }) {
                     </Grid>
                 </Grid>
             </Box>
+            {isAdmin && (
+            <Box sx={{marginTop:2,marginLeft: "48px", alignSelf:"start",display:"flex", justifyContent:"space-between", gap:18}}>
+                <Button variant={"contained"} onClick={() => {
+                }}>
+                    add topic
+                </Button>
+                <Button variant={"contained"} onClick={() => {
+                }}>
+                    add subtopic
+                </Button>
+            </Box>
+        )}
             <br />
             <Button
                 disabled={!selectedParent && !selectedSubtopic}
