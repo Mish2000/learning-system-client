@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, TextField, Typography } from "@mui/material";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import "../../../CSS/Fonts.css";
-import { PRACTICE_URL } from "../../../Utils/Constants.js";
-import Loading from "../../../Utils/Loading/Loading.jsx";
+import "../../../styles/Fonts.css";
+import { PRACTICE_URL } from "../../../utils/Constants.js";
+import Loading from "../../Common/Loading.jsx";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useTranslation } from "react-i18next";
-import { translateSolutionSteps } from "../../../Utils/Translate/translateSolutionSteps.js";
+import { translateSolutionSteps } from "../../../utils/translateSolutionSteps.js";
 
 function NoteBook() {
     const { questionId } = useParams();

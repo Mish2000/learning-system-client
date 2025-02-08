@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { CssBaseline, ThemeProvider } from '@mui/material';
-import Login from './Components/Login&Registration/Login.jsx';
-import Register from './Components/Login&Registration/Register.jsx';
-import Error404 from './components/ErrorPages/Error404';
-import CombinedDashboard from './Components/Dashboard/CombinedDashboard';
-import PracticePage from './Components/Dashboard/Practice/PracticePage';
-import { HOME_URL, LOGIN_URL, PRACTICE_URL, PROFILE_URL, REGISTER_URL, STATISTICS_URL } from './Utils/Constants.js';
-import NavBar from "./Components/Dashboard/NavBar/NavBar.jsx";
-import Home from "./Components/Dashboard/Home.jsx";
-import ProfilePage from "./Components/Dashboard/Profile/ProfilePage.jsx";
-import NoteBook from "./Components/Dashboard/Practice/NoteBook.jsx";
-import theme from './Utils/Theme';
+import Login from './components/Auth/Login.jsx';
+import Register from './components/Auth/Register.jsx';
+import Error404 from './components/Dashboard/Error404.jsx';
+import CombinedDashboard from './components/Dashboard/CombinedDashboard';
+import PracticePage from './components/Dashboard/Practice/PracticePage';
+import { HOME_URL, LOGIN_URL, PRACTICE_URL, PROFILE_URL, REGISTER_URL, STATISTICS_URL } from './utils/Constants.js';
+import NavBar from "./components/Dashboard/NavBar.jsx";
+import Home from "./components/Dashboard/Home.jsx";
+import ProfilePage from "./components/Dashboard/ProfilePage.jsx";
+import NoteBook from "./components/Dashboard/Practice/NoteBook.jsx";
+import theme from './utils/Theme.js';
 
 function App() {
     const [token, setToken] = useState(localStorage.getItem('jwtToken') || null);

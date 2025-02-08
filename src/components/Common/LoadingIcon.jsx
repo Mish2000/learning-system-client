@@ -1,4 +1,4 @@
-import '../../CSS/Loading.css' ;
+import '../../styles/Loading.css' ;
 
 function LoadingIcon() {
     return (

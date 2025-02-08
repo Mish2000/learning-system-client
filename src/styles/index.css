@@ -1,0 +1,14 @@
+:root {
+  --pointer-cursor: url(../../public/assets/pointer.png), pointer;
+  --edit-cursor: url(../../public/assets/pointer.png), text;
+  --text-cursor: url(../../public/assets/pointer.png), text;
+  --button: url(../../public/assets/pointer.png), text;
+}
+* {
+  cursor: var(--pointer-cursor);
+}
+
+body {
+  margin: 0;
+}
+

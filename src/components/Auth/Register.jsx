@@ -1,12 +1,12 @@
 import {useState} from 'react';
 import {Alert, Box, Button, Card, Stack, TextField, Typography} from "@mui/material";
 import {useNavigate} from 'react-router-dom';
-import PasswordTextField from "./PasswordTextField.jsx";
-import {LOGIN_URL} from "../../Utils/Constants.js";
-import {registerUser} from '../../api/UserAPI';
+import PasswordTextField from "../Common/PasswordTextField.jsx";
+import {LOGIN_URL} from "../../utils/Constants.js";
+import {registerUser} from '../../services/UserAPI.js';
 import {useTranslation} from "react-i18next";
-import LanguageSwitcher from "./LanguageSwitcher.jsx";
-import PasswordStrengthIndicator from "./PasswordStrengthIndicator.jsx";
+import LanguageSwitcher from "../Common/LanguageSwitcher.jsx";
+import PasswordStrengthIndicator from "../Common/PasswordStrengthIndicator.jsx";
 
 function Register() {
     const { t } = useTranslation();

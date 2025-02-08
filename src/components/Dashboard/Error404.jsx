@@ -1,7 +1,7 @@
 import {Button, Stack, Typography} from "@mui/material";
 import ErrorIcon from '@mui/icons-material/Error';
 import {Link} from "react-router-dom";
-import {HOME_URL} from "../../Utils/Constants.js";
+import {HOME_URL} from "../../utils/Constants.js";
 import {useTranslation} from "react-i18next";
 
 function Error404() {

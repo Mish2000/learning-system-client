@@ -1,11 +1,11 @@
 import  { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import {Typography, Box, CardMedia, TextField, Button, Stack, Menu, MenuItem, Alert} from '@mui/material';
-import Loading from "../../../Utils/Loading/Loading.jsx";
+import Loading from "../Common/Loading.jsx";
 import { useTranslation } from 'react-i18next';
-import CustomAccountCircleIcon from "../../../Utils/CustomAccountCircleIcon.jsx";
-import PasswordTextField from "../../Login&Registration/PasswordTextField.jsx";
-import PasswordStrengthIndicator from "../../Login&Registration/PasswordStrengthIndicator.jsx";
+import CustomAccountCircleIcon from "../Common/CustomAccountCircleIcon.jsx";
+import PasswordTextField from "../Common/PasswordTextField.jsx";
+import PasswordStrengthIndicator from "../Common/PasswordStrengthIndicator.jsx";
 
 function ProfilePage() {
     const { t, i18n } = useTranslation();

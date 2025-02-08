@@ -1,6 +1,6 @@
 import { Box, Typography, Button, Stack } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import {STATISTICS_URL, LOGIN_URL, PRACTICE_URL, PROFILE_URL, REGISTER_URL} from '../../utils/Constants';
+import {STATISTICS_URL, LOGIN_URL, PRACTICE_URL, PROFILE_URL, REGISTER_URL} from '../../utils/Constants.js';
 import {useTranslation} from "react-i18next";
 
 function Home() {

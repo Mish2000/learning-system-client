@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import {Box, Typography} from "@mui/material";
 import ChartTotalSuccessRate from "./Statistics/ChartTotalSuccessRate.jsx";
 import ChartSuccessRateByTopic from "./Statistics/ChartSuccessRateByTopic.jsx";
-import Loading from "../../Utils/Loading/Loading.jsx";
+import Loading from "../Common/Loading.jsx";
 import {useTranslation} from "react-i18next";
 
 function UserDashboardSSE() {

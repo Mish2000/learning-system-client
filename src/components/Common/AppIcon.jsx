@@ -8,7 +8,7 @@ AppIcon.propTypes = {
 function AppIcon(props) {
     return (
         <CardMedia
-            image={"src/Assets/favicon.png"}
+            image={"src/assets/favicon.png"}
             sx={{ height: props.size , width: props.size }}
         />
     );

@@ -1,11 +1,11 @@
 import {useState, useEffect} from 'react';
 import axios from 'axios';
 import TopicList from "./TopicList.jsx";
-import '../../../CSS/App.css'
+import '../../../styles/App.css'
 import {Box, Grid, Button, FormControl, InputLabel, MenuItem, Select, Typography} from "@mui/material";
 import PropTypes from "prop-types";
 import {useNavigate} from "react-router-dom";
-import {PRACTICE_URL} from "../../../Utils/Constants.js";
+import {PRACTICE_URL} from "../../../utils/Constants.js";
 import {useTranslation} from "react-i18next";
 
 function QuestionGenerator({ onQuestionGenerated }) {

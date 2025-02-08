@@ -1,13 +1,13 @@
 import {useState} from 'react';
 import {Box, Button, Card, Stack, TextField, Typography} from "@mui/material";
 import {useNavigate} from 'react-router-dom';
-import {HOME_URL, REGISTER_URL} from "../../Utils/Constants.js";
-import PasswordTextField from "./PasswordTextField.jsx";
-import AppIcon from "../../Utils/AppIcon.jsx";
+import {HOME_URL, REGISTER_URL} from "../../utils/Constants.js";
+import PasswordTextField from "../Common/PasswordTextField.jsx";
+import AppIcon from "../Common/AppIcon.jsx";
 import axios from "axios";
 import PropTypes from 'prop-types';
 import {useTranslation} from "react-i18next";
-import LanguageSwitcher from "./LanguageSwitcher.jsx";
+import LanguageSwitcher from "../Common/LanguageSwitcher.jsx";
 
 function Login({onLoginSuccess}) {
     const navigate = useNavigate();
