@@ -14,6 +14,7 @@ function QuestionGenerator({ onQuestionGenerated }) {
     const [subTopics, setSubTopics] = useState([]);
     const [selectedParent, setSelectedParent] = useState('');
     const [selectedSubtopic, setSelectedSubtopic] = useState('');
+    const [isGeometry, setIsGeometry] = useState('false');
     const [isAdmin, setIsAdmin] = useState(localStorage.getItem('role') === "ADMIN");
     const navigate = useNavigate();
     const { t } = useTranslation();
@@ -81,7 +82,7 @@ function QuestionGenerator({ onQuestionGenerated }) {
                 {t('pleaseGenerateQuestion')}
             </Typography>
             <TopicList topics={subTopics} />
-            <Box sx={{ marginLeft: "30px", minWidth: 120 }}>
+            <Box sx={{ marginLeft: "30px", minWidth: 12 }}>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={4}>
                         <Typography>{t('questionType')}:</Typography>
@@ -89,7 +90,14 @@ function QuestionGenerator({ onQuestionGenerated }) {
                             <InputLabel>{t('selectType')}</InputLabel>
                             <Select
                                 value={selectedParent}
-                                onChange={(e) => setSelectedParent(e.target.value)}
+                                onChange={(e) => {
+                                    setSelectedParent(e.target.value);
+                                if (e.target.value=== "Geometry"){
+                                    setIsGeometry(true);
+                                }else {
+                                    setIsGeometry(false)
+                                }
+                                }}
                             >
                                 {parentTopics.map(topic => (
                                     <MenuItem key={topic.id} value={topic.id}>
@@ -99,9 +107,9 @@ function QuestionGenerator({ onQuestionGenerated }) {
                             </Select>
                         </FormControl>
                     </Grid>
-
+                    {()=>setIsGeometry( isGeometry ? "Operator Type" : "Shape Type")}
                     <Grid item xs={12} sm={4}>
-                        <Typography>{t(selectedSubtopic!="Geometry"?'Operator Type':'shape Type')}:</Typography>
+                        <Typography>{t(((selectedParent === "Geometry" )? "Shape Type" : "Operator Type"))}:</Typography>
                         <FormControl variant="standard" sx={{ m: 1, minWidth: 150 }}>
                             <InputLabel>{t('selectType')}</InputLabel>
                             <Select
