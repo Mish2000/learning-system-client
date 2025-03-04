@@ -17,6 +17,7 @@ function QuestionGenerator({ onQuestionGenerated }) {
     const [isGeometry, setIsGeometry] = useState('false');
     const [isAdmin, setIsAdmin] = useState(localStorage.getItem('role') === "ADMIN");
     const navigate = useNavigate();
+
     const { t } = useTranslation();
 
     useEffect(() => {
