@@ -12,8 +12,8 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import HomeIcon from '@mui/icons-material/Home';
 import { useTranslation } from 'react-i18next';
 import {useEffect, useState} from "react";
-import axios from "axios";
 import NotificationCenter from "../Common/NotificationCenter.jsx";
+import axios from "axios";
 
 export default function NavBar() {
     const { t } = useTranslation();
@@ -21,6 +21,9 @@ export default function NavBar() {
     const navigate = useNavigate();
     const [userData, setUserData] = useState(null);
     const [sseSource, setSseSource] = useState(null);
+
+    const rawRole = localStorage.getItem('role') || '';
+    const role = rawRole.replace('ROLE_', '');
 
     const handleLogout = () => {
         localStorage.removeItem('jwtToken');
@@ -45,6 +48,15 @@ export default function NavBar() {
             console.error('SSE connection failed or was closed.');
             eventSource.close();
         };
+
+        axios
+            .get(`${SERVER_URL}/profile`, { headers: { Authorization: `Bearer ${token}` } })
+            .then((resp) => {
+                setUserData(resp.data);
+            })
+            .catch((err) => {
+                console.error('Failed to fetch user profile in NavBar', err);
+            });
 
         return () => {
             eventSource.close();
@@ -120,16 +132,34 @@ export default function NavBar() {
                                 {t('profile')}
                             </Button>
 
+                            {role === 'ADMIN' && (
+                                <Button
+                                    sx={{
+                                        textTransform: 'inherit',
+                                        color: location.pathname === '/manage-topics' ? 'secondary.light' : 'inherit',
+                                    }}
+                                    onClick={() => navigate('/manage-topics')}
+                                >
+                                    {t('adminTopicManagement')}
+                                </Button>
+                            )}
+
                             <NotificationCenter />
 
                             {userData && (
                                 <Stack direction="row" spacing={1} alignItems="center">
                                     <Avatar alt="User Avatar" src={avatarUrl || undefined} />
-                                    <Typography variant="body1">{userData.username}</Typography>
+                                    <Typography variant="body1">
+                                        {userData.username}
+                                    </Typography>
                                 </Stack>
                             )}
 
-                            <Button sx={{ textTransform: 'inherit' }} color="inherit" onClick={handleLogout}>
+                            <Button
+                                sx={{ textTransform: 'inherit' }}
+                                color="inherit"
+                                onClick={handleLogout}
+                            >
                                 <LogoutIcon />
                                 {t('logOut')}
                             </Button>
@@ -141,3 +171,4 @@ export default function NavBar() {
         </Stack>
     );
 }
+

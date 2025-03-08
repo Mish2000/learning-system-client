@@ -1,10 +1,6 @@
 import {CardMedia} from "@mui/material";
 import PropTypes from "prop-types";
 
-AppIcon.propTypes = {
-    size: PropTypes.number.isRequired
-}
-
 function AppIcon(props) {
     return (
         <CardMedia
@@ -15,3 +11,7 @@ function AppIcon(props) {
 }
 
 export default AppIcon;
+
+AppIcon.propTypes = {
+    size: PropTypes.number.isRequired
+}

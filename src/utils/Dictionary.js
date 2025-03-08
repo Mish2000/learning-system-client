@@ -1,4 +1,3 @@
-// src/Utils/Dictionary.js
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
@@ -29,6 +28,8 @@ const resources = {
             profileUpdatedSuccessfully: "Profile updated successfully!",
             updateFailed: "Update failed",
             ProfileEmailHelperText: "Enter a valid email address.",
+            subLevel: "Sub-level",
+            currentDifficulty: "Current Difficulty",
 
             // NoteBook.jsx
             solutionSteps:"Solution Steps",
@@ -44,6 +45,8 @@ const resources = {
             changeSubject: "Change Subject",
             writeYourAnswerHere: "Write your answer here",
             loadingQuestionData: "Loading question data...",
+            noQuestionLoaded: "No question loaded",
+            failedToSubmitAnswer: "Failed to submit answer",
 
             // PracticePage.jsx
             timeToPractice: "Time to practice!",
@@ -59,6 +62,11 @@ const resources = {
             advanced: "Hard",
             generate: "Generate",
             bankOfQuestionTypes: "Bank Of Question Types",
+            operatorType: "Operator Type",
+            shapeType: "Shape Type",
+            addTopic: "Add Topic",
+            addSubtopic: "Add Subtopic",
+            parentTopics: "General Topics",
 
             // AdminDashboardSSE.jsx
             loadingAdminDashboard: "Loading Admin Dashboard...",
@@ -75,10 +83,12 @@ const resources = {
 
             // ChartSuccessRateByTopic.jsx
             successRateTitle: "Success Rate By Topic",
+            noTopicData: "No topic data available.",
 
             // ChartTotalSuccessRate.jsx
             overallSuccessTitle: "Overall Success Rate",
             overallSuccess: "Overall Success",
+            noOverallSuccessData: "No overall success data.",
 
             // Error404.jsx
             error404: "Error 404",
@@ -116,12 +126,29 @@ const resources = {
             goToProfilePage: "Go to Profile Page",
             seeYourStatistics: "See Your Statistics",
 
-            //PasswordStrengthIndicator.jsx
+            // PasswordStrengthIndicator.jsx
             passwordStrength: "Password Strength:",
             Invalid: "Invalid",
             Weak: "Weak",
             Normal: "Normal",
             Strong: "Strong",
+
+            //TopicManagementPage.jsx
+            adminTopicManagement: "Admin Topic Management",
+            createNewTopic: "Create a New Topic",
+            topicName: "Topic Name",
+            description: "Description",
+            parentTopic: "Parent Topic",
+            none: "None",
+            createTopic: "Create Topic",
+            existingTopics: "Existing Topics",
+            noTopicsFound: "No topics found.",
+            deleteTopic: "Delete Topic",
+            topicCreatedSuccessfully: "Topic created successfully!",
+            topicCreationFailed: "Topic creation failed.",
+            topicDeleted: "Topic deleted!",
+            topicDeletionFailed: "Topic deletion failed.",
+            pleaseEnterValidTopicName: "Please enter a valid topic name",
 
             // Dynamic Server Content - Topics and Descriptions
             Arithmetic: "Arithmetic",
@@ -153,8 +180,8 @@ const resources = {
             MEDIUM: "Medium",
             ADVANCED: "Hard",
 
-            // Translation keys for solution step phrases:
-            //General:
+
+            // Some solution-step phrases (for translateSolutionSteps.js to match)
             and: "and",
             take: "take",
             from: "from",
@@ -166,10 +193,8 @@ const resources = {
             remaining: "remaining",
             get: "get",
 
-            //Addition:
-            add: "add",
-
             toAdd: "To add",
+            add: "add",
             simplyAdd: "simply add",
             step1: "Step 1:",
             step2: "Step 2:",
@@ -185,9 +210,10 @@ const resources = {
             combineOnes: "Combine the ones",
             combineTens: "Combine the tens",
             combineHundreds: "Combine the hundreds",
-            simplifiesTo: "which simplifies to"
+            simplifiesTo: "which simplifies to",
         }
     },
+
     he: {
         translation: {
             // NavBar.jsx
@@ -214,6 +240,8 @@ const resources = {
             profileUpdatedSuccessfully: "הפרופיל עודכן בהצלחה!",
             updateFailed: "עדכון נכשל",
             ProfileEmailHelperText: "הזן כתובת דוא\"ל חוקית.",
+            subLevel: "תת רמה",
+            currentDifficulty: "רמת קושי נוכחית",
 
             // NoteBook.jsx
             solutionSteps:"שלבי פתרון",
@@ -229,6 +257,8 @@ const resources = {
             changeSubject: "שנה נושא",
             writeYourAnswerHere: "כתוב את תשובתך כאן",
             loadingQuestionData: "טוען את נתוני השאלה...",
+            noQuestionLoaded: "לא נטענה שאלה",
+            failedToSubmitAnswer: "שליחת תשובה נכשלה",
 
             // PracticePage.jsx
             timeToPractice: "הגיע הזמן לתרגל!",
@@ -244,6 +274,11 @@ const resources = {
             advanced: "קשה",
             generate: "צור",
             bankOfQuestionTypes: "מאגר סוגי השאלות",
+            operatorType: "סוג פעולה",
+            shapeType: "סוג צורה",
+            addTopic: "הוסף נושא",
+            addSubtopic: "הוסף תת-נושא",
+            parentTopics: "נושאים כלליים",
 
             // AdminDashboardSSE.jsx
             loadingAdminDashboard: "טוען לוח מחוונים מנהל...",
@@ -296,19 +331,36 @@ const resources = {
             passwordsMustMatch: "הסיסמאות חייבות להתאים",
 
             // Home.jsx
-            welcomeQuickMath: "ברוכים הבאים ל-Quick Math!",
+            welcomeQuickMath: "!ברוכים הבאים לחשבון מהיר",
             selfLearningMath: "זו פלטפורמה ללימוד עצמי ותרגול מתמטיקה עם מגוון רחב של נושאים. אנחנו עוזרים לך להבין עם מה אתה מתקשה ונתאים את התרגילים לרמתך. כל זאת כדי שתבין את הדרך לפתור בעיות ולאחר מכן תעבור לרמות קושי גבוהות יותר כדי לשפר את כישורי המתמטיקה שלך. אנו מציעים גם יצירת שאלות דינמית ולוח סטטיסטיקה אישי ונוח",
             homeDescription: "זו פלטפורמה ללימוד עצמי ותרגול מתמטיקה עם מגוון רחב של נושאים...",
             startPracticing: "התחל לתרגל",
             goToProfilePage: "גש לדף הפרופיל",
             seeYourStatistics: "ראה את הסטטיסטיקות שלך",
 
-            //PasswordStrengthIndicator.jsx
+            // PasswordStrengthIndicator.jsx
             passwordStrength: "חוזק סיסמה:",
             Invalid: "לא תקין",
             Weak: "חלש",
             Normal: "רגיל",
             Strong: "חזק",
+
+            //TopicManagementPage.jsx
+            adminTopicManagement: "ניהול נושאים למנהל",
+            createNewTopic: "צור נושא חדש",
+            topicName: "שם נושא",
+            description: "תיאור",
+            parentTopic: "נושא אב",
+            none: "ללא",
+            createTopic: "צור נושא",
+            existingTopics: "נושאים קיימים",
+            noTopicsFound: "לא נמצאו נושאים.",
+            deleteTopic: "מחק נושא",
+            topicCreatedSuccessfully: "הנושא נוצר בהצלחה!",
+            topicCreationFailed: "יצירת הנושא נכשלה.",
+            topicDeleted: "הנושא נמחק!",
+            topicDeletionFailed: "מחיקת הנושא נכשלה.",
+            pleaseEnterValidTopicName: "אנא הזן שם נושא תקין",
 
             // Dynamic Server Content - Topics and Descriptions
             Arithmetic: "חשבון",
@@ -340,8 +392,6 @@ const resources = {
             MEDIUM: "בינוני",
             ADVANCED: "קשה",
 
-            // Translation keys for solution step phrases
-            //General:
             and: "ו",
             take: "קח",
             from: "מ",
@@ -353,10 +403,8 @@ const resources = {
             remaining: "נותרים",
             get: "קבל",
 
-            //Addition:
-            add: "חבר",
-            //todo
             toAdd: "כדי להוסיף",
+            add: "חבר",
             simplyAdd: "פשוט תוסיף",
             step1: "שלב 1:",
             step2: "שלב 2:",
@@ -392,8 +440,5 @@ i18n
     });
 
 export default i18n;
-
-
-
 
 

@@ -6,10 +6,10 @@ import { useTranslation } from 'react-i18next';
 import CustomAccountCircleIcon from "../Common/CustomAccountCircleIcon.jsx";
 import PasswordTextField from "../Common/PasswordTextField.jsx";
 import PasswordStrengthIndicator from "../Common/PasswordStrengthIndicator.jsx";
+import {SERVER_URL} from "../../utils/Constants.js";
 
-function ProfilePage() {
+export default function ProfilePage() {
     const { t, i18n } = useTranslation();
-
     const [profile, setProfile] = useState(null);
     const [language, setLanguage] = useState('');
     const [originalLanguage, setOriginalLanguage] = useState('');
@@ -24,7 +24,7 @@ function ProfilePage() {
     const [errors, setErrors] = useState({
         username: false,
         password: false,
-        repeatPassword: false
+        repeatPassword: false,
     });
     const [alertMessage, setAlertMessage] = useState('');
 
@@ -35,12 +35,13 @@ function ProfilePage() {
         const fetchProfile = async () => {
             try {
                 const token = localStorage.getItem('jwtToken');
-                const resp = await axios.get('http://localhost:8080/api/profile', {
-                    headers: { Authorization: `Bearer ${token}` }
+                if (!token) return;
+
+                const resp = await axios.get(`${SERVER_URL}/profile`, {
+                    headers: { Authorization: `Bearer ${token}` },
                 });
 
                 setProfile(resp.data);
-
                 setLanguage(resp.data.interfaceLanguage || 'English');
                 setOriginalLanguage(resp.data.interfaceLanguage || 'English');
                 setNewUsername(resp.data.username || '');
@@ -79,25 +80,30 @@ function ProfilePage() {
         }
         try {
             const token = localStorage.getItem('jwtToken');
+            if (!token) {
+                setAlertMessage(t('updateFailed'));
+                return;
+            }
 
             if (userImage) {
                 const formData = new FormData();
                 formData.append('image', userImage);
-                await axios.post('http://localhost:8080/api/profile/uploadImage', formData, {
+                await axios.post(`${SERVER_URL}/profile/uploadImage`, formData, {
                     headers: {
                         Authorization: `Bearer ${token}`,
-                        'Content-Type': 'multipart/form-data'
-                    }
+                        'Content-Type': 'multipart/form-data',
+                    },
                 });
             }
 
             const payload = {
                 username: newUsername,
                 password: newPassword,
-                interfaceLanguage: language
+                interfaceLanguage: language,
             };
-            await axios.put('http://localhost:8080/api/profile', payload, {
-                headers: { Authorization: `Bearer ${token}` }
+
+            await axios.put(`${SERVER_URL}/profile`, payload, {
+                headers: { Authorization: `Bearer ${token}` },
             });
 
             alert(t('profileUpdatedSuccessfully'));
@@ -105,23 +111,23 @@ function ProfilePage() {
             setNewPassword('');
             setRepeatPassword('');
 
-            setProfile(prev => ({
-                ...prev,
-                username: newUsername
-            }));
+            const resp = await axios.get(`${SERVER_URL}/profile`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setProfile(resp.data);
         } catch (err) {
             console.error('Failed to update profile', err);
             setAlertMessage(t('updateFailed'));
         }
     };
 
-    const handleLanguageMenuOpen = event => {
+    const handleLanguageMenuOpen = (event) => {
         setLanguageAnchorEl(event.currentTarget);
     };
     const handleMenuClose = () => {
         setLanguageAnchorEl(null);
     };
-    const handleLanguageSelect = selectedLanguage => {
+    const handleLanguageSelect = (selectedLanguage) => {
         setLanguage(selectedLanguage);
         const langCode = selectedLanguage === 'עברית' ? 'he' : 'en';
         i18n.changeLanguage(langCode);
@@ -132,7 +138,7 @@ function ProfilePage() {
     const handleImageClick = () => {
         document.getElementById('profile-image-upload').click();
     };
-    const handleImageChange = e => {
+    const handleImageChange = (e) => {
         if (e.target.files && e.target.files[0]) {
             setUserImage(e.target.files[0]);
         }
@@ -141,15 +147,7 @@ function ProfilePage() {
     if (!profile) {
         return (
             <Box>
-                <Typography
-                    variant="h3"
-                    sx={{
-                        margin: 10,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}
-                >
+                <Typography variant="h3" sx={{ margin: 10 }}>
                     {t('loadingProfile')}
                 </Typography>
                 <Loading />
@@ -160,8 +158,7 @@ function ProfilePage() {
     let displayImage = null;
     if (userImage) {
         displayImage = URL.createObjectURL(userImage);
-    }
-    else if (profile.profileImage) {
+    } else if (profile.profileImage) {
         displayImage = `data:image/jpeg;base64,${profile.profileImage}`;
     }
 
@@ -173,16 +170,18 @@ function ProfilePage() {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-            <Box sx={{ textAlign: 'center' }}>
+            <Box sx={{ textAlign: 'center', mt: 3 }}>
                 <Typography variant="h4" gutterBottom>
                     {t('profileManagement')}
                 </Typography>
             </Box>
+
             {alertMessage && (
                 <Alert severity="error" sx={{ m: 2 }}>
                     {alertMessage}
                 </Alert>
             )}
+
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <Box
                     sx={{
@@ -194,7 +193,7 @@ function ProfilePage() {
                         width: '100px',
                         height: '100px',
                         marginBottom: '10px',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
                     }}
                     onClick={handleImageClick}
                 >
@@ -213,17 +212,25 @@ function ProfilePage() {
                             sx={{ width: '100%', height: '100px', objectFit: 'cover' }}
                         />
                     ) : (
-                        <CustomAccountCircleIcon
-                            style={{ width: '100%', maxWidth: '100px', height: '100px' }}
-                        />
+                        <CustomAccountCircleIcon style={{ width: '100%', maxWidth: '100px', height: '100px' }} />
                     )}
+                </Box>
+
+                <Box sx={{ mb: 2 }}>
+                    <Typography variant="h6">
+                        {t('currentDifficulty')}{': '}
+                        {t(profile.currentDifficulty || 'BASIC')}
+                        {profile.subDifficultyLevel > 0 && (
+                            <> ({t('subLevel')} {profile.subDifficultyLevel})</>
+                        )}
+                    </Typography>
                 </Box>
 
                 <Stack spacing={3} sx={{ width: '90%', maxWidth: '600px' }}>
                     <TextField
                         label={t('newUsername')}
                         value={newUsername}
-                        onChange={e => setNewUsername(e.target.value)}
+                        onChange={(e) => setNewUsername(e.target.value)}
                         error={errors.username}
                         helperText={errors.username ? t('usernameHelperText') : ''}
                     />
@@ -234,7 +241,7 @@ function ProfilePage() {
                         value={newPassword}
                         error={errors.password}
                         helperText={errors.password ? t('RegisterPasswordHelperText') : ''}
-                        onChange={e => setNewPassword(e.target.value)}
+                        onChange={(e) => setNewPassword(e.target.value)}
                     />
 
                     <PasswordStrengthIndicator password={newPassword} />
@@ -245,7 +252,7 @@ function ProfilePage() {
                         value={repeatPassword}
                         error={errors.repeatPassword}
                         helperText={errors.repeatPassword ? t('passwordsMustMatch') : ''}
-                        onChange={e => setRepeatPassword(e.target.value)}
+                        onChange={(e) => setRepeatPassword(e.target.value)}
                     />
 
                     <TextField
@@ -261,8 +268,8 @@ function ProfilePage() {
                         onClose={handleMenuClose}
                         PaperProps={{
                             style: {
-                                width: languageRef.current ? languageRef.current.offsetWidth : 'auto'
-                            }
+                                width: languageRef.current ? languageRef.current.offsetWidth : 'auto',
+                            },
                         }}
                     >
                         <MenuItem onClick={() => handleLanguageSelect('English')}>English</MenuItem>
@@ -282,5 +289,3 @@ function ProfilePage() {
         </Box>
     );
 }
-
-export default ProfilePage;

@@ -12,6 +12,7 @@ import Home from "./components/Dashboard/Home.jsx";
 import ProfilePage from "./components/Dashboard/ProfilePage.jsx";
 import NoteBook from "./components/Dashboard/Practice/NoteBook.jsx";
 import theme from './utils/Theme.js';
+import TopicManagementPage from "./components/Admin/TopicManagementPage.jsx";
 
 function App() {
     const [token, setToken] = useState(localStorage.getItem('jwtToken') || null);
@@ -58,6 +59,10 @@ function App() {
                                 <Route path={`${PRACTICE_URL}/:questionId`} element={<NoteBook />} />
                                 <Route path={`${PRACTICE_URL}/:id`} element={<NoteBook />} />
                                 <Route path={PROFILE_URL} element={<ProfilePage />} />
+
+                                {role === "ADMIN" && (
+                                    <Route path="/manage-topics" element={<TopicManagementPage />} />
+                                )}
                             </Route>
                         )}
                         <Route path="*" element={<Error404 />} />
