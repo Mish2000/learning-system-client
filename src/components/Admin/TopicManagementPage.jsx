@@ -135,7 +135,12 @@ function TopicManagementPage() {
                         <Typography sx={{mr: 2}}>
                             <strong>{topic.name}</strong> – {topic.description} ({t('difficulty')}: {topic.difficultyLevel})
                         </Typography>
-                        <Button variant="outlined" color="error" onClick={() => handleDeleteTopic(topic.id)}>
+                        <Button
+                            variant="outlined"
+                            color="error"
+                            disabled={topic.subtopicCount > 0}
+                            onClick={() => handleDeleteTopic(topic.id)}
+                        >
                             {t('deleteTopic')}
                         </Button>
                     </Box>
