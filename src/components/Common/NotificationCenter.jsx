@@ -20,8 +20,8 @@ function NotificationCenter() {
             setNotifications((prev) => [newNotif, ...prev]);
             setSnackbarMessage("New Notification: " + newNotif.message);
             setSnackbarOpen(true);
+            console.log("Got SSE custom event in NotificationCenter:", e.detail);
         }
-
         window.addEventListener('server-notification', handleNewNotification);
         return () => {
             window.removeEventListener('server-notification', handleNewNotification);

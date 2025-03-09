@@ -24,8 +24,6 @@ function NoteBook() {
     const [responseData, setResponseData] = useState(null);
     const [color, setColor] = useState("inherit");
     const [difficulty, setDifficulty ] =useState('') ;
-    const [correctAnswerCounter, setCorrectAnswerCounter] = useState(0);
-    const [incorrectAnswerCounter, setIncorrectAnswerCounter] = useState(0);
     const [isClicked, setIsClicked] = useState(false);
 
 
@@ -50,8 +48,6 @@ function NoteBook() {
                 const res = await axios.get(`http://localhost:8080/api/questions/${questionId}`);
                 setQuestion(res.data);
                 setDifficulty(res.data.difficultyLevel);
-                setCorrectAnswerCounter(0); // Reset counters for new question
-                setIncorrectAnswerCounter(0);
                 if (res.data.topicId) {
                     const resTopic = await axios.get(`http://localhost:8080/api/topics/${res.data.topicId}`);
                     if (resTopic.data.parentId === 1) {
@@ -91,30 +87,18 @@ function NoteBook() {
     }, [questionId]);
 
     function isValidDouble(input) {
-        // Regular expression to match:
-        // 1. Only numbers: ^\d+$
-        // 2. Number with a point but no digits after it: ^\d+\.$
-        // 3. Number with a point and 1 or more digits after it: ^\d+\.\d+$
         const doublePattern = /^\d+(\.\d*)?$/;
-
-        // Test if the input matches the pattern
         return doublePattern.test(input);
     }
 
 
     function handleNumberFormatting(input) {
-        // Trim any unnecessary spaces
         input = input.trim();
 
-        // Option 1: Integer (no decimal part)
         const integerPattern = /^\d+$/;
-        // Option 2: Integer with a decimal point but no digits after it
         const integerWithDotPattern = /^\d+\.$/;
-        // Option 3: Double with 1 decimal digit
         const oneDecimalPattern = /^\d+\.\d$/;
-        // Option 4: Double with exactly 2 decimal digits
         const twoDecimalPattern = /^\d+\.\d{2}$/;
-        // Option 5: Double with 3 to 10 decimal digits
         const threeToTenDecimalPattern = /^\d+\.\d{3,10}$/;
 
         let formattedValue;
@@ -152,58 +136,40 @@ function NoteBook() {
             return;
         }
         try {
-
             const token = localStorage.getItem("jwtToken");
             let finalUserAnswer;
-
             if (userAnswer) {
                 if (answerPartOne === "Polygon") {
                     const formatted = handleNumberFormatting(userAnswer);
                     finalUserAnswer = `${formatted}`;
-                    console.log("answerPartOne", finalUserAnswer);
                 } else {
                     finalUserAnswer = userAnswer;
                 }
             } else if (isFractions()) {
                 finalUserAnswer = `${userAnswerPart1}/${userAnswerPart2}`;
-                console.log("entered us1,us2");
             } else {
-                // setUserAnswerPart1(formatAnswerPart(userAnswerPart1));
-                // setUserAnswerPart2(formatAnswerPart(userAnswerPart2));
                 if (answerPartTwo === "Circumference" || answerPartTwo === "Hypotenuse") {
                     const formattedPart1 = handleNumberFormatting(userAnswerPart1);
                     const formattedPart2 = handleNumberFormatting(userAnswerPart2);
                     finalUserAnswer = `${formattedPart1},${formattedPart2}`;
-                    console.log("circumference", finalUserAnswer);
-                } else
+                } else {
                     finalUserAnswer = `${userAnswerPart1},${userAnswerPart2}`;
+                }
             }
-            console.log("finalUserAnswer "+finalUserAnswer);
-            const res = await axios.post(
+
+            const submitRes = await axios.post(
                 "http://localhost:8080/api/questions/submit",
-                {
-                    questionId: question.id,
-                    userAnswer: finalUserAnswer
-                },
+                { questionId: question.id, userAnswer: finalUserAnswer },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
-            setResponseData(res.data);
+            setResponseData(submitRes.data);
 
-            if (res.data.correct) {
-                setCorrectAnswerCounter(prev => prev + 1);
-                setIncorrectAnswerCounter(0);
-            } else {
-                setIncorrectAnswerCounter(prev => prev + 1);
-                setCorrectAnswerCounter(0);
-            }
-
-            if (correctAnswerCounter >= 2) { // Adjusted thresholds
-                increaseDifficulty();
-                setCorrectAnswerCounter(0);
-            } else if (incorrectAnswerCounter >= 2) { // Adjusted thresholds
-                decreaseDifficulty();
-                setIncorrectAnswerCounter(0);
-            }
+            const profileRes = await axios.get(
+                "http://localhost:8080/api/profile",
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            const updatedDifficulty = profileRes.data.currentDifficulty;
+            setDifficulty(updatedDifficulty);
 
         } catch (error) {
             console.error("Error submitting answer:", error);
@@ -234,25 +200,6 @@ function NoteBook() {
         console.log("userAnswer : "+userAnswer);
     }, [userAnswer]);
 
-    const increaseDifficulty = () => {
-        const difficultyLevels = ['BASIC', 'EASY', 'MEDIUM', 'ADVANCED', 'EXPERT'];
-        const currentIndex = difficultyLevels.indexOf(difficulty);
-        if (currentIndex < difficultyLevels.length - 1) {
-            const newDifficulty = difficultyLevels[currentIndex + 1];
-            setDifficulty(newDifficulty);
-            console.log("Difficulty increased to:", difficultyLevels[currentIndex + 1]);
-        }
-    };
-
-    const decreaseDifficulty = () => {
-        const difficultyLevels = ['BASIC', 'EASY', 'MEDIUM', 'ADVANCED', 'EXPERT'];
-        const currentIndex = difficultyLevels.indexOf(difficulty);
-        if (currentIndex > 0) {
-            const newDifficulty = difficultyLevels[currentIndex - 1];
-            setDifficulty(newDifficulty);
-            console.log("Difficulty decreased to:", difficultyLevels[currentIndex - 1]);
-        }
-    };
 
     if (!question) {
         return (
@@ -282,6 +229,9 @@ function NoteBook() {
                 padding: 2
             }}
         >
+            <Typography sx={{ fontFamily: myFont, fontSize: 20, marginTop: 2, marginBottom: 2 }}>
+                {t('currentDifficulty')}: {difficulty}
+            </Typography>
             <Box sx={{ display: "flex", flexDirection: "column", wordSpacing: 15, fontFamily: myFont }}>
                 <Typography sx={{ wordSpacing: 15, fontFamily: myFont }}>
                     {t('question')}: {question.questionText}
@@ -383,27 +333,31 @@ function NoteBook() {
                         <Box sx={{ display: "flex", flexDirection: "row-reverse", justifyContent: "center", gap: 3 }}>
                             <Button
                                 sx={{ wordSpacing: 15, fontFamily: myFont, color: "black", fontSize: 25 }}
-                                onClick={
-                                    async () => {
-                                        try {
-                                            setIsClicked(false);
-                                            const token = localStorage.getItem("jwtToken");
-                                            const res = await axios.post(
-                                                "http://localhost:8080/api/questions/generate",
-                                                { topicId: question.topicId ?? null, difficultyLevel:difficulty },
-                                                { headers: { Authorization: `Bearer ${token}` } }
-                                            );
-                                            const newQ = res.data;
-                                            setQuestion(newQ);
-                                            setUserAnswer("");
-                                            setResponseData(null);
-                                        } catch (err) {
-                                            console.error("Failed to get next question:", err);
-                                        }
-                                    }}
+                                onClick={async () => {
+                                    try {
+                                        setIsClicked(false);
+                                        setUserAnswer("");
+                                        setResponseData(null);
+
+                                        const token = localStorage.getItem("jwtToken");
+                                        const response = await axios.post(
+                                            "http://localhost:8080/api/questions/generate",
+                                            {
+                                                topicId: question.topicId ?? null,
+                                                difficultyLevel: null
+                                            },
+                                            { headers: { Authorization: `Bearer ${token}` } }
+                                        );
+                                        const newQ = response.data;
+                                        setQuestion(newQ);
+                                    } catch (err) {
+                                        console.error("Failed to get next question:", err);
+                                    }
+                                }}
                             >
                                 {t('nextQuestion')}
                             </Button>
+
                             <Button
                                 sx={{ wordSpacing: 15, fontFamily: myFont, color: "black", fontSize: 25 }}
                                 onClick={() => navigate(PRACTICE_URL)}
