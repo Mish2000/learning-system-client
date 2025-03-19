@@ -4,7 +4,7 @@ import { Accordion, AccordionDetails, AccordionSummary, Box, Button, TextField, 
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import "../../../styles/Fonts.css";
-import { PRACTICE_URL } from "../../../utils/Constants.js";
+import {GET_DIRECTION, PRACTICE_URL} from "../../../utils/Constants.js";
 import Loading from "../../Common/Loading.jsx";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useTranslation } from "react-i18next";
@@ -217,10 +217,12 @@ function NoteBook() {
             : "";
 
 
+
     return (
         <Box
             className="container"
             sx={{
+                direction: GET_DIRECTION(i18n.language),
                 position: "absolute",
                 width: "95%",
                 height: "95%",
@@ -234,7 +236,7 @@ function NoteBook() {
             </Typography>
             <Box sx={{ display: "flex", flexDirection: "column", wordSpacing: 15, fontFamily: myFont }}>
                 <Typography sx={{ wordSpacing: 15, fontFamily: myFont }}>
-                    {t('question')}: {question.questionText}
+                    {t('question')}: {t(question.questionText)}
                 </Typography>
                 <br />
                 <Typography sx={{ wordSpacing: 15, fontFamily: myFont }}>{t('yourAnswer')}</Typography>
@@ -304,7 +306,7 @@ function NoteBook() {
                 {responseData && (
                     <Box>
                         <Typography sx={{ fontFamily: myFont , color}}>
-                            {t('correct')}: {responseData.correct ? t('yes') : t('no')}
+                            {t('correct')}? : {responseData.correct ? t('yes') : t('no')}
                         </Typography>
                         <br />
                         <Accordion sx={{
@@ -330,7 +332,7 @@ function NoteBook() {
                                 </Typography>
                             </AccordionDetails>
                         </Accordion>
-                        <Box sx={{ display: "flex", flexDirection: "row-reverse", justifyContent: "center", gap: 3 }}>
+                        <Box sx={{ display: "flex", flexDirection: "row-reverse", justifyContent: "center", gap: 15 }}>
                             <Button
                                 sx={{ wordSpacing: 15, fontFamily: myFont, color: "black", fontSize: 25 }}
                                 onClick={async () => {

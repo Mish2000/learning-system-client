@@ -19,6 +19,7 @@ const PasswordTextField = ({ label, helperText, ...props }) => {
             {...props}
             label={label}
             type={showPassword ? 'text' : 'password'}
+            dir={"ltr"}
             helperText={helperText}
             InputProps={{
                 endAdornment: (

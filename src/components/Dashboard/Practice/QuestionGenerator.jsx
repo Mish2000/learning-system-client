@@ -5,7 +5,7 @@ import '../../../styles/App.css'
 import {Box, Grid, Button, FormControl, InputLabel, MenuItem, Select, Typography} from "@mui/material";
 import PropTypes from "prop-types";
 import {useNavigate} from "react-router-dom";
-import {PRACTICE_URL, SERVER_URL} from "../../../utils/Constants.js";
+import {GET_DIRECTION, PRACTICE_URL, SERVER_URL} from "../../../utils/Constants.js";
 import {useTranslation} from "react-i18next";
 
 function QuestionGenerator({ onQuestionGenerated }) {
@@ -17,7 +17,7 @@ function QuestionGenerator({ onQuestionGenerated }) {
     const [isGeometry, setIsGeometry] = useState(false);
     const [isAdmin] = useState(localStorage.getItem('role') === 'ADMIN');
     const navigate = useNavigate();
-    const { t } = useTranslation();
+    const { t ,i18n} = useTranslation();
 
     useEffect(() => {
         fetchParents();
@@ -159,7 +159,7 @@ function QuestionGenerator({ onQuestionGenerated }) {
             </Typography>
             {isAdmin && (
                 <>
-                    <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
+                    <Typography variant="h6" sx={{textAlign: "center", direction: GET_DIRECTION(i18n.language),mt: 2, mb: 1 }}>
                         {t('parentTopics')}
                     </Typography>
                     <TopicList
@@ -239,11 +239,12 @@ function QuestionGenerator({ onQuestionGenerated }) {
                 <Box
                     sx={{
                         marginTop: 2,
+                        marginRight: '10px',
                         marginLeft: '48px',
                         alignSelf: 'start',
                         display: 'flex',
                         justifyContent: 'space-between',
-                        gap: 4
+                        gap: 20
                     }}
                 >
                     <Button variant="contained" onClick={addTopic}>

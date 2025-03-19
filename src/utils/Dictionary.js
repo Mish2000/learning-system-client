@@ -1,5 +1,5 @@
 import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
+import {initReactI18next} from 'react-i18next';
 
 const resources = {
     en: {
@@ -32,7 +32,7 @@ const resources = {
             currentDifficulty: "Current Difficulty",
 
             // NoteBook.jsx
-            solutionSteps:"Solution Steps",
+            solutionSteps: "Solution Steps",
             correctAnswer: "Correct Answer:",
             question: "Question",
             yourAnswer: "Your Answer:",
@@ -47,6 +47,7 @@ const resources = {
             loadingQuestionData: "Loading question data...",
             noQuestionLoaded: "No question loaded",
             failedToSubmitAnswer: "Failed to submit answer",
+            subtract: "Subtract",
 
             // PracticePage.jsx
             timeToPractice: "Time to practice!",
@@ -67,6 +68,7 @@ const resources = {
             addTopic: "Add Topic",
             addSubtopic: "Add Subtopic",
             parentTopics: "General Topics",
+
 
             // AdminDashboardSSE.jsx
             loadingAdminDashboard: "Loading Admin Dashboard...",
@@ -152,7 +154,8 @@ const resources = {
 
             // Dynamic Server Content - Topics and Descriptions
             Arithmetic: "Arithmetic",
-            Addition: "Addition",
+            addition: "Addition",
+            simpleMath: "Simple Math",
             Subtraction: "Subtraction",
             Multiplication: "Multiplication",
             Division: "Division",
@@ -186,6 +189,7 @@ const resources = {
             take: "take",
             from: "from",
             it: "it",
+            tens: "tens",
             to: "to",
             make: "make",
             then: "then",
@@ -203,6 +207,7 @@ const resources = {
             applySign: "Apply the sign",
             multiply: "Multiply",
             area: "Area",
+            write: "write",
             perimeter: "Perimeter",
             circumference: "Circumference",
             hypotenuse: "Hypotenuse",
@@ -211,6 +216,7 @@ const resources = {
             combineTens: "Combine the tens",
             combineHundreds: "Combine the hundreds",
             simplifiesTo: "which simplifies to",
+            by: "by",
         }
     },
 
@@ -244,7 +250,7 @@ const resources = {
             currentDifficulty: "רמת קושי נוכחית",
 
             // NoteBook.jsx
-            solutionSteps:"שלבי פתרון",
+            solutionSteps: "שלבי פתרון",
             correctAnswer: "תשובה נכונה",
             question: "שאלה",
             yourAnswer: "התשובה שלך:",
@@ -344,6 +350,8 @@ const resources = {
             Weak: "חלש",
             Normal: "רגיל",
             Strong: "חזק",
+            by: "ב",
+
 
             //TopicManagementPage.jsx
             adminTopicManagement: "ניהול נושאים למנהל",
@@ -363,8 +371,8 @@ const resources = {
             pleaseEnterValidTopicName: "אנא הזן שם נושא תקין",
 
             // Dynamic Server Content - Topics and Descriptions
-            Arithmetic: "חשבון",
-            Addition: "חיבור",
+            Arithmetic: "חשבון מתקדם",
+            addition: "חיבור",
             Subtraction: "חיסור",
             Multiplication: "כפל",
             Division: "חילוק",
@@ -405,6 +413,13 @@ const resources = {
 
             toAdd: "כדי להוסיף",
             add: "חבר",
+            numbers: "המספרים",
+            parts: "חלקים",
+            allThe: "את כול",
+            now: "עכשיו",
+            subtract: "חסר",
+            simpleMath: "חשבון פשוט",
+            result: "תוצאה",
             simplyAdd: "פשוט תוסיף",
             step1: "שלב 1:",
             step2: "שלב 2:",
@@ -413,6 +428,12 @@ const resources = {
             applySign: "השתמש בסימן",
             multiply: "תכפול",
             area: "שטח",
+            ones: "אחדות",
+            tens: "עשרות",
+            hundreds: "",
+            simply: "בפשטות",
+            directly: "באופן ישיר",
+            write: "כתוב",
             perimeter: "היקף",
             circumference: "היקף",
             hypotenuse: "אלכסון",

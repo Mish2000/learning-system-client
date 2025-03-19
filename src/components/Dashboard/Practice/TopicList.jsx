@@ -4,11 +4,11 @@ import PropTypes from "prop-types";
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import axios from "axios";
-import {SERVER_URL} from "../../../utils/Constants.js";
+import {GET_DIRECTION, SERVER_URL} from "../../../utils/Constants.js";
 import {useState} from "react";
 
 function TopicList({topics, onDeleted}) {
-    const {t} = useTranslation();
+    const {t,i18n} = useTranslation();
     const [isAdmin] = useState(localStorage.getItem('role') === 'ADMIN');
 
     const deleteTopic = async (topicId) => {

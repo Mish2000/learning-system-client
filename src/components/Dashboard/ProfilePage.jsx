@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import CustomAccountCircleIcon from "../Common/CustomAccountCircleIcon.jsx";
 import PasswordTextField from "../Common/PasswordTextField.jsx";
 import PasswordStrengthIndicator from "../Common/PasswordStrengthIndicator.jsx";
-import {SERVER_URL} from "../../utils/Constants.js";
+import {GET_DIRECTION, SERVER_URL} from "../../utils/Constants.js";
 
 export default function ProfilePage() {
     const { t, i18n } = useTranslation();
@@ -169,7 +169,7 @@ export default function ProfilePage() {
     const buttonEnabled = hasLanguageChanged || hasUsernameChanged || hasPasswordEntered || hasImageUploaded;
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+        <Box sx={{direction: GET_DIRECTION(i18n.language), display: 'flex', flexDirection: 'column', width: '100%' }}>
             <Box sx={{ textAlign: 'center', mt: 3 }}>
                 <Typography variant="h4" gutterBottom>
                     {t('profileManagement')}
@@ -226,7 +226,7 @@ export default function ProfilePage() {
                     </Typography>
                 </Box>
 
-                <Stack spacing={3} sx={{ width: '90%', maxWidth: '600px' }}>
+                <Stack spacing={3} sx={{ direction: GET_DIRECTION(i18n.language), width: '90%', maxWidth: '600px' }}>
                     <TextField
                         label={t('newUsername')}
                         value={newUsername}
