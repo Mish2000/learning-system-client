@@ -1,15 +1,15 @@
-import  { useEffect, useState, useRef } from 'react';
+import {useEffect, useState, useRef} from 'react';
 import axios from 'axios';
 import {Typography, Box, CardMedia, TextField, Button, Stack, Menu, MenuItem, Alert} from '@mui/material';
 import Loading from "../Common/Loading.jsx";
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import CustomAccountCircleIcon from "../Common/CustomAccountCircleIcon.jsx";
 import PasswordTextField from "../Common/PasswordTextField.jsx";
 import PasswordStrengthIndicator from "../Common/PasswordStrengthIndicator.jsx";
 import {GET_DIRECTION, SERVER_URL} from "../../utils/Constants.js";
 
 export default function ProfilePage() {
-    const { t, i18n } = useTranslation();
+    const {t, i18n} = useTranslation();
     const [profile, setProfile] = useState(null);
     const [language, setLanguage] = useState('');
     const [originalLanguage, setOriginalLanguage] = useState('');
@@ -38,7 +38,7 @@ export default function ProfilePage() {
                 if (!token) return;
 
                 const resp = await axios.get(`${SERVER_URL}/profile`, {
-                    headers: { Authorization: `Bearer ${token}` },
+                    headers: {Authorization: `Bearer ${token}`},
                 });
 
                 setProfile(resp.data);
@@ -53,7 +53,7 @@ export default function ProfilePage() {
     }, []);
 
     const validateInputs = () => {
-        const newErrors = { username: false, password: false, repeatPassword: false };
+        const newErrors = {username: false, password: false, repeatPassword: false};
         let isValid = true;
 
         if (newUsername && !usernameRegex.test(newUsername)) {
@@ -102,19 +102,24 @@ export default function ProfilePage() {
                 interfaceLanguage: language,
             };
 
-            await axios.put(`${SERVER_URL}/profile`, payload, {
-                headers: { Authorization: `Bearer ${token}` },
+            const resp = await axios.put(`${SERVER_URL}/profile`, payload, {
+                headers: {Authorization: `Bearer ${token}`},
             });
+
+            if (resp.data.newToken) {
+                localStorage.setItem('jwtToken', resp.data.newToken);
+            }
 
             alert(t('profileUpdatedSuccessfully'));
             setAlertMessage('');
             setNewPassword('');
             setRepeatPassword('');
 
-            const resp = await axios.get(`${SERVER_URL}/profile`, {
-                headers: { Authorization: `Bearer ${token}` },
+            const newToken = resp.data.newToken || token;
+            const refreshed = await axios.get(`${SERVER_URL}/profile`, {
+                headers: {Authorization: `Bearer ${newToken}`},
             });
-            setProfile(resp.data);
+            setProfile(refreshed.data);
         } catch (err) {
             console.error('Failed to update profile', err);
             setAlertMessage(t('updateFailed'));
@@ -147,10 +152,10 @@ export default function ProfilePage() {
     if (!profile) {
         return (
             <Box>
-                <Typography variant="h3" sx={{ margin: 10 }}>
+                <Typography variant="h3" sx={{margin: 10}}>
                     {t('loadingProfile')}
                 </Typography>
-                <Loading />
+                <Loading/>
             </Box>
         );
     }
@@ -169,20 +174,20 @@ export default function ProfilePage() {
     const buttonEnabled = hasLanguageChanged || hasUsernameChanged || hasPasswordEntered || hasImageUploaded;
 
     return (
-        <Box sx={{direction: GET_DIRECTION(i18n.language), display: 'flex', flexDirection: 'column', width: '100%' }}>
-            <Box sx={{ textAlign: 'center', mt: 3 }}>
+        <Box sx={{direction: GET_DIRECTION(i18n.language), display: 'flex', flexDirection: 'column', width: '100%'}}>
+            <Box sx={{textAlign: 'center', mt: 3}}>
                 <Typography variant="h4" gutterBottom>
                     {t('profileManagement')}
                 </Typography>
             </Box>
 
             {alertMessage && (
-                <Alert severity="error" sx={{ m: 2 }}>
+                <Alert severity="error" sx={{m: 2}}>
                     {alertMessage}
                 </Alert>
             )}
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                 <Box
                     sx={{
                         margin: '5px',
@@ -201,7 +206,7 @@ export default function ProfilePage() {
                         id="profile-image-upload"
                         type="file"
                         accept="image/*"
-                        style={{ display: 'none' }}
+                        style={{display: 'none'}}
                         onChange={handleImageChange}
                     />
                     {displayImage ? (
@@ -209,14 +214,14 @@ export default function ProfilePage() {
                             component="img"
                             image={displayImage}
                             alt="User Profile"
-                            sx={{ width: '100%', height: '100px', objectFit: 'cover' }}
+                            sx={{width: '100%', height: '100px', objectFit: 'cover'}}
                         />
                     ) : (
-                        <CustomAccountCircleIcon style={{ width: '100%', maxWidth: '100px', height: '100px' }} />
+                        <CustomAccountCircleIcon style={{width: '100%', maxWidth: '100px', height: '100px'}}/>
                     )}
                 </Box>
 
-                <Box sx={{ mb: 2 }}>
+                <Box sx={{mb: 2}}>
                     <Typography variant="h6">
                         {t('currentDifficulty')}{': '}
                         {t(profile.currentDifficulty || 'BASIC')}
@@ -226,7 +231,7 @@ export default function ProfilePage() {
                     </Typography>
                 </Box>
 
-                <Stack spacing={3} sx={{ direction: GET_DIRECTION(i18n.language), width: '90%', maxWidth: '600px' }}>
+                <Stack spacing={3} sx={{direction: GET_DIRECTION(i18n.language), width: '90%', maxWidth: '600px'}}>
                     <TextField
                         label={t('newUsername')}
                         value={newUsername}
@@ -244,7 +249,7 @@ export default function ProfilePage() {
                         onChange={(e) => setNewPassword(e.target.value)}
                     />
 
-                    <PasswordStrengthIndicator password={newPassword} />
+                    <PasswordStrengthIndicator password={newPassword}/>
 
                     <PasswordTextField
                         label={t('repeatPassword')}
@@ -259,7 +264,7 @@ export default function ProfilePage() {
                         label={t('interfaceLanguage')}
                         value={language}
                         onClick={handleLanguageMenuOpen}
-                        InputProps={{ readOnly: true }}
+                        InputProps={{readOnly: true}}
                         inputRef={languageRef}
                     />
                     <Menu

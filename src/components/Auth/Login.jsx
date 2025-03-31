@@ -1,13 +1,14 @@
 import {useState} from 'react';
 import {Box, Button, Card, Stack, TextField, Typography} from "@mui/material";
 import {useNavigate} from 'react-router-dom';
-import {HOME_URL, REGISTER_URL} from "../../utils/Constants.js";
+import {HOME_URL, REGISTER_URL, SERVER_URL} from "../../utils/Constants.js";
 import PasswordTextField from "../Common/PasswordTextField.jsx";
 import AppIcon from "../Common/AppIcon.jsx";
 import axios from "axios";
 import PropTypes from 'prop-types';
 import {useTranslation} from "react-i18next";
 import LanguageSwitcher from "../Common/LanguageSwitcher.jsx";
+import i18n from "i18next";
 
 function Login({onLoginSuccess}) {
     const navigate = useNavigate();
@@ -25,7 +26,21 @@ function Login({onLoginSuccess}) {
             const {token, role} = response.data;
             onLoginSuccess(token, role);
             setLoginError(false);
+
+            const profResp = await axios.get(`${SERVER_URL}/profile`, {
+                headers: {Authorization: `Bearer ${token}`}
+            });
+            const userLang = profResp.data.interfaceLanguage || 'en';
+
+            if (userLang === 'עברית' || userLang === 'he') {
+                i18n.changeLanguage('he');
+                localStorage.setItem('language', 'he');
+            } else {
+                i18n.changeLanguage('en');
+                localStorage.setItem('language', 'en');
+            }
             navigate(HOME_URL);
+
             // eslint-disable-next-line no-unused-vars
         } catch (err) {
             setLoginError(true);
@@ -47,8 +62,8 @@ function Login({onLoginSuccess}) {
                 mx: 'auto',
             }}
         >
-            <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
-                <LanguageSwitcher />
+            <Box sx={{position: 'absolute', top: 16, right: 16}}>
+                <LanguageSwitcher/>
             </Box>
             <AppIcon size={150}/>
             <Typography variant={"h4"}>{t('loginTitle')}</Typography>
