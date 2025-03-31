@@ -1,5 +1,5 @@
 // NoteBook.jsx
-import { useEffect, useState } from 'react';
+import {useEffect, useRef, useState} from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, TextField, Typography } from "@mui/material";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
@@ -25,6 +25,7 @@ function NoteBook() {
     const [color, setColor] = useState("inherit");
     const [difficulty, setDifficulty ] =useState('') ;
     const [isClicked, setIsClicked] = useState(false);
+    const questionLoadTimeRef = useRef(null);
 
 
 
@@ -48,6 +49,9 @@ function NoteBook() {
                 const res = await axios.get(`http://localhost:8080/api/questions/${questionId}`);
                 setQuestion(res.data);
                 setDifficulty(res.data.difficultyLevel);
+
+                questionLoadTimeRef.current = Date.now();
+
                 if (res.data.topicId) {
                     const resTopic = await axios.get(`http://localhost:8080/api/topics/${res.data.topicId}`);
                     if (resTopic.data.parentId === 1) {
@@ -137,6 +141,11 @@ function NoteBook() {
         }
         try {
             const token = localStorage.getItem("jwtToken");
+
+            const endTime = Date.now();
+            const elapsedMs = endTime - questionLoadTimeRef.current;
+            const timeTakenSeconds = Math.floor(elapsedMs / 1000);
+
             let finalUserAnswer;
             if (userAnswer) {
                 if (answerPartOne === "Polygon") {
@@ -159,7 +168,7 @@ function NoteBook() {
 
             const submitRes = await axios.post(
                 "http://localhost:8080/api/questions/submit",
-                { questionId: question.id, userAnswer: finalUserAnswer },
+                { questionId: question.id, userAnswer: finalUserAnswer, timeTakenSeconds },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             setResponseData(submitRes.data);

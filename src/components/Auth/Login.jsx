@@ -51,8 +51,8 @@ function Login({onLoginSuccess}) {
                 <LanguageSwitcher />
             </Box>
             <AppIcon size={150}/>
-            <Typography variant={"h4"}>{t('login')}</Typography>
-            <Typography variant={"h7"}>{t('loginPageTitle')}</Typography>
+            <Typography variant={"h4"}>{t('loginTitle')}</Typography>
+            <Typography variant={"h7"}>{t('slogan')}</Typography>
             <Card
                 sx={{
                     width: '100%',

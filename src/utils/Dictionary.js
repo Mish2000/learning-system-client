@@ -106,6 +106,8 @@ const resources = {
             usernamePlaceholder: "Enter your username",
             passwordPlaceholder: "Enter your password",
             loginPasswordHelperText: "Do not share your password with anyone else",
+            loginTitle: "Quick Math",
+            slogan: "Think Fast - Solve Faster!",
 
             // Register.jsx
             registerPageTitle: "Create New Account",
@@ -322,6 +324,8 @@ const resources = {
             usernamePlaceholder: "הזן את שם המשתמש שלך",
             passwordPlaceholder: "הזן את הסיסמה שלך",
             loginPasswordHelperText: "נא לא לשתף את סיסמתך עם כל אדם אחר",
+            loginTitle: "חשבון מהיר",
+            slogan: "!לחשוב מהר - לפתור מהר יותר",
 
             // Register.jsx
             registerPageTitle: "צור משתמש חדש",
@@ -372,7 +376,7 @@ const resources = {
 
             // Dynamic Server Content - Topics and Descriptions
             Arithmetic: "חשבון מתקדם",
-            addition: "חיבור",
+            Addition: "חיבור",
             Subtraction: "חיסור",
             Multiplication: "כפל",
             Division: "חילוק",
