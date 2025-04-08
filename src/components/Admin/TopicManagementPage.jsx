@@ -19,7 +19,7 @@ function TopicManagementPage() {
     const fetchAllParentTopics = async () => {
         try {
             const res = await axios.get(`${SERVER_URL}/topics`);
-            const parentTopics = res.data; // top-level
+            const parentTopics = res.data;
 
             for (let parent of parentTopics) {
                 const subRes = await axios.get(`${SERVER_URL}/topics?parentId=${parent.id}`);
