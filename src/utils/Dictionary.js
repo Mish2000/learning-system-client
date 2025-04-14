@@ -48,6 +48,10 @@ const resources = {
             noQuestionLoaded: "No question loaded",
             failedToSubmitAnswer: "Failed to submit answer",
             subtract: "Subtract",
+            askAiSolution: "Ask AI for an Alternative Solution",
+            loadingAiSolution: "Contacting the AI model, please wait...",
+            failedToGetAiSolution: "Failed to retrieve AI solution. Please try again.",
+            alternativeSolutionFromAi: "Alternative Solution from AI",
 
             // PracticePage.jsx
             timeToPractice: "Time to practice!",
@@ -267,6 +271,12 @@ const resources = {
             loadingQuestionData: "טוען את נתוני השאלה...",
             noQuestionLoaded: "לא נטענה שאלה",
             failedToSubmitAnswer: "שליחת תשובה נכשלה",
+            // In the "he" section:
+            askAiSolution: "בינה מלאכותית לפתרון מפורט יותר",
+            loadingAiSolution: "הבינה חושבת, התעזר בסבלנות...",
+            failedToGetAiSolution: "הבקשה נכשלה, נסה שוב מאוחר יותר.",
+            alternativeSolutionFromAi: "פתרון מבוסס בינה מלאכותית",
+
 
             // PracticePage.jsx
             timeToPractice: "הגיע הזמן לתרגל!",

@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import {Box, Typography, Stack, Card} from '@mui/material';
 import QuestionGenerator from "./QuestionGenerator.jsx";
 import {useTranslation} from "react-i18next";
-import {GET_DIRECTION} from "../../../utils/Constants.js";
 
 function PracticePage({ onLogout }) {
     const { t,i18n } = useTranslation();
