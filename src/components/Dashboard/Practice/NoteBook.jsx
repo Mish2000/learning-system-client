@@ -14,6 +14,26 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import 'katex/dist/katex.min.css';
 
+const concatSmart = (prev, next) => {
+    if (!prev) return next;
+
+    const lastChar = prev.at(-1);
+    const firstChar = next[0] || '';
+
+    if (/\s/.test(lastChar) || /\s/.test(firstChar)) return prev + next;
+    if (/[.,;:!?()\[\]{}"'`]/.test(lastChar) || /[.,;:!?()\[\]{}"'`]/.test(firstChar)) return prev + next;
+
+    const isAlnum = (c) => /[A-Za-z0-9]/.test(c);
+
+    if (isAlnum(lastChar) && isAlnum(firstChar)) {
+        if (/\d/.test(lastChar) && /\d/.test(firstChar)) {
+            return prev + next;
+        }
+        return prev + ' ' + next;
+    }
+    return prev + next;
+};
+
 function NoteBook() {
     const { questionId } = useParams();
     const myFont = "Gloria Hallelujah";
@@ -104,15 +124,9 @@ function NoteBook() {
         }
     }, [isClicked, answerPartOne, answerPartTwo, userAnswerPart1, userAnswerPart2]);
 
-    function isValidDouble(val) {
-        return /^\d+(\.\d*)?$/.test(val);
-    }
-    function isFractions() {
-        return (answerPartOne === "Numerator" && answerPartTwo === "Denominator");
-    }
-    function isOnlyDigitsMeansInteger(str) {
-        return /^\d+$/.test(str);
-    }
+    const isValidDouble = (val) => /^\d+(\.\d*)?$/.test(val);
+    const isFractions = () => (answerPartOne === "Numerator" && answerPartTwo === "Denominator");
+    const isOnlyDigitsMeansInteger = (str) => /^\d+$/.test(str);
 
     const handleSubmitAnswer = async () => {
         if (!question) {
@@ -157,30 +171,6 @@ function NoteBook() {
         }
     };
 
-    function postProcessSpacing(text) {
-        if (!text) return "";
-        let result = text;
-        result = result.replace(/([.,;!?])([^\s.,;!?])/g, "$1 $2");
-        result = result.replace(/(#{1,6})(\d)/g, "$1 $2");
-        result = result.replace(/\s{2,}/g, " ");
-
-        return result.trim();
-    }
-
-    function smartAppend(prev, newChunk) {
-        if (!prev) return newChunk;
-
-        const lastChar = prev.slice(-1);
-        const firstChar = newChunk[0] || "";
-        const lastIsAlnum = /[a-zA-Z0-9]/.test(lastChar);
-        const firstIsAlnum = /[a-zA-Z0-9]/.test(firstChar);
-
-        if (lastIsAlnum && firstIsAlnum) {
-            return prev + " " + newChunk;
-        }
-        return prev + newChunk;
-    }
-
     const handleAskAiSolution = () => {
         if (!question) return;
         setErrorAiSolution(null);
@@ -210,16 +200,14 @@ function NoteBook() {
         };
 
         es.addEventListener("chunk", (e) => {
-            interimText = smartAppend(interimText, e.data);
+            interimText = concatSmart(interimText, e.data);
             setAiSolution(interimText);
         });
 
         es.addEventListener("done", () => {
             es.close();
             setLoadingAiSolution(false);
-
-            const fixed = postProcessSpacing(interimText);
-            setAiSolution(fixed);
+            setAiSolution(interimText.trim());
         });
     };
 
@@ -266,11 +254,11 @@ function NoteBook() {
                 <Typography sx={{ wordSpacing: 15, fontFamily: myFont }}>
                     {t('question')}: {t(question.questionText)}
                 </Typography>
-                <br/>
+                <br />
                 <Typography sx={{ wordSpacing: 15, fontFamily: myFont }}>
                     {t('yourAnswer')}
                 </Typography>
-                <br/>
+                <br />
 
                 {answerPartOne && answerPartTwo ? (
                     <>
@@ -305,7 +293,7 @@ function NoteBook() {
                     />
                 )}
 
-                <br/><br/>
+                <br /><br />
                 <Button
                     variant="text"
                     sx={{ wordSpacing: 15, fontFamily: myFont, color: "black", fontSize: 25 }}
@@ -334,13 +322,13 @@ function NoteBook() {
                     {t('submitAnswer')}
                 </Button>
 
-                <br/>
+                <br />
                 {responseData && (
                     <Box>
                         <Typography sx={{ fontFamily: myFont, color }}>
                             {t('correct')}? : {isCorrect ? t('yes') : t('no')}
                         </Typography>
-                        <br/>
+                        <br />
                         <Accordion sx={{
                             bgcolor: 'transparent',
                             '& .MuiAccordionSummary-root': { bgcolor: 'transparent' },
@@ -348,7 +336,7 @@ function NoteBook() {
                             border: '2px solid #000000'
                         }}>
                             <AccordionSummary
-                                expandIcon={<ArrowDropDownIcon/>}
+                                expandIcon={<ArrowDropDownIcon />}
                                 aria-controls="panel1-content"
                                 id="panel1-header"
                             >
@@ -360,9 +348,9 @@ function NoteBook() {
                                 <Typography sx={{ fontFamily: myFont }}>
                                     {t('correctAnswer')}: {correctAnswer}
                                 </Typography>
-                                <br/>
+                                <br />
                                 <Typography sx={{ whiteSpace: "break-spaces", fontFamily: myFont }}>
-                                    {t('solutionSteps')}:<br/><br/>{displayedSteps}
+                                    {t('solutionSteps')}:<br /><br />{displayedSteps}
                                 </Typography>
                             </AccordionDetails>
                         </Accordion>
@@ -402,14 +390,14 @@ function NoteBook() {
                                 variant="text"
                                 onClick={handleAskAiSolution}
                                 disabled={!question || loadingAiSolution}
-                                sx={{ marginTop: 2 }}
+                                sx={{ wordSpacing: 15, fontFamily: myFont, color: "black", fontSize: 25 }}
                             >
                                 {t('askAiSolution')}
                             </Button>
 
                             {loadingAiSolution && (
                                 <Box sx={{ margin: 2 }}>
-                                    <Loading/>
+                                    <Loading />
                                     <Typography>{t('loadingAiSolution')}</Typography>
                                 </Box>
                             )}
