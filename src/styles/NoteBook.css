@@ -2,3 +2,11 @@
 input#\:r1\: {
     background-clip: text;
 }
+
+.rtl-notebook .MuiTypography-root,
+.rtl-notebook p,
+.rtl-notebook li {
+    display: block;
+    margin-left: auto !important;
+    margin-right: 0 !important;
+}
