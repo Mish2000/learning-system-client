@@ -229,7 +229,7 @@ const resources = {
     he: {
         translation: {
             // NavBar.jsx
-            quickMath: "Quick Math",
+            quickMath: "חשבון מהיר",
             home: "בית",
             practice: "תרגול",
             statistics: "סטטיסטיקה",
@@ -335,7 +335,7 @@ const resources = {
             passwordPlaceholder: "הזן את הסיסמה שלך",
             loginPasswordHelperText: "נא לא לשתף את סיסמתך עם כל אדם אחר",
             loginTitle: "חשבון מהיר",
-            slogan: "!לחשוב מהר - לפתור מהר יותר",
+            slogan: "לחשוב מהר - לפתור מהר יותר!",
 
             // Register.jsx
             registerPageTitle: "צור משתמש חדש",
@@ -351,7 +351,7 @@ const resources = {
             passwordsMustMatch: "הסיסמאות חייבות להתאים",
 
             // Home.jsx
-            welcomeQuickMath: "!ברוכים הבאים לחשבון מהיר",
+            welcomeQuickMath: "ברוכים הבאים לחשבון מהיר!",
             selfLearningMath: "זו פלטפורמה ללימוד עצמי ותרגול מתמטיקה עם מגוון רחב של נושאים. אנחנו עוזרים לך להבין עם מה אתה מתקשה ונתאים את התרגילים לרמתך. כל זאת כדי שתבין את הדרך לפתור בעיות ולאחר מכן תעבור לרמות קושי גבוהות יותר כדי לשפר את כישורי המתמטיקה שלך. אנו מציעים גם יצירת שאלות דינמית ולוח סטטיסטיקה אישי ונוח",
             homeDescription: "זו פלטפורמה ללימוד עצמי ותרגול מתמטיקה עם מגוון רחב של נושאים...",
             startPracticing: "התחל לתרגל",
