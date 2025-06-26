@@ -147,7 +147,7 @@ function NoteBook() {
                 finalUserAnswer = `${userAnswerPart1},${userAnswerPart2}`;
             }
 
-            await axios.post(
+            const {data: submitRes} = await axios.post(
                 `${SERVER_URL}/questions/submit`,
                 {
                     questionId: question.id,
@@ -156,9 +156,9 @@ function NoteBook() {
                 },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
+            setResponseData(submitRes);
 
-            const updatedQ = await axios.get(`${SERVER_URL}/questions/${question.id}`);
-            setResponseData(updatedQ.data);
+
 
             const prof = await axios.get(`${SERVER_URL}/profile`, {
                 headers: { Authorization: `Bearer ${token}` }
