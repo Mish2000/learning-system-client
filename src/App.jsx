@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import {useState, useEffect, useRef} from 'react';
 import {
     BrowserRouter,
     Navigate,
@@ -13,6 +13,9 @@ import { CacheProvider } from '@emotion/react';
 import createCache from '@emotion/cache';
 import rtlPlugin from 'stylis-plugin-rtl';
 import { prefixer } from 'stylis';
+
+import axios from 'axios';
+import { SERVER_URL } from './utils/Constants.js';
 
 import Login from './components/Auth/Login.jsx';
 import Register from './components/Auth/Register.jsx';
@@ -48,10 +51,7 @@ function App() {
     const [cache, setCache]       = useState(createEmotionCache(theme.direction));
 
     useEffect(() => {
-        document.documentElement.setAttribute(
-            'dir',
-            language === 'he' ? 'rtl' : 'ltr'
-        );
+        document.documentElement.setAttribute('dir', language === 'he' ? 'rtl' : 'ltr');
     }, [language]);
 
     useEffect(() => {
@@ -64,22 +64,63 @@ function App() {
         return () => i18n.off('languageChanged', onLangChange);
     }, []);
 
-    const [token, setToken] = useState(localStorage.getItem('jwtToken') || null);
-    const [role,  setRole ] = useState(localStorage.getItem('role')     || null);
+    // === Auth state (cookie-based) ===
+    const [isAuth, setIsAuth] = useState(null); // null = unknown, true/false otherwise
+    const [role,  setRole ]   = useState(null);
 
-    const handleLogout = () => {
-        localStorage.removeItem('jwtToken');
-        localStorage.removeItem('role');
-        setToken(null);
+    const refreshAuthState = async () => {
+        try {
+            const { data } = await axios.get(`${SERVER_URL}/auth/me`, { withCredentials: true });
+            setIsAuth(true);
+            setRole(data?.role?.replace('ROLE_', '') || null);
+        } catch {
+            setIsAuth(false);
+            setRole(null);
+        }
+    };
+
+    const didRun = useRef(false);
+    useEffect(() => {
+        if (didRun.current) return;
+        didRun.current = true;
+
+        const path = window.location.pathname;
+        const onAuthScreens = (path === LOGIN_URL) || (path === REGISTER_URL) || (path === '/');
+        if (onAuthScreens) {
+            setIsAuth(false);
+            setRole(null);
+            return;
+        }
+        // Only check /auth/me for real app routes
+        refreshAuthState();
+    }, []);
+
+    const handleLogout = async () => {
+        try {
+            await axios.post(`${SERVER_URL}/auth/logout`, null, { withCredentials: true });
+        } catch { /* ignore */ }
+        setIsAuth(false);
         setRole(null);
     };
 
-    const handleLoginSuccess = (newToken, newRole) => {
-        localStorage.setItem('jwtToken', newToken);
-        localStorage.setItem('role', newRole);
-        setToken(newToken);
-        setRole(newRole);
+    const handleLoginSuccess = async () => {
+        // After successful /auth/login (cookies set), resolve auth via /auth/me
+        await refreshAuthState();
     };
+
+    // Optional small loader while auth state is unknown on protected screens only
+    const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
+    const onAuthScreens = (currentPath === LOGIN_URL || currentPath === REGISTER_URL);
+    if (isAuth === null && !onAuthScreens) {
+        return (
+            <CacheProvider value={cache}>
+                <ThemeProvider theme={theme}>
+                    <CssBaseline />
+                    <div />
+                </ThemeProvider>
+            </CacheProvider>
+        );
+    }
 
     return (
         <CacheProvider value={cache}>
@@ -87,39 +128,36 @@ function App() {
                 <CssBaseline />
                 <BrowserRouter>
                     <Routes>
-                        {token ? (
+                        {isAuth ? (
                             <Route path={LOGIN_URL} element={<Navigate to={HOME_URL} replace />} />
                         ) : (
-                            <Route
-                                path={LOGIN_URL}
-                                element={<Login onLoginSuccess={handleLoginSuccess} />}
-                            />
+                            <Route path={LOGIN_URL} element={<Login onLoginSuccess={handleLoginSuccess} />} />
                         )}
 
                         <Route path={REGISTER_URL} element={<Register />} />
 
-                        {!token && (
+                        {!isAuth && (
                             <>
-                                <Route path={STATISTICS_URL} element={<Navigate to={LOGIN_URL} />} />
-                                <Route path={PRACTICE_URL}   element={<Navigate to={LOGIN_URL} />} />
-                                <Route path={PROFILE_URL}    element={<Navigate to={LOGIN_URL} />} />
+                                <Route path={STATISTICS_URL} element={<Navigate to={LOGIN_URL} replace />} />
+                                <Route path={PRACTICE_URL}   element={<Navigate to={LOGIN_URL} replace />} />
+                                <Route path={PROFILE_URL}    element={<Navigate to={LOGIN_URL} replace />} />
                             </>
                         )}
 
-                        {token && (
+                        {isAuth && (
                             <Route element={<NavBar />}>
-                                <Route path={HOME_URL}                        element={<Home />} />
-                                <Route path={STATISTICS_URL}                  element={<CombinedDashboard role={role} onLogout={handleLogout} />} />
-                                <Route path={PRACTICE_URL}                    element={<PracticePage onLogout={handleLogout} />} />
-                                <Route path={`${PRACTICE_URL}/:questionId`}   element={<NoteBook />} />
-                                <Route path={`${PRACTICE_URL}/:id`}           element={<NoteBook />} />
-                                <Route path={PROFILE_URL}                     element={<ProfilePage />} />
+                                <Route path={HOME_URL}                      element={<Home />} />
+                                <Route path={STATISTICS_URL}                element={<CombinedDashboard role={role} onLogout={handleLogout} />} />
+                                <Route path={PRACTICE_URL}                  element={<PracticePage onLogout={handleLogout} />} />
+                                <Route path={`${PRACTICE_URL}/:questionId`} element={<NoteBook />} />
+                                <Route path={`${PRACTICE_URL}/:id`}         element={<NoteBook />} />
+                                <Route path={PROFILE_URL}                   element={<ProfilePage />} />
                                 {role === 'ADMIN' && (
                                     <Route path="/manage-topics" element={<TopicManagementPage />} />
                                 )}
                             </Route>
                         )}
-
+                        <Route path="/" element={<Navigate to={LOGIN_URL} replace />} />
                         <Route path="*" element={<Error404 />} />
                     </Routes>
                 </BrowserRouter>

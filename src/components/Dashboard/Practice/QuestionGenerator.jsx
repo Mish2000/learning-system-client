@@ -8,7 +8,7 @@ import {useNavigate} from "react-router-dom";
 import {GET_DIRECTION, PRACTICE_URL, SERVER_URL} from "../../../utils/Constants.js";
 import {useTranslation} from "react-i18next";
 
-function QuestionGenerator({ onQuestionGenerated }) {
+function QuestionGenerator({onQuestionGenerated}) {
     const [difficulty, setDifficulty] = useState('');
     const [parentTopics, setParentTopics] = useState([]);
     const [subTopics, setSubTopics] = useState([]);
@@ -17,7 +17,7 @@ function QuestionGenerator({ onQuestionGenerated }) {
     const [isGeometry, setIsGeometry] = useState(false);
     const [isAdmin] = useState(localStorage.getItem('role') === 'ADMIN');
     const navigate = useNavigate();
-    const { t ,i18n} = useTranslation();
+    const {t, i18n} = useTranslation();
 
     useEffect(() => {
         fetchParents();
@@ -68,16 +68,9 @@ function QuestionGenerator({ onQuestionGenerated }) {
                     ? parseInt(selectedParent)
                     : null;
 
-            const token = localStorage.getItem('jwtToken');
             const response = await axios.post(
                 `${SERVER_URL}/questions/generate`,
-                {
-                    topicId: topicId,
-                    difficultyLevel: difficulty
-                },
-                {
-                    headers: { Authorization: `Bearer ${token}` }
-                }
+                {topicId, difficultyLevel: difficulty},
             );
             const questionData = response.data;
 
@@ -97,20 +90,13 @@ function QuestionGenerator({ onQuestionGenerated }) {
         const newDesc = prompt(t('description'), '');
         const descValue = newDesc === null ? '' : newDesc;
 
-        const token = localStorage.getItem('jwtToken');
         try {
-            await axios.post(
-                `${SERVER_URL}/topics`,
-                {
-                    name: newName,
-                    description: descValue,
-                    difficultyLevel: 'BASIC',
-                    parentId: null
-                },
-                {
-                    headers: { Authorization: `Bearer ${token}` }
-                }
-            );
+            await axios.post(`${SERVER_URL}/topics`, {
+                name: newName,
+                description: descValue,
+                difficultyLevel: 'BASIC',
+                parentId: null
+            });
             alert(t('topicCreatedSuccessfully'));
             fetchParents();
         } catch (error) {
@@ -130,20 +116,9 @@ function QuestionGenerator({ onQuestionGenerated }) {
         const newDesc = prompt(t('description'), '');
         const descValue = newDesc === null ? '' : newDesc;
 
-        const token = localStorage.getItem('jwtToken');
+
         try {
-            await axios.post(
-                `${SERVER_URL}/topics`,
-                {
-                    name: newName,
-                    description: descValue,
-                    difficultyLevel: 'BASIC',
-                    parentId: parseInt(selectedParent)
-                },
-                {
-                    headers: { Authorization: `Bearer ${token}` }
-                }
-            );
+            await axios.post(`${SERVER_URL}/topics`, { name: newName, description: descValue, difficultyLevel: 'BASIC', parentId: parseInt(selectedParent) });
             alert(t('topicCreatedSuccessfully'));
             fetchSubTopics(selectedParent);
         } catch (error) {
@@ -153,13 +128,14 @@ function QuestionGenerator({ onQuestionGenerated }) {
     };
 
     return (
-        <Box sx={{ margin: '10px', display: 'flex', flexDirection: 'column' }}>
-            <Typography sx={{ marginTop: '20px' }} variant="h5" align="center">
+        <Box sx={{margin: '10px', display: 'flex', flexDirection: 'column'}}>
+            <Typography sx={{marginTop: '20px'}} variant="h5" align="center">
                 {t('pleaseGenerateQuestion')}
             </Typography>
             {isAdmin && (
                 <>
-                    <Typography variant="h6" sx={{textAlign: "center", direction: GET_DIRECTION(i18n.language),mt: 2, mb: 1 }}>
+                    <Typography variant="h6"
+                                sx={{textAlign: "center", direction: GET_DIRECTION(i18n.language), mt: 2, mb: 1}}>
                         {t('parentTopics')}
                     </Typography>
                     <TopicList
@@ -178,11 +154,11 @@ function QuestionGenerator({ onQuestionGenerated }) {
                 }}
             />
 
-            <Box sx={{ marginLeft: '30px', minWidth: 12 }}>
+            <Box sx={{marginLeft: '30px', minWidth: 12}}>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={4}>
                         <Typography>{t('questionType')}:</Typography>
-                        <FormControl variant="standard" sx={{ m: 1, minWidth: 150 }}>
+                        <FormControl variant="standard" sx={{m: 1, minWidth: 150}}>
                             <InputLabel>{t('selectType')}</InputLabel>
                             <Select
                                 value={selectedParent}
@@ -201,7 +177,7 @@ function QuestionGenerator({ onQuestionGenerated }) {
                         <Typography>
                             {t(isGeometry ? 'shapeType' : 'operatorType')}:
                         </Typography>
-                        <FormControl variant="standard" sx={{ m: 1, minWidth: 150 }}>
+                        <FormControl variant="standard" sx={{m: 1, minWidth: 150}}>
                             <InputLabel>{t('selectType')}</InputLabel>
                             <Select
                                 value={selectedSubtopic}
@@ -219,7 +195,7 @@ function QuestionGenerator({ onQuestionGenerated }) {
 
                     <Grid item xs={12} sm={4}>
                         <Typography>{t('difficulty')}:</Typography>
-                        <FormControl variant="standard" sx={{ m: 1, minWidth: 150 }}>
+                        <FormControl variant="standard" sx={{m: 1, minWidth: 150}}>
                             <InputLabel>{t('selectDifficulty')}</InputLabel>
                             <Select
                                 value={difficulty}
@@ -255,7 +231,7 @@ function QuestionGenerator({ onQuestionGenerated }) {
                     </Button>
                 </Box>
             )}
-            <br />
+            <br/>
             <Button
                 variant="contained"
                 onClick={handleGenerate}

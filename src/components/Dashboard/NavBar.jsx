@@ -10,38 +10,36 @@ import {HOME_URL, LOGIN_URL, PRACTICE_URL, PROFILE_URL, SERVER_URL, STATISTICS_U
 import CalculateIcon from '@mui/icons-material/Calculate';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import HomeIcon from '@mui/icons-material/Home';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import {useEffect, useState} from "react";
 import NotificationCenter from "../Common/NotificationCenter.jsx";
 import axios from "axios";
 
 export default function NavBar() {
-    const { t } = useTranslation();
+    const {t} = useTranslation();
     const location = useLocation();
     const navigate = useNavigate();
     const [userData, setUserData] = useState(null);
-    const [sseSource, setSseSource] = useState(null);
+    const [, setSseSource] = useState(null);
 
-    const rawRole = localStorage.getItem('role') || '';
-    const role = rawRole.replace('ROLE_', '');
+    const role = (userData?.role || '').replace('ROLE_', '');
 
-    const handleLogout = () => {
-        localStorage.removeItem('jwtToken');
-        localStorage.removeItem('role');
-        navigate(LOGIN_URL);
+    const handleLogout = async () => {
+        try {
+            await axios.post(`${SERVER_URL}/auth/logout`, null, {withCredentials: true});
+        } catch { /* empty */
+        }
+        +navigate(LOGIN_URL);
         window.location.reload();
     };
 
     useEffect(() => {
-        const token = localStorage.getItem('jwtToken');
-        if (!token) return;
-
-        const eventSource = new EventSource(`${SERVER_URL}/notifications/stream?token=${token}`);
+        const eventSource = new EventSource(`${SERVER_URL}/notifications/stream`, {withCredentials: true});
         setSseSource(eventSource);
 
         eventSource.addEventListener('notification', event => {
             const newNotification = JSON.parse(event.data);
-            window.dispatchEvent(new CustomEvent('server-notification', { detail: newNotification }));
+            window.dispatchEvent(new CustomEvent('server-notification', {detail: newNotification}));
         });
 
         eventSource.onerror = () => {
@@ -49,18 +47,11 @@ export default function NavBar() {
             eventSource.close();
         };
 
-        axios
-            .get(`${SERVER_URL}/profile`, { headers: { Authorization: `Bearer ${token}` } })
-            .then((resp) => {
-                setUserData(resp.data);
-            })
-            .catch((err) => {
-                console.error('Failed to fetch user profile in NavBar', err);
-            });
+        axios.get(`${SERVER_URL}/profile`)
+            .then((resp) => setUserData(resp.data))
+            .catch((err) => console.error('Failed to fetch user profile in NavBar', err));
 
-        return () => {
-            eventSource.close();
-        };
+        return () => eventSource.close();
     }, []);
 
     let avatarUrl = null;
@@ -81,7 +72,7 @@ export default function NavBar() {
                         }}
                     >
                         <Stack direction="row" spacing={2} alignItems="center">
-                            <AppIcon size={50} />
+                            <AppIcon size={50}/>
                             <Typography variant="h6" component="div">
                                 {t('quickMath')}
                             </Typography>
@@ -95,7 +86,7 @@ export default function NavBar() {
                                 }}
                                 onClick={() => navigate(HOME_URL)}
                             >
-                                <HomeIcon />
+                                <HomeIcon/>
                                 {t('home')}
                             </Button>
 
@@ -106,7 +97,7 @@ export default function NavBar() {
                                 }}
                                 onClick={() => navigate(PRACTICE_URL)}
                             >
-                                <CalculateIcon />
+                                <CalculateIcon/>
                                 {t('practice')}
                             </Button>
 
@@ -117,7 +108,7 @@ export default function NavBar() {
                                 }}
                                 onClick={() => navigate(STATISTICS_URL)}
                             >
-                                <BarChartIcon />
+                                <BarChartIcon/>
                                 {t('statistics')}
                             </Button>
 
@@ -128,7 +119,7 @@ export default function NavBar() {
                                 }}
                                 onClick={() => navigate(PROFILE_URL)}
                             >
-                                <PersonIcon />
+                                <PersonIcon/>
                                 {t('profile')}
                             </Button>
 
@@ -144,11 +135,11 @@ export default function NavBar() {
                                 </Button>
                             )}
 
-                            <NotificationCenter />
+                            <NotificationCenter/>
 
                             {userData && (
                                 <Stack direction="row" spacing={1} alignItems="center">
-                                    <Avatar alt="User Avatar" src={avatarUrl || undefined} />
+                                    <Avatar alt="User Avatar" src={avatarUrl || undefined}/>
                                     <Typography variant="body1">
                                         {userData.username}
                                     </Typography>
@@ -156,18 +147,18 @@ export default function NavBar() {
                             )}
 
                             <Button
-                                sx={{ textTransform: 'inherit' }}
+                                sx={{textTransform: 'inherit'}}
                                 color="inherit"
                                 onClick={handleLogout}
                             >
-                                <LogoutIcon />
+                                <LogoutIcon/>
                                 {t('logOut')}
                             </Button>
                         </Stack>
                     </Box>
                 </Toolbar>
             </AppBar>
-            <Outlet />
+            <Outlet/>
         </Stack>
     );
 }

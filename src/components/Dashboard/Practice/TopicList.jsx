@@ -1,26 +1,27 @@
-import {Box, Stack, Table, TableBody, TableCell, TableRow, Typography} from "@mui/material";
-import {useTranslation} from "react-i18next";
+import { Box, Stack, Table, TableBody, TableCell, TableRow, Typography, IconButton } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import PropTypes from "prop-types";
-import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import axios from "axios";
-import {SERVER_URL} from "../../../utils/Constants.js";
-import {useState} from "react";
+import { SERVER_URL } from "../../../utils/Constants.js";
+import { useEffect, useState } from "react";
 
 function TopicList({ topics, onDeleted }) {
     const { t } = useTranslation();
-    const [isAdmin] = useState(localStorage.getItem('role') === 'ADMIN');
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    useEffect(() => {
+        // derive role from the server (cookie-based session)
+        axios.get(`${SERVER_URL}/profile`)
+            .then(r => setIsAdmin((r.data.role || '').includes('ADMIN')))
+            .catch(() => setIsAdmin(false));
+    }, []);
 
     const deleteTopic = async (topicId) => {
-        const token = localStorage.getItem('jwtToken');
         try {
-            await axios.delete(`${SERVER_URL}/topics/${topicId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await axios.delete(`${SERVER_URL}/topics/${topicId}`);
             alert(t('topicDeleted'));
-            if (onDeleted) {
-                onDeleted();
-            }
+            onDeleted && onDeleted();
         } catch (error) {
             console.error('Failed to delete topic', error);
             alert(t('topicDeletionFailed'));
@@ -57,11 +58,14 @@ function TopicList({ topics, onDeleted }) {
                 <TableBody>
                     {topics.map((topic) => {
                         const translatedName = t(topic.name) || topic.name;
+
+                        // Try a "{name}Description" key first; if not found, fall back to the raw description (and run through t() just in case).
                         const descKey = topic.name + 'Description';
                         let finalDescription = t(descKey);
                         if (finalDescription === descKey) {
                             finalDescription = t(topic.description) || topic.description;
                         }
+
                         const translatedDiff = t(topic.difficultyLevel) || topic.difficultyLevel;
 
                         return (
@@ -69,9 +73,7 @@ function TopicList({ topics, onDeleted }) {
                                 <TableCell>
                                     <Stack direction="row" spacing={2} alignItems="center">
                                         <Box>
-                                            <Typography variant="h6">
-                                                {translatedName}
-                                            </Typography>
+                                            <Typography variant="h6">{translatedName}</Typography>
                                             <Typography variant="body2">
                                                 {finalDescription} ({t('difficulty')}: {translatedDiff})
                                             </Typography>
@@ -81,6 +83,7 @@ function TopicList({ topics, onDeleted }) {
                                             <IconButton
                                                 color="error"
                                                 onClick={() => deleteTopic(topic.id)}
+                                                aria-label={t('deleteTopic')}
                                             >
                                                 <DeleteIcon />
                                             </IconButton>
@@ -102,5 +105,3 @@ TopicList.propTypes = {
 };
 
 export default TopicList;
-
-

@@ -2,12 +2,13 @@ import { Box, Typography, Button, Stack } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import {STATISTICS_URL, LOGIN_URL, PRACTICE_URL, PROFILE_URL, REGISTER_URL} from '../../utils/Constants.js';
 import {useTranslation} from "react-i18next";
+import {useState} from "react";
 
 function Home() {
     const navigate = useNavigate();
-    const token = localStorage.getItem('jwtToken');
-    const role  = localStorage.getItem('role');
     const { t } = useTranslation();
+
+    const [isAuth] = useState(false);
 
     return (
         <Box
@@ -34,7 +35,7 @@ function Home() {
                 {t('selfLearningMath')}
             </Typography>
 
-            {!token && (
+            {!isAuth && (
                 <Stack spacing={2} direction="row">
                     <Button
                         variant="contained"
@@ -51,7 +52,7 @@ function Home() {
                 </Stack>
             )}
 
-            {token && (
+            {isAuth && (
                 <Stack spacing={2} direction="row">
                     <Button
                         variant="contained"

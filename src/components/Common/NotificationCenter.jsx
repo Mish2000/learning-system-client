@@ -22,6 +22,7 @@ function NotificationCenter() {
             setSnackbarOpen(true);
             console.log("Got SSE custom event in NotificationCenter:", e.detail);
         }
+
         window.addEventListener('server-notification', handleNewNotification);
         return () => {
             window.removeEventListener('server-notification', handleNewNotification);
@@ -30,11 +31,7 @@ function NotificationCenter() {
 
     const fetchNotifications = async () => {
         try {
-            const token = localStorage.getItem('jwtToken');
-            if (!token) return;
-            const res = await axios.get(`${SERVER_URL}/notifications`, {
-                headers: {Authorization: `Bearer ${token}`},
-            });
+            const res = await axios.get(`${SERVER_URL}/notifications`);
             setNotifications(res.data.slice(0, 15));
         } catch (error) {
             console.error('Error fetching notifications', error);
@@ -46,12 +43,7 @@ function NotificationCenter() {
 
     const handleMarkAsRead = async (notificationId) => {
         try {
-            const token = localStorage.getItem('jwtToken');
-            await axios.post(
-                `${SERVER_URL}/notifications/markRead/${notificationId}`,
-                null,
-                {headers: {Authorization: `Bearer ${token}`}}
-            );
+            await axios.post(`${SERVER_URL}/notifications/markRead/${notificationId}`);
             setNotifications((prev) =>
                 prev.map((notif) =>
                     notif.id === notificationId ? {...notif, isRead: true} : notif
@@ -72,13 +64,7 @@ function NotificationCenter() {
 
     const clearAllNotifications = async () => {
         try {
-            const token = localStorage.getItem('jwtToken');
-            if (!token) return;
-
-            await axios.delete(`${SERVER_URL}/notifications/clearAll`, {
-                headers: {Authorization: `Bearer ${token}`}
-            });
-
+            await axios.delete(`${SERVER_URL}/notifications/clearAll`);
             setNotifications([]);
         } catch (error) {
             console.error('Error clearing notifications', error);

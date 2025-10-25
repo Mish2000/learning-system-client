@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import {Box, Stack, Table, TableBody, TableCell, TableRow, Typography} from "@mui/material";
 import {useTranslation} from "react-i18next";
+import {SERVER_URL} from "../../utils/Constants.js";
 
 function AdminDashboardSSE() {
     const [dashboardData, setDashboardData] = useState(null);
@@ -10,7 +11,7 @@ function AdminDashboardSSE() {
         const token = localStorage.getItem('jwtToken');
         if (!token) return;
 
-        const source = new EventSource(`http://localhost:8080/api/sse/admin-dashboard?token=${token}`);
+        const source = new EventSource(`${SERVER_URL}/sse/admin-dashboard`, { withCredentials: true });
         source.addEventListener('adminDashboard', event => {
             setDashboardData(JSON.parse(event.data));
         });

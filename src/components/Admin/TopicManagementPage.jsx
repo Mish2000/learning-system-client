@@ -37,17 +37,7 @@ function TopicManagementPage() {
             return;
         }
         try {
-            const token = localStorage.getItem('jwtToken');
-            await axios.post(
-                `${SERVER_URL}/topics`,
-                {
-                    name: topicName,
-                    description,
-                    difficultyLevel,
-                    parentId: parentId ? parseInt(parentId) : null
-                },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            await axios.post(`${SERVER_URL}/topics`, { name: topicName, description, difficultyLevel, parentId: parentId ? parseInt(parentId) : null });
             alert(t('topicCreatedSuccessfully'));
             setTopicName('');
             setDescription('');
@@ -62,10 +52,7 @@ function TopicManagementPage() {
 
     const handleDeleteTopic = async (id) => {
         try {
-            const token = localStorage.getItem('jwtToken');
-            await axios.delete(`${SERVER_URL}/topics/${id}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await axios.delete(`${SERVER_URL}/topics/${id}`);
             alert(t('topicDeleted'));
             fetchAllParentTopics();
         } catch (error) {

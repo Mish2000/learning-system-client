@@ -16,28 +16,31 @@ function Register() {
 
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
-    const [email, setEmail] = useState("");
+    const [email, setEmail]       = useState("");
     const [password, setPassword] = useState("");
-    const [repeat, setRepeat] = useState("");
+    const [repeat, setRepeat]     = useState("");
+
     const [alertVisible, setAlertVisible] = useState(false);
-    const [error, setError] = useState("");
-    const [success, setSuccess] = useState(false);
+    const [error, setError]               = useState("");
+    const [success, setSuccess]           = useState(false);
 
     const usernameError = (username.length > 0 && !usernameRegex.test(username));
-    const emailError = (email.length > 0 && !emailRegex.test(email));
+    const emailError    = (email.length > 0 && !emailRegex.test(email));
     const passwordError = (password.length > 0 && !passwordRegex.test(password));
-    const repeatError = (repeat.length > 0 && repeat !== password);
+    const repeatError   = (repeat.length > 0 && repeat !== password);
 
-    const noError = !usernameError && !emailError && !passwordError && !repeatError;
+    const noError  = !usernameError && !emailError && !passwordError && !repeatError;
     const notEmpty = username && email && password && repeat === password;
 
     async function createAccount() {
         const data = await registerUser(username, email, password);
         if (data.status === 200) {
             setSuccess(true);
-            setTimeout(() => navigate(LOGIN_URL), 2000);
+            // ✅ Show success on the login screen and redirect immediately (no delay)
+            sessionStorage.setItem('postRegisterMessage', t('registerSuccess'));
+            navigate(LOGIN_URL, { replace: true });
         } else {
-            setError(data.response.data.message || "Registration failed");
+            setError(data.response?.data?.message || "Registration failed");
         }
     }
 
@@ -51,6 +54,7 @@ function Register() {
             <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
                 <LanguageSwitcher />
             </Box>
+
             <Card sx={{ width: '100%', boxShadow: 3 }} variant="outlined">
                 <Stack spacing={2} padding={2}>
                     <Typography variant="h4">
@@ -80,7 +84,7 @@ function Register() {
                     <TextField
                         error={emailError}
                         variant="outlined"
-                        type="text"
+                        type="email"
                         helperText={t('emailHelperText')}
                         label={t('email')}
                         value={email}

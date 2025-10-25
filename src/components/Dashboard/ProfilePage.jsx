@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import {useEffect, useState, useRef} from 'react';
 import axios from 'axios';
 import {
     Typography,
@@ -13,14 +13,14 @@ import {
     Snackbar,
 } from '@mui/material';
 import Loading from '../Common/Loading.jsx';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import CustomAccountCircleIcon from '../Common/CustomAccountCircleIcon.jsx';
 import PasswordTextField from '../Common/PasswordTextField.jsx';
 import PasswordStrengthIndicator from '../Common/PasswordStrengthIndicator.jsx';
-import { GET_DIRECTION, SERVER_URL } from '../../utils/Constants.js';
+import {GET_DIRECTION, SERVER_URL} from '../../utils/Constants.js';
 
 export default function ProfilePage() {
-    const { t, i18n } = useTranslation();
+    const {t, i18n} = useTranslation();
 
     const [profile, setProfile] = useState(null);
     const [language, setLanguage] = useState('');
@@ -50,16 +50,15 @@ export default function ProfilePage() {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const token = localStorage.getItem('jwtToken');
-                if (!token) return;
-
+                // Cookie flow: do NOT gate on localStorage token.
                 const resp = await axios.get(`${SERVER_URL}/profile`, {
-                    headers: { Authorization: `Bearer ${token}` },
+                    withCredentials: true,
                 });
 
                 setProfile(resp.data);
-                setLanguage(resp.data.interfaceLanguage || 'English');
-                setOriginalLanguage(resp.data.interfaceLanguage || 'English');
+                const uiLang = resp.data.interfaceLanguage || 'English';
+                setLanguage(uiLang);
+                setOriginalLanguage(uiLang);
                 setNewUsername(resp.data.username || '');
             } catch (err) {
                 console.error('Failed to fetch profile', err);
@@ -69,7 +68,7 @@ export default function ProfilePage() {
     }, []);
 
     const validateInputs = () => {
-        const newErrors = { username: false, password: false, repeatPassword: false };
+        const newErrors = {username: false, password: false, repeatPassword: false};
         let isValid = true;
 
         if (newUsername && !usernameRegex.test(newUsername)) {
@@ -97,22 +96,13 @@ export default function ProfilePage() {
             return;
         }
         try {
-            const token = localStorage.getItem('jwtToken');
-            if (!token) {
-                setSnackbarSeverity('error');
-                setSnackbarMessage(t('updateFailed'));
-                setSnackbarOpen(true);
-                return;
-            }
 
             if (userImage) {
                 const formData = new FormData();
                 formData.append('image', userImage);
                 await axios.post(`${SERVER_URL}/profile/uploadImage`, formData, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'multipart/form-data',
-                    },
+                    headers: {'Content-Type': 'multipart/form-data'},
+                    withCredentials: true,
                 });
             }
 
@@ -123,10 +113,11 @@ export default function ProfilePage() {
             };
 
             const resp = await axios.put(`${SERVER_URL}/profile`, payload, {
-                headers: { Authorization: `Bearer ${token}` },
+                withCredentials: true,
             });
 
-            if (resp.data.newToken) {
+            // Legacy support (harmless if unused now):
+            if (resp.data?.newToken) {
                 localStorage.setItem('jwtToken', resp.data.newToken);
             }
 
@@ -137,10 +128,15 @@ export default function ProfilePage() {
             setNewPassword('');
             setRepeatPassword('');
 
+            // Refresh the profile view from server (cookie-auth)
             const refreshed = await axios.get(`${SERVER_URL}/profile`, {
-                headers: { Authorization: `Bearer ${resp.data.newToken || token}` },
+                withCredentials: true,
             });
             setProfile(refreshed.data);
+
+            // Reset baselines so the Save button disables when nothing pending
+            setOriginalLanguage(language);
+
         } catch (err) {
             console.error('Failed to update profile', err);
             setSnackbarSeverity('error');
@@ -171,10 +167,10 @@ export default function ProfilePage() {
     if (!profile) {
         return (
             <Box>
-                <Typography variant="h3" sx={{ m: 10 }}>
+                <Typography variant="h3" sx={{m: 10}}>
                     {t('loadingProfile')}
                 </Typography>
-                <Loading />
+                <Loading/>
             </Box>
         );
     }
@@ -209,24 +205,24 @@ export default function ProfilePage() {
                 open={snackbarOpen}
                 autoHideDuration={4000}
                 onClose={() => setSnackbarOpen(false)}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
             >
                 <Alert
                     onClose={() => setSnackbarOpen(false)}
                     severity={snackbarSeverity}
-                    sx={{ width: '100%' }}
+                    sx={{width: '100%'}}
                 >
                     {snackbarMessage}
                 </Alert>
             </Snackbar>
 
-            <Box sx={{ textAlign: 'center', mt: 3 }}>
+            <Box sx={{textAlign: 'center', mt: 3}}>
                 <Typography variant="h4" gutterBottom>
                     {t('profileManagement')}
                 </Typography>
             </Box>
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                 <Box
                     sx={{
                         m: 1,
@@ -245,7 +241,7 @@ export default function ProfilePage() {
                         id="profile-image-upload"
                         type="file"
                         accept="image/*"
-                        style={{ display: 'none' }}
+                        style={{display: 'none'}}
                         onChange={handleImageChange}
                     />
                     {displayImage ? (
@@ -253,14 +249,14 @@ export default function ProfilePage() {
                             component="img"
                             image={displayImage}
                             alt="User Profile"
-                            sx={{ width: '100%', height: 100, objectFit: 'cover' }}
+                            sx={{width: '100%', height: 100, objectFit: 'cover'}}
                         />
                     ) : (
-                        <CustomAccountCircleIcon style={{ width: '100%', height: 100 }} />
+                        <CustomAccountCircleIcon style={{width: '100%', height: 100}}/>
                     )}
                 </Box>
 
-                <Box sx={{ mb: 2 }}>
+                <Box sx={{mb: 2}}>
                     <Typography variant="h6">
                         {t('currentDifficulty')}: {t(profile.currentDifficulty || 'BASIC')}
                         {profile.subDifficultyLevel > 0 && (
@@ -271,7 +267,7 @@ export default function ProfilePage() {
 
                 <Stack
                     spacing={3}
-                    sx={{ direction: GET_DIRECTION(i18n.language), width: '90%', maxWidth: 600 }}
+                    sx={{direction: GET_DIRECTION(i18n.language), width: '90%', maxWidth: 600}}
                 >
                     <TextField
                         label={t('newUsername')}
@@ -290,7 +286,7 @@ export default function ProfilePage() {
                         onChange={(e) => setNewPassword(e.target.value)}
                     />
 
-                    <PasswordStrengthIndicator password={newPassword} />
+                    <PasswordStrengthIndicator password={newPassword}/>
 
                     <PasswordTextField
                         label={t('repeatPassword')}
@@ -305,7 +301,7 @@ export default function ProfilePage() {
                         label={t('interfaceLanguage')}
                         value={language}
                         onClick={handleLanguageMenuOpen}
-                        InputProps={{ readOnly: true }}
+                        InputProps={{readOnly: true}}
                         inputRef={languageRef}
                     />
                     <Menu

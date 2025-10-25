@@ -11,10 +11,7 @@ export default function UserDashboardSSE() {
     const { t } = useTranslation();
 
     useEffect(() => {
-        const token = localStorage.getItem('jwtToken');
-        if (!token) return;
-
-        const source = new EventSource(`${SERVER_URL}/sse/user-dashboard?token=${token}`);
+        const source = new EventSource(`${SERVER_URL}/sse/user-dashboard`, { withCredentials: true });
 
         source.addEventListener('userDashboard', (event) => {
             setDashboardData(JSON.parse(event.data));
@@ -24,9 +21,7 @@ export default function UserDashboardSSE() {
             source.close();
         };
 
-        return () => {
-            source.close();
-        };
+        return () => source.close();
     }, []);
 
     if (!dashboardData) {

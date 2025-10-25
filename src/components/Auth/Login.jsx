@@ -1,5 +1,5 @@
-import {useState} from 'react';
-import {Box, Button, Card, Stack, TextField, Typography} from "@mui/material";
+import {useEffect, useState} from 'react';
+import {Alert, Box, Button, Card, Snackbar, Stack, TextField, Typography} from "@mui/material";
 import {useNavigate} from 'react-router-dom';
 import {HOME_URL, REGISTER_URL, SERVER_URL} from "../../utils/Constants.js";
 import PasswordTextField from "../Common/PasswordTextField.jsx";
@@ -13,40 +13,48 @@ import i18n from "i18next";
 function Login({onLoginSuccess}) {
     const navigate = useNavigate();
     const {t} = useTranslation();
-    const [username, setUsername] = useState("");
+
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loginError, setLoginError] = useState(false);
 
+    // Snackbar for "Registration successful" message passed from Register.jsx
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+
+    useEffect(() => {
+        const msg = sessionStorage.getItem('postRegisterMessage');
+        if (msg) {
+            setSnackbarMessage(msg);
+            setSnackbarOpen(true);
+            sessionStorage.removeItem('postRegisterMessage');
+        }
+    }, []);
+
+    const handleCloseSnackbar = () => setSnackbarOpen(false);
+
     async function handleLogin() {
         try {
-            const response = await axios.post('http://localhost:8080/api/auth/login', {
-                username: username,
-                password: password
-            });
-            const {token, role} = response.data;
-            onLoginSuccess(token, role);
-            setLoginError(false);
-
-            const profResp = await axios.get(`${SERVER_URL}/profile`, {
-                headers: {Authorization: `Bearer ${token}`}
-            });
+            await axios.post(`${SERVER_URL}/auth/login`, { email, password }, { withCredentials: true });
+            const profResp = await axios.get(`${SERVER_URL}/profile`, { withCredentials: true });
             const userLang = profResp.data.interfaceLanguage || 'en';
-
-            if (userLang === 'עברית' || userLang === 'he') {
-                i18n.changeLanguage('he');
+            if (userLang === 'he' || userLang === 'עברית') {
+                await i18n.changeLanguage('he');
                 localStorage.setItem('language', 'he');
             } else {
-                i18n.changeLanguage('en');
+                await i18n.changeLanguage('en');
                 localStorage.setItem('language', 'en');
             }
-            navigate(HOME_URL);
 
+            setLoginError(false);
+            onLoginSuccess && onLoginSuccess(null, profResp.data.role);
+
+            navigate(HOME_URL);
             // eslint-disable-next-line no-unused-vars
         } catch (err) {
             setLoginError(true);
         }
     }
-
 
     return (
         <Box
@@ -58,73 +66,72 @@ function Login({onLoginSuccess}) {
                 minHeight: '100vh',
                 padding: {xs: 0, sm: 4, md: 4, lg: 4},
                 width: '100%',
-                maxWidth: {xs: '90%', sm: '800px'},
-                mx: 'auto',
+                maxWidth: {xs: '90%', sm: '850px'},
+                mx: 'auto'
             }}
         >
-            <Box sx={{position: 'absolute', top: 16, right: 16}}>
-                <LanguageSwitcher/>
+            <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
+                <LanguageSwitcher />
             </Box>
-            <AppIcon size={150}/>
-            <Typography variant={"h4"}>{t('loginTitle')}</Typography>
-            <Typography variant={"h7"}>{t('slogan')}</Typography>
-            <Card
-                sx={{
-                    width: '100%',
-                    boxShadow: 3,
-                }}
-                variant='outlined'
-            >
-                <Stack
-                    spacing={2}
-                    padding={2}
-                >
-                    <Typography
-                        variant="h4"
-                    >
-                        {t('login')}
-                    </Typography>
 
-                    {loginError && <Typography color='error'
-                                               variant="h7"
-                    >
-                        {t('loginFailed')}
-                    </Typography>}
+            <Card sx={{display: "flex", flexDirection: "column", width: '100%', boxShadow: 3}} variant="outlined">
+                <Stack direction={"column"} spacing={2} padding={2}>
+                    <Stack direction={"row"} spacing={2}>
+                        <AppIcon size={70}/>
+                        <Stack margin={1}>
+                            <Typography variant='h4'>{t('loginTitle')}</Typography>
+                            <Typography>{t('slogan')}</Typography>
+                        </Stack>
+                    </Stack>
+
+                    {loginError &&
+                        <Typography color='error' variant="h7">
+                            {t('loginFailed')}
+                        </Typography>
+                    }
+
                     <TextField
                         error={loginError}
-                        variant={"outlined"}
-                        type={"text"}
-                        label={t('username')}
-                        value={username}
-                        onChange={(event) => setUsername(event.target.value)}
+                        variant="outlined"
+                        type="email"
+                        label={t('email')}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                     />
+
                     <PasswordTextField
                         error={loginError}
-                        variant={"outlined"}
-                        type={"password"}
+                        variant="outlined"
+                        type="password"
                         label={t('password')}
                         value={password}
                         helperText={t('loginPasswordHelperText')}
-                        onChange={(event) => setPassword(event.target.value)}
-
+                        onChange={(e) => setPassword(e.target.value)}
                     />
+
                     <Button
                         sx={{textTransform: 'inherit'}}
                         variant='contained'
-                        onClick={() => {
-                            handleLogin();
-                        }}
-                    >{t('login')} </Button>
+                        onClick={handleLogin}
+                    >
+                        {t('login')}
+                    </Button>
 
                     <Button
                         sx={{textTransform: 'inherit'}}
                         variant='text'
-                        onClick={() => {
-                            navigate(REGISTER_URL)
-                        }}
-                    > {t('createAccount')}</Button>
+                        onClick={() => navigate(REGISTER_URL)}
+                    >
+                        {t('createAccount')}
+                    </Button>
                 </Stack>
             </Card>
+
+            <Snackbar open={snackbarOpen} autoHideDuration={4000} onClose={handleCloseSnackbar}>
+                <Alert severity="success" onClose={handleCloseSnackbar} sx={{ width: '100%' }}>
+                    {snackbarMessage || t('registerSuccess')}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 }
@@ -132,6 +139,5 @@ function Login({onLoginSuccess}) {
 Login.propTypes = {
     onLoginSuccess: PropTypes.func,
 };
-
 
 export default Login;

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {
     Accordion,
     AccordionDetails,
@@ -9,7 +9,7 @@ import {
     Typography,
 } from '@mui/material';
 import axios from 'axios';
-import { useNavigate, useParams } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import '../../../styles/Fonts.css';
 import {
     GET_DIRECTION,
@@ -18,8 +18,8 @@ import {
 } from '../../../utils/Constants.js';
 import Loading from '../../Common/Loading.jsx';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { useTranslation } from 'react-i18next';
-import { translateSolutionSteps } from '../../../utils/translateSolutionSteps.js';
+import {useTranslation} from 'react-i18next';
+import {translateSolutionSteps} from '../../../utils/translateSolutionSteps.js';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
@@ -31,7 +31,7 @@ const concatSmart = (prev, next) => {
     const last = prev.at(-1);
     const first = next[0] || '';
     if (/\s/.test(last) || /\s/.test(first)) return prev + next;
-    if (/[.,;:!?()\[\]{}"'`]/.test(last) || /[.,;:!?()\[\]{}"'`]/.test(first))
+    if (/[.,;:!?()[\]{}"'`]/.test(last) || /[.,;:!?()[\]{}"'`]/.test(first))
         return prev + next;
     const isAlnum = (c) => /[A-Za-z0-9]/.test(c);
     if (isAlnum(last) && isAlnum(first)) {
@@ -42,8 +42,8 @@ const concatSmart = (prev, next) => {
 };
 
 function NoteBook() {
-    const { questionId } = useParams();
-    const { t, i18n } = useTranslation();
+    const {questionId} = useParams();
+    const {t, i18n} = useTranslation();
     const navigate = useNavigate();
     const myFont = 'Gloria Hallelujah';
 
@@ -72,7 +72,7 @@ function NoteBook() {
 
     const inputPropsDir = {
         dir: currentDir,
-        style: { textAlign },
+        style: {textAlign},
     };
 
     useEffect(() => {
@@ -86,7 +86,7 @@ function NoteBook() {
                 questionLoadTimeRef.current = Date.now();
 
                 if (res.data.topicId) {
-                    const { data: topic } = await axios.get(
+                    const {data: topic} = await axios.get(
                         `${SERVER_URL}/topics/${res.data.topicId}`
                     );
 
@@ -140,12 +140,11 @@ function NoteBook() {
     const isOnlyDigits = (v) => /^\d+$/.test(v);
     const isFractionMode =
         answerPartOne === 'Numerator' && answerPartTwo === 'Denominator';
-
+    //todo
     const handleSubmitAnswer = async () => {
         if (!question) return;
 
         try {
-            const token = localStorage.getItem('jwtToken');
             const timeTakenSeconds = Math.floor(
                 (Date.now() - questionLoadTimeRef.current) / 1000
             );
@@ -156,20 +155,14 @@ function NoteBook() {
                     ? `${userAnswerPart1}/${userAnswerPart2}`
                     : `${userAnswerPart1},${userAnswerPart2}`);
 
-            const { data } = await axios.post(
-                `${SERVER_URL}/questions/submit`,
-                {
-                    questionId: question.id,
-                    userAnswer: finalUserAnswer,
-                    timeTakenSeconds,
-                },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            const {data} = await axios.post(`${SERVER_URL}/questions/submit`, {
+                questionId: question.id,
+                userAnswer: finalUserAnswer,
+                timeTakenSeconds,
+            });
             setResponseData(data);
 
-            const prof = await axios.get(`${SERVER_URL}/profile`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const prof = await axios.get(`${SERVER_URL}/profile`);
             setDifficulty(prof.data.currentDifficulty);
         } catch (err) {
             console.error('Error submitting answer:', err);
@@ -184,11 +177,8 @@ function NoteBook() {
         setAiSolution('');
         eventSource?.close();
 
-        const token = localStorage.getItem('jwtToken');
-        const url = `${SERVER_URL}/ai/stream?question=${encodeURIComponent(
-            question.questionText
-        )}&token=${token}`;
-        const es = new EventSource(url);
+        const url = `${SERVER_URL}/ai/stream?question=${encodeURIComponent(question.questionText)}`;
+        const es = new EventSource(url, {withCredentials: true});
         setEventSource(es);
 
         let buf = '';
@@ -214,9 +204,9 @@ function NoteBook() {
 
     if (!question) {
         return (
-            <Box sx={{ m: 4 }}>
+            <Box sx={{m: 4}}>
                 <Typography>{t('loadingQuestionData')}</Typography>
-                <Loading />
+                <Loading/>
             </Box>
         );
     }
@@ -240,7 +230,7 @@ function NoteBook() {
             }}
         >
 
-        <Typography
+            <Typography
                 sx={{
                     fontFamily: myFont,
                     fontSize: 20,
@@ -253,14 +243,14 @@ function NoteBook() {
                 {t('currentDifficulty')}: {translatedDifficulty}
             </Typography>
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', fontFamily: myFont, width: '100%' }}>
-                <Typography sx={{ width: '100%', textAlign: 'start' }}>
+            <Box sx={{display: 'flex', flexDirection: 'column', fontFamily: myFont, width: '100%'}}>
+                <Typography sx={{width: '100%', textAlign: 'start'}}>
                     {t('question')}: {t(question.questionText)}
                 </Typography>
 
-                <Typography sx={{ mt: 2, textAlign: 'start' }}>{t('yourAnswer')}</Typography>
+                <Typography sx={{mt: 2, textAlign: 'start'}}>{t('yourAnswer')}</Typography>
 
-                <Box sx={{ mt: 1 }}>
+                <Box sx={{mt: 1}}>
                     {answerPartOne && answerPartTwo ? (
                         <>
                             <TextField
@@ -321,29 +311,29 @@ function NoteBook() {
                 </Button>
 
                 {responseData && (
-                    <Box sx={{ mt: 4 }}>
-                        <Typography sx={{ fontFamily: myFont, color, textAlign: 'start' }}>
+                    <Box sx={{mt: 4}}>
+                        <Typography sx={{fontFamily: myFont, color, textAlign: 'start'}}>
                             {t('correct')}? : {isCorrect ? t('yes') : t('no')}
                         </Typography>
 
                         <Accordion
-                            sx={{ mt: 2, bgcolor: 'transparent', border: '2px solid #000' }}
+                            sx={{mt: 2, bgcolor: 'transparent', border: '2px solid #000'}}
                         >
-                            <AccordionSummary expandIcon={<ArrowDropDownIcon />}>
-                                <Typography sx={{ fontFamily: myFont }}>
+                            <AccordionSummary expandIcon={<ArrowDropDownIcon/>}>
+                                <Typography sx={{fontFamily: myFont}}>
                                     {t('seeStepsAndAnswer')}
                                 </Typography>
                             </AccordionSummary>
                             <AccordionDetails dir={currentDir}>
-                                <Typography sx={{ fontFamily: myFont }}>
+                                <Typography sx={{fontFamily: myFont}}>
                                     {t('correctAnswer')}: {responseData.correctAnswer}
                                 </Typography>
                                 <Typography
-                                    sx={{ whiteSpace: 'break-spaces', mt: 2, fontFamily: myFont }}
+                                    sx={{whiteSpace: 'break-spaces', mt: 2, fontFamily: myFont}}
                                 >
                                     {t('solutionSteps')}:
-                                    <br />
-                                    <br />
+                                    <br/>
+                                    <br/>
                                     {displayedSteps}
                                 </Typography>
                             </AccordionDetails>
@@ -359,18 +349,16 @@ function NoteBook() {
                             }}
                         >
                             <Button
-                                sx={{ fontFamily: myFont, color: 'black', fontSize: 25 }}
+                                sx={{fontFamily: myFont, color: 'black', fontSize: 25}}
                                 onClick={async () => {
                                     try {
                                         setIsClicked(false);
                                         setUserAnswer('');
                                         setResponseData(null);
-                                        const token = localStorage.getItem('jwtToken');
-                                        const { data } = await axios.post(
-                                            `${SERVER_URL}/questions/generate`,
-                                            { topicId: question.topicId ?? null, difficultyLevel: null },
-                                            { headers: { Authorization: `Bearer ${token}` } }
-                                        );
+                                        const {data} = await axios.post(`${SERVER_URL}/questions/generate`, {
+                                            topicId: question?.topicId ?? null,
+                                            difficultyLevel: null
+                                        });
                                         setQuestion(data);
                                     } catch (err) {
                                         console.error('Failed to get next question:', err);
@@ -381,7 +369,7 @@ function NoteBook() {
                             </Button>
 
                             <Button
-                                sx={{ fontFamily: myFont, color: 'black', fontSize: 25 }}
+                                sx={{fontFamily: myFont, color: 'black', fontSize: 25}}
                                 onClick={() => navigate(PRACTICE_URL)}
                             >
                                 {t('changeSubject')}
@@ -391,15 +379,15 @@ function NoteBook() {
                                 variant="text"
                                 onClick={handleAskAiSolution}
                                 disabled={!question || loadingAiSolution}
-                                sx={{ fontFamily: myFont, color: 'black', fontSize: 25 }}
+                                sx={{fontFamily: myFont, color: 'black', fontSize: 25}}
                             >
                                 {t('askAiSolution')}
                             </Button>
                         </Box>
 
                         {loadingAiSolution && (
-                            <Box sx={{ mt: 2 }}>
-                                <Loading />
+                            <Box sx={{mt: 2}}>
+                                <Loading/>
                                 <Typography>{t('loadingAiSolution')}</Typography>
                             </Box>
                         )}
@@ -425,7 +413,7 @@ function NoteBook() {
                                 ref={aiSolutionRef}
                                 dir={currentDir}
                             >
-                                <Typography variant="h6" sx={{ fontFamily: myFont }}>
+                                <Typography variant="h6" sx={{fontFamily: myFont}}>
                                     {t('alternativeSolutionFromAi')}
                                 </Typography>
                                 <ReactMarkdown
