@@ -8,9 +8,6 @@ function AdminDashboardSSE() {
     const { t } = useTranslation();
 
     useEffect(() => {
-        const token = localStorage.getItem('jwtToken');
-        if (!token) return;
-
         const source = new EventSource(`${SERVER_URL}/sse/admin-dashboard`, { withCredentials: true });
         source.addEventListener('adminDashboard', event => {
             setDashboardData(JSON.parse(event.data));
@@ -70,5 +67,3 @@ function AdminDashboardSSE() {
 }
 
 export default AdminDashboardSSE;
-
-

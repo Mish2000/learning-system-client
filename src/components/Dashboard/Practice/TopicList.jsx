@@ -11,15 +11,19 @@ function TopicList({ topics, onDeleted }) {
     const [isAdmin, setIsAdmin] = useState(false);
 
     useEffect(() => {
-        // derive role from the server (cookie-based session)
-        axios.get(`${SERVER_URL}/profile`)
-            .then(r => setIsAdmin((r.data.role || '').includes('ADMIN')))
-            .catch(() => setIsAdmin(false));
+        (async () => {
+            try {
+                const r = await axios.get(`${SERVER_URL}/profile`, { withCredentials: true });
+                setIsAdmin((r.data.role || '').includes('ADMIN'));
+            } catch {
+                setIsAdmin(false);
+            }
+        })();
     }, []);
 
     const deleteTopic = async (topicId) => {
         try {
-            await axios.delete(`${SERVER_URL}/topics/${topicId}`);
+            await axios.delete(`${SERVER_URL}/topics/${topicId}`, { withCredentials: true });
             alert(t('topicDeleted'));
             onDeleted && onDeleted();
         } catch (error) {

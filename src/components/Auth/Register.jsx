@@ -1,10 +1,10 @@
-import {useState} from 'react';
-import {Alert, Box, Button, Card, Stack, TextField, Typography} from "@mui/material";
-import {useNavigate} from 'react-router-dom';
+import { useState } from 'react';
+import { Alert, Box, Button, Card, Stack, TextField, Typography } from "@mui/material";
+import { useNavigate } from 'react-router-dom';
 import PasswordTextField from "../Common/PasswordTextField.jsx";
-import {LOGIN_URL} from "../../utils/Constants.js";
-import {registerUser} from '../../services/UserAPI.js';
-import {useTranslation} from "react-i18next";
+import { LOGIN_URL } from "../../utils/Constants.js";
+import { registerUser } from '../../services/UserAPI.js';
+import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../Common/LanguageSwitcher.jsx";
 import PasswordStrengthIndicator from "../Common/PasswordStrengthIndicator.jsx";
 
@@ -33,14 +33,19 @@ function Register() {
     const notEmpty = username && email && password && repeat === password;
 
     async function createAccount() {
-        const data = await registerUser(username, email, password);
-        if (data.status === 200) {
-            setSuccess(true);
-            // ✅ Show success on the login screen and redirect immediately (no delay)
-            sessionStorage.setItem('postRegisterMessage', t('registerSuccess'));
-            navigate(LOGIN_URL, { replace: true });
-        } else {
-            setError(data.response?.data?.message || "Registration failed");
+        try {
+            const ok = await registerUser({ username, email, password });
+            if (ok) {
+                setSuccess(true);
+                // Show success on the login screen and redirect immediately
+                sessionStorage.setItem('postRegisterMessage', t('registerSuccess'));
+                navigate(LOGIN_URL, { replace: true });
+            } else {
+                setError(t('registrationError'));
+            }
+            // eslint-disable-next-line no-unused-vars
+        } catch (e) {
+            setError(t('registrationError'));
         }
     }
 
@@ -104,7 +109,7 @@ function Register() {
 
                     <PasswordTextField
                         error={repeatError}
-                        helperText={repeatError ? "Passwords must match!" : ""}
+                        helperText={repeatError ? t('passwordsMustMatch') : ''}
                         variant="outlined"
                         type="password"
                         label={t('repeatPassword')}

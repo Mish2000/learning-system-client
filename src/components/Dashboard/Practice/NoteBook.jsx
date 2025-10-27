@@ -1,10 +1,9 @@
-import {useEffect, useRef, useState} from 'react';
+import {forwardRef, useEffect, useRef, useState} from 'react';
 import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
     Box,
-    Button,
     TextField,
     Typography,
 } from '@mui/material';
@@ -25,6 +24,20 @@ import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
+import MuiButton from '@mui/material/Button';
+
+const coerceDisabled = (value) => {
+    if (typeof value === 'object') {
+        return value ? Object.keys(value).length > 0 : false;
+    }
+    return !!value;
+};
+
+const Button = forwardRef(function Button(props, ref) {
+    // eslint-disable-next-line react/prop-types
+    const { disabled, ...rest } = props;
+    return <MuiButton ref={ref} disabled={coerceDisabled(disabled)} {...rest} />;
+});
 
 const concatSmart = (prev, next) => {
     if (!prev) return next;
@@ -140,7 +153,7 @@ function NoteBook() {
     const isOnlyDigits = (v) => /^\d+$/.test(v);
     const isFractionMode =
         answerPartOne === 'Numerator' && answerPartTwo === 'Denominator';
-    //todo
+
     const handleSubmitAnswer = async () => {
         if (!question) return;
 
@@ -178,25 +191,43 @@ function NoteBook() {
         eventSource?.close();
 
         const url = `${SERVER_URL}/ai/stream?question=${encodeURIComponent(question.questionText)}`;
-        const es = new EventSource(url, {withCredentials: true});
+        const es = new EventSource(url, { withCredentials: true });
         setEventSource(es);
 
+        let finished = false;
         let buf = '';
-        es.addEventListener('chunk', (e) => {
+
+        const onChunk = (e) => {
             buf = concatSmart(buf, e.data);
             setAiSolution(buf);
-        });
-        es.addEventListener('done', () => {
+        };
+
+        const onStatus = (e) => {
+            setAiSolution(prev => (prev ? `${prev}\n${e.data}` : e.data));
+        };
+
+        const onDone = () => {
+            finished = true;
+            es.removeEventListener('error', onError);
             es.close();
             setLoadingAiSolution(false);
             setAiSolution(buf.trim());
-        });
-        es.onerror = () => {
+        };
+
+        const onError = () => {
+            // If server already closed cleanly, ignore the late error tick
+            if (finished) return;
             es.close();
             setLoadingAiSolution(false);
             setErrorAiSolution(t('failedToGetAiSolution'));
         };
+
+        es.addEventListener('chunk', onChunk);
+        es.addEventListener('status', onStatus);
+        es.addEventListener('done', onDone);
+        es.addEventListener('error', onError);
     };
+
 
     useEffect(() => {
         aiSolutionRef.current?.scrollTo(0, aiSolutionRef.current.scrollHeight);

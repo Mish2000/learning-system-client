@@ -25,7 +25,7 @@ function QuestionGenerator({onQuestionGenerated}) {
 
     const fetchParents = async () => {
         try {
-            const response = await axios.get(`${SERVER_URL}/topics`);
+            const response = await axios.get(`${SERVER_URL}/topics`, { withCredentials: true });
             setParentTopics(response.data);
         } catch (error) {
             console.error('Failed to fetch parent topics', error);
@@ -39,7 +39,10 @@ function QuestionGenerator({onQuestionGenerated}) {
             return;
         }
         try {
-            const response = await axios.get(`${SERVER_URL}/topics?parentId=${parentId}`);
+            const response = await axios.get(
+                `${SERVER_URL}/topics`,
+                { params: { parentId }, withCredentials: true }
+            );
             setSubTopics(response.data);
         } catch (error) {
             console.error('Failed to fetch subtopics', error);

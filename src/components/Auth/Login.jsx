@@ -1,18 +1,25 @@
-import {useEffect, useState} from 'react';
-import {Alert, Box, Button, Card, Snackbar, Stack, TextField, Typography} from "@mui/material";
-import {useNavigate} from 'react-router-dom';
-import {HOME_URL, REGISTER_URL, SERVER_URL} from "../../utils/Constants.js";
+import { useEffect, useState } from 'react';
+import { Alert, Box, Button, Card, Snackbar, Stack, TextField, Typography } from "@mui/material";
+import { useNavigate } from 'react-router-dom';
+import { REGISTER_URL, STATISTICS_URL, SERVER_URL } from "../../utils/Constants.js";
 import PasswordTextField from "../Common/PasswordTextField.jsx";
 import AppIcon from "../Common/AppIcon.jsx";
 import axios from "axios";
 import PropTypes from 'prop-types';
-import {useTranslation} from "react-i18next";
-import LanguageSwitcher from "../Common/LanguageSwitcher.jsx";
+import { useTranslation } from "react-i18next";
 import i18n from "i18next";
+import LanguageSwitcher from "../Common/LanguageSwitcher.jsx";
 
-function Login({onLoginSuccess}) {
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+function setCookie(name, value, days = 365) {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
+}
+
+function Login({ onLoginSuccess }) {
     const navigate = useNavigate();
-    const {t} = useTranslation();
+    const { t } = useTranslation();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -35,23 +42,31 @@ function Login({onLoginSuccess}) {
 
     async function handleLogin() {
         try {
+            if (!emailRegex.test(email.trim())) {
+                setLoginError(true);
+                return;
+            }
+
             await axios.post(`${SERVER_URL}/auth/login`, { email, password }, { withCredentials: true });
+
+            // Fetch profile to capture interfaceLanguage (and optionally role, etc.)
             const profResp = await axios.get(`${SERVER_URL}/profile`, { withCredentials: true });
-            const userLang = profResp.data.interfaceLanguage || 'en';
-            if (userLang === 'he' || userLang === 'עברית') {
+            const userLang = (profResp?.data?.interfaceLanguage || 'en').toLowerCase();
+
+            if (userLang.startsWith('he') || userLang === 'עברית') {
                 await i18n.changeLanguage('he');
-                localStorage.setItem('language', 'he');
+                setCookie('language', 'he');
             } else {
                 await i18n.changeLanguage('en');
-                localStorage.setItem('language', 'en');
+                setCookie('language', 'en');
             }
 
             setLoginError(false);
-            onLoginSuccess && onLoginSuccess(null, profResp.data.role);
+            onLoginSuccess && onLoginSuccess(null, profResp?.data?.role);
 
-            navigate(HOME_URL);
-            // eslint-disable-next-line no-unused-vars
-        } catch (err) {
+            // Redirect to landing/dashboard
+            navigate(STATISTICS_URL, { replace: true });
+        } catch {
             setLoginError(true);
         }
     }
@@ -59,25 +74,20 @@ function Login({onLoginSuccess}) {
     return (
         <Box
             sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                minHeight: '100vh',
-                padding: {xs: 0, sm: 4, md: 4, lg: 4},
-                width: '100%',
-                maxWidth: {xs: '90%', sm: '850px'},
-                mx: 'auto'
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                minHeight: '100vh', padding: { xs: 0, sm: 4, md: 4, lg: 4 }, width: '100%',
+                maxWidth: { xs: '90%', sm: '850px' }, mx: 'auto'
             }}
         >
+            {/* Top-right language selector (public) */}
             <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
                 <LanguageSwitcher />
             </Box>
 
-            <Card sx={{display: "flex", flexDirection: "column", width: '100%', boxShadow: 3}} variant="outlined">
+            <Card sx={{ display: "flex", flexDirection: "column", width: '100%', boxShadow: 3 }} variant="outlined">
                 <Stack direction={"column"} spacing={2} padding={2}>
                     <Stack direction={"row"} spacing={2}>
-                        <AppIcon size={70}/>
+                        <AppIcon size={70} />
                         <Stack margin={1}>
                             <Typography variant='h4'>{t('loginTitle')}</Typography>
                             <Typography>{t('slogan')}</Typography>
@@ -109,19 +119,11 @@ function Login({onLoginSuccess}) {
                         onChange={(e) => setPassword(e.target.value)}
                     />
 
-                    <Button
-                        sx={{textTransform: 'inherit'}}
-                        variant='contained'
-                        onClick={handleLogin}
-                    >
+                    <Button sx={{ textTransform: 'inherit' }} variant='contained' onClick={handleLogin}>
                         {t('login')}
                     </Button>
 
-                    <Button
-                        sx={{textTransform: 'inherit'}}
-                        variant='text'
-                        onClick={() => navigate(REGISTER_URL)}
-                    >
+                    <Button sx={{ textTransform: 'inherit' }} variant='text' onClick={() => navigate(REGISTER_URL)}>
                         {t('createAccount')}
                     </Button>
                 </Stack>

@@ -1,14 +1,13 @@
 import { Box, Typography, Button, Stack } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import {STATISTICS_URL, LOGIN_URL, PRACTICE_URL, PROFILE_URL, REGISTER_URL} from '../../utils/Constants.js';
-import {useTranslation} from "react-i18next";
-import {useState} from "react";
+import { LOGIN_URL, REGISTER_URL } from '../../utils/Constants.js';
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "../Common/LanguageSwitcher.jsx";
+
 
 function Home() {
     const navigate = useNavigate();
     const { t } = useTranslation();
-
-    const [isAuth] = useState(false);
 
     return (
         <Box
@@ -16,11 +15,17 @@ function Home() {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                justifyContent: 'center',
                 minHeight: '60vh',
-                gap: 8
+                gap: 8,
+                px: 2,
+                pt: 2
             }}
         >
+            {/* Top-right language selector (public) */}
+            <Box sx={{ alignSelf: 'flex-end' }}>
+                <LanguageSwitcher />
+            </Box>
+
             <Typography variant="h4">{t('welcomeQuickMath')}</Typography>
 
             <Typography
@@ -35,50 +40,16 @@ function Home() {
                 {t('selfLearningMath')}
             </Typography>
 
-            {!isAuth && (
-                <Stack spacing={2} direction="row">
-                    <Button
-                        variant="contained"
-                        onClick={() => navigate(LOGIN_URL)}
-                    >
-                        {t('login')}
-                    </Button>
-                    <Button
-                        variant="outlined"
-                        onClick={() => navigate(REGISTER_URL)}
-                    >
-                        {t('register')}
-                    </Button>
-                </Stack>
-            )}
-
-            {isAuth && (
-                <Stack spacing={2} direction="row">
-                    <Button
-                        variant="contained"
-                        onClick={() => navigate(PRACTICE_URL)}
-                    >
-                        {t('startPracticing')}
-                    </Button>
-                    <Button
-                        variant="contained"
-                        onClick={() => navigate(PROFILE_URL)}
-                    >
-                        {t('goToProfilePage')}
-                    </Button>
-                    <Button
-                        variant="contained"
-                        onClick={() => navigate(STATISTICS_URL)}
-                    >
-                        {t('seeYourStatistics')}
-                    </Button>
-                </Stack>
-            )}
+            <Stack spacing={2} direction="row">
+                <Button variant="contained" onClick={() => navigate(LOGIN_URL)}>
+                    {t('login')}
+                </Button>
+                <Button variant="outlined" onClick={() => navigate(REGISTER_URL)}>
+                    {t('register')}
+                </Button>
+            </Stack>
         </Box>
     );
 }
 
-
 export default Home;
-
-

@@ -1,22 +1,22 @@
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import {Avatar, Box, Button, Stack} from "@mui/material";
+import { Avatar, Box, Button, Stack } from "@mui/material";
 import AppIcon from "../Common/AppIcon.jsx";
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
-import {Outlet, useLocation, useNavigate} from "react-router-dom";
-import {HOME_URL, LOGIN_URL, PRACTICE_URL, PROFILE_URL, SERVER_URL, STATISTICS_URL} from "../../utils/Constants.js";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { HOME_URL, LOGIN_URL, PRACTICE_URL, PROFILE_URL, SERVER_URL, STATISTICS_URL } from "../../utils/Constants.js";
 import CalculateIcon from '@mui/icons-material/Calculate';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import HomeIcon from '@mui/icons-material/Home';
-import {useTranslation} from 'react-i18next';
-import {useEffect, useState} from "react";
+import { useTranslation } from 'react-i18next';
+import { useEffect, useState } from "react";
 import NotificationCenter from "../Common/NotificationCenter.jsx";
 import axios from "axios";
 
 export default function NavBar() {
-    const {t} = useTranslation();
+    const { t } = useTranslation();
     const location = useLocation();
     const navigate = useNavigate();
     const [userData, setUserData] = useState(null);
@@ -26,20 +26,19 @@ export default function NavBar() {
 
     const handleLogout = async () => {
         try {
-            await axios.post(`${SERVER_URL}/auth/logout`, null, {withCredentials: true});
-        } catch { /* empty */
-        }
-        +navigate(LOGIN_URL);
+            await axios.post(`${SERVER_URL}/auth/logout`, null, { withCredentials: true });
+        } catch { /* ignore */ }
+        navigate(LOGIN_URL);
         window.location.reload();
     };
 
     useEffect(() => {
-        const eventSource = new EventSource(`${SERVER_URL}/notifications/stream`, {withCredentials: true});
+        const eventSource = new EventSource(`${SERVER_URL}/notifications/stream`, { withCredentials: true });
         setSseSource(eventSource);
 
         eventSource.addEventListener('notification', event => {
             const newNotification = JSON.parse(event.data);
-            window.dispatchEvent(new CustomEvent('server-notification', {detail: newNotification}));
+            window.dispatchEvent(new CustomEvent('server-notification', { detail: newNotification }));
         });
 
         eventSource.onerror = () => {
@@ -72,7 +71,7 @@ export default function NavBar() {
                         }}
                     >
                         <Stack direction="row" spacing={2} alignItems="center">
-                            <AppIcon size={50}/>
+                            <AppIcon size={50} />
                             <Typography variant="h6" component="div">
                                 {t('quickMath')}
                             </Typography>
@@ -86,7 +85,7 @@ export default function NavBar() {
                                 }}
                                 onClick={() => navigate(HOME_URL)}
                             >
-                                <HomeIcon/>
+                                <HomeIcon />
                                 {t('home')}
                             </Button>
 
@@ -97,7 +96,7 @@ export default function NavBar() {
                                 }}
                                 onClick={() => navigate(PRACTICE_URL)}
                             >
-                                <CalculateIcon/>
+                                <CalculateIcon />
                                 {t('practice')}
                             </Button>
 
@@ -108,7 +107,7 @@ export default function NavBar() {
                                 }}
                                 onClick={() => navigate(STATISTICS_URL)}
                             >
-                                <BarChartIcon/>
+                                <BarChartIcon />
                                 {t('statistics')}
                             </Button>
 
@@ -119,7 +118,7 @@ export default function NavBar() {
                                 }}
                                 onClick={() => navigate(PROFILE_URL)}
                             >
-                                <PersonIcon/>
+                                <PersonIcon />
                                 {t('profile')}
                             </Button>
 
@@ -135,11 +134,11 @@ export default function NavBar() {
                                 </Button>
                             )}
 
-                            <NotificationCenter/>
+                            <NotificationCenter />
 
                             {userData && (
                                 <Stack direction="row" spacing={1} alignItems="center">
-                                    <Avatar alt="User Avatar" src={avatarUrl || undefined}/>
+                                    <Avatar alt="User Avatar" src={avatarUrl || undefined} />
                                     <Typography variant="body1">
                                         {userData.username}
                                     </Typography>
@@ -147,19 +146,18 @@ export default function NavBar() {
                             )}
 
                             <Button
-                                sx={{textTransform: 'inherit'}}
+                                sx={{ textTransform: 'inherit' }}
                                 color="inherit"
                                 onClick={handleLogout}
                             >
-                                <LogoutIcon/>
+                                <LogoutIcon />
                                 {t('logOut')}
                             </Button>
                         </Stack>
                     </Box>
                 </Toolbar>
             </AppBar>
-            <Outlet/>
+            <Outlet />
         </Stack>
     );
 }
-

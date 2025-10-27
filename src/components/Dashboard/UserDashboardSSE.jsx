@@ -43,16 +43,17 @@ export default function UserDashboardSSE() {
 
             <Typography variant="body1" sx={{ mb: 2 }}>
                 {t('currentDifficulty')}: {t(dashboardData.currentDifficulty || 'BASIC')}
-                {dashboardData.subDifficultyLevel > 0 && (
-                    <> ({t('subLevel')} {dashboardData.subDifficultyLevel})</>
-                )}
             </Typography>
+
+            {/* New field (will appear after backend refactor). If absent, nothing breaks. */}
+            {dashboardData.overallProgressLevel && (
+                <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+                    {t('overallProgressLevel')}: {t(dashboardData.overallProgressLevel)}
+                </Typography>
+            )}
 
             <ChartSuccessRateByTopic data={dashboardData} />
             <ChartTotalSuccessRate data={dashboardData} />
         </Box>
     );
 }
-
-
-

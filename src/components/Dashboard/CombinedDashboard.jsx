@@ -1,19 +1,12 @@
 import PropTypes from 'prop-types';
-import { Button, Box, Typography } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { Box } from '@mui/material';
 import UserDashboardSSE from './UserDashboardSSE';
 import AdminDashboardSSE from './AdminDashboardSSE';
 
-function CombinedDashboard({ role, onLogout }) {
-    const navigate = useNavigate();
-
+function CombinedDashboard({ role }) {
     return (
         <Box sx={{ marginTop: 0, width: '100%', textAlign: 'center' }}>
-
-            {role === 'USER' && (
-                    <UserDashboardSSE />
-
-            )}
+            {role === 'USER' && <UserDashboardSSE />}
 
             {role === 'ADMIN' && (
                 <Box sx={{
@@ -32,14 +25,12 @@ function CombinedDashboard({ role, onLogout }) {
                     </Box>
                 </Box>
             )}
-
         </Box>
     );
 }
 
 CombinedDashboard.propTypes = {
-    role: PropTypes.string,
-    onLogout: PropTypes.func
+    role: PropTypes.string
 };
 
 export default CombinedDashboard;

@@ -9,13 +9,13 @@ import {
     CssBaseline,
     ThemeProvider,
 } from '@mui/material';
-import { CacheProvider } from '@emotion/react';
+import {CacheProvider} from '@emotion/react';
 import createCache from '@emotion/cache';
 import rtlPlugin from 'stylis-plugin-rtl';
-import { prefixer } from 'stylis';
+import {prefixer} from 'stylis';
 
 import axios from 'axios';
-import { SERVER_URL } from './utils/Constants.js';
+import {SERVER_URL} from './utils/Constants.js';
 
 import Login from './components/Auth/Login.jsx';
 import Register from './components/Auth/Register.jsx';
@@ -38,6 +38,7 @@ import NoteBook from './components/Dashboard/Practice/NoteBook.jsx';
 import i18n from './utils/Dictionary.js';
 import createAppTheme from './utils/Theme.js';
 import TopicManagementPage from "./components/Admin/TopicManagementPage.jsx";
+import LandingDashboard from "./components/Dashboard/LandingDashboard.jsx";
 
 const createEmotionCache = (dir = 'ltr') =>
     createCache({
@@ -46,9 +47,23 @@ const createEmotionCache = (dir = 'ltr') =>
     });
 
 function App() {
+    // --- Initialize i18n from cookie (if present), then keep reacting to changes ---
     const [language, setLanguage] = useState(i18n.language || 'en');
-    const [theme, setTheme]       = useState(createAppTheme(language));
-    const [cache, setCache]       = useState(createEmotionCache(theme.direction));
+
+    // Read cookie "language" once on mount and sync i18n
+    useEffect(() => {
+        const match = typeof document !== 'undefined'
+            ? document.cookie.match(/(?:^|;\s*)language=([^;]+)/)
+            : null;
+        const cookieLang = match ? decodeURIComponent(match[1]) : null;
+        if (cookieLang && cookieLang !== i18n.language) {
+            i18n.changeLanguage(cookieLang);
+            setLanguage(cookieLang);
+        }
+    }, []);
+
+    const [theme, setTheme] = useState(createAppTheme(language));
+    const [cache, setCache] = useState(createEmotionCache(theme.direction));
 
     useEffect(() => {
         document.documentElement.setAttribute('dir', language === 'he' ? 'rtl' : 'ltr');
@@ -66,11 +81,11 @@ function App() {
 
     // === Auth state (cookie-based) ===
     const [isAuth, setIsAuth] = useState(null); // null = unknown, true/false otherwise
-    const [role,  setRole ]   = useState(null);
+    const [role, setRole] = useState(null);
 
     const refreshAuthState = async () => {
         try {
-            const { data } = await axios.get(`${SERVER_URL}/auth/me`, { withCredentials: true });
+            const {data} = await axios.get(`${SERVER_URL}/auth/me`, {withCredentials: true});
             setIsAuth(true);
             setRole(data?.role?.replace('ROLE_', '') || null);
         } catch {
@@ -85,7 +100,8 @@ function App() {
         didRun.current = true;
 
         const path = window.location.pathname;
-        const onAuthScreens = (path === LOGIN_URL) || (path === REGISTER_URL) || (path === '/');
+        // Treat /home as a public "auth screen" to avoid unnecessary /auth/me 401 on first load
+        const onAuthScreens = (path === LOGIN_URL) || (path === REGISTER_URL) || (path === '/') || (path === HOME_URL);
         if (onAuthScreens) {
             setIsAuth(false);
             setRole(null);
@@ -97,8 +113,9 @@ function App() {
 
     const handleLogout = async () => {
         try {
-            await axios.post(`${SERVER_URL}/auth/logout`, null, { withCredentials: true });
-        } catch { /* ignore */ }
+            await axios.post(`${SERVER_URL}/auth/logout`, null, {withCredentials: true});
+        } catch { /* ignore */
+        }
         setIsAuth(false);
         setRole(null);
     };
@@ -115,8 +132,8 @@ function App() {
         return (
             <CacheProvider value={cache}>
                 <ThemeProvider theme={theme}>
-                    <CssBaseline />
-                    <div />
+                    <CssBaseline/>
+                    <div/>
                 </ThemeProvider>
             </CacheProvider>
         );
@@ -125,40 +142,55 @@ function App() {
     return (
         <CacheProvider value={cache}>
             <ThemeProvider theme={theme}>
-                <CssBaseline />
+                <CssBaseline/>
                 <BrowserRouter>
                     <Routes>
+                        {/* LOGIN / REGISTER */}
                         {isAuth ? (
-                            <Route path={LOGIN_URL} element={<Navigate to={HOME_URL} replace />} />
+                            <Route path={LOGIN_URL} element={<Navigate to={STATISTICS_URL} replace/>}/>
                         ) : (
-                            <Route path={LOGIN_URL} element={<Login onLoginSuccess={handleLoginSuccess} />} />
+                            <Route path={LOGIN_URL} element={<Login onLoginSuccess={handleLoginSuccess}/>}/>
                         )}
+                        <Route path={REGISTER_URL} element={<Register/>}/>
 
-                        <Route path={REGISTER_URL} element={<Register />} />
+                        {/* PUBLIC HOME (no NavBar) */}
+                        <Route path={HOME_URL} element={<Home/>}/>
 
+                        {/* REDIRECTS for unauthenticated users hitting protected routes */}
                         {!isAuth && (
                             <>
-                                <Route path={STATISTICS_URL} element={<Navigate to={LOGIN_URL} replace />} />
-                                <Route path={PRACTICE_URL}   element={<Navigate to={LOGIN_URL} replace />} />
-                                <Route path={PROFILE_URL}    element={<Navigate to={LOGIN_URL} replace />} />
+                                <Route path={STATISTICS_URL} element={<Navigate to={LOGIN_URL} replace/>}/>
+                                <Route path={PRACTICE_URL} element={<Navigate to={LOGIN_URL} replace/>}/>
+                                <Route path={PROFILE_URL} element={<Navigate to={LOGIN_URL} replace/>}/>
+                                <Route path={`${PRACTICE_URL}/:questionId`}
+                                       element={<Navigate to={LOGIN_URL} replace/>}/>
+                                <Route path={`${PRACTICE_URL}/:id`} element={<Navigate to={LOGIN_URL} replace/>}/>
+                                <Route path="/manage-topics" element={<Navigate to={LOGIN_URL} replace/>}/>
                             </>
                         )}
 
+                        {/* AUTHENTICATED AREA (with NavBar) */}
                         {isAuth && (
-                            <Route element={<NavBar />}>
-                                <Route path={HOME_URL}                      element={<Home />} />
-                                <Route path={STATISTICS_URL}                element={<CombinedDashboard role={role} onLogout={handleLogout} />} />
-                                <Route path={PRACTICE_URL}                  element={<PracticePage onLogout={handleLogout} />} />
-                                <Route path={`${PRACTICE_URL}/:questionId`} element={<NoteBook />} />
-                                <Route path={`${PRACTICE_URL}/:id`}         element={<NoteBook />} />
-                                <Route path={PROFILE_URL}                   element={<ProfilePage />} />
+                            <Route element={<NavBar/>}>
+                                {/* Intentionally NO /home here, so Home never shows NavBar */}
+                                <Route path="/dashboard" element={<LandingDashboard/>}/>
+                                <Route path={STATISTICS_URL}
+                                       element={<CombinedDashboard role={role} onLogout={handleLogout}/>}/>
+                                <Route path={PRACTICE_URL} element={<PracticePage onLogout={handleLogout}/>}/>
+                                <Route path={`${PRACTICE_URL}/:questionId`} element={<NoteBook/>}/>
+                                <Route path={`${PRACTICE_URL}/:id`} element={<NoteBook/>}/>
+                                <Route path={PROFILE_URL} element={<ProfilePage/>}/>
                                 {role === 'ADMIN' && (
-                                    <Route path="/manage-topics" element={<TopicManagementPage />} />
+                                    <Route path="/manage-topics" element={<TopicManagementPage/>}/>
                                 )}
                             </Route>
                         )}
-                        <Route path="/" element={<Navigate to={LOGIN_URL} replace />} />
-                        <Route path="*" element={<Error404 />} />
+
+                        {/* ROOT: if not auth → /home (public). if auth → a sensible protected default */}
+                        <Route path="/" element={<Navigate to={isAuth ? STATISTICS_URL : HOME_URL} replace/>}/>
+
+                        {/* 404 */}
+                        <Route path="*" element={<Error404/>}/>
                     </Routes>
                 </BrowserRouter>
             </ThemeProvider>
