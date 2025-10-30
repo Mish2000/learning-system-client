@@ -175,8 +175,7 @@ function NoteBook() {
             });
             setResponseData(data);
 
-            const prof = await axios.get(`${SERVER_URL}/profile`);
-            setDifficulty(prof.data.currentDifficulty);
+            // Removed /profile fetch; the next loaded question will carry its difficulty
         } catch (err) {
             console.error('Error submitting answer:', err);
             alert(t('failedToSubmitAnswer'));
@@ -215,7 +214,6 @@ function NoteBook() {
         };
 
         const onError = () => {
-            // If server already closed cleanly, ignore the late error tick
             if (finished) return;
             es.close();
             setLoadingAiSolution(false);
@@ -227,7 +225,6 @@ function NoteBook() {
         es.addEventListener('done', onDone);
         es.addEventListener('error', onError);
     };
-
 
     useEffect(() => {
         aiSolutionRef.current?.scrollTo(0, aiSolutionRef.current.scrollHeight);
@@ -387,10 +384,12 @@ function NoteBook() {
                                         setUserAnswer('');
                                         setResponseData(null);
                                         const {data} = await axios.post(`${SERVER_URL}/questions/generate`, {
-                                            topicId: question?.topicId ?? null,
-                                            difficultyLevel: null
+                                            topicId: question?.topicId ?? null
                                         });
                                         setQuestion(data);
+                                        setDifficulty(data.difficultyLevel);
+                                        // keep URL in sync with the new question
+                                        navigate(`/practice/${data.id}`);
                                     } catch (err) {
                                         console.error('Failed to get next question:', err);
                                     }

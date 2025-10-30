@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {Box, Typography} from "@mui/material";
+import {Box, Typography, Divider} from "@mui/material";
 import ChartTotalSuccessRate from "./Statistics/ChartTotalSuccessRate.jsx";
 import ChartSuccessRateByTopic from "./Statistics/ChartSuccessRateByTopic.jsx";
 import Loading from "../Common/Loading.jsx";
@@ -11,16 +11,19 @@ export default function UserDashboardSSE() {
     const { t } = useTranslation();
 
     useEffect(() => {
-        const source = new EventSource(`${SERVER_URL}/sse/user-dashboard`, { withCredentials: true });
+        const source = new EventSource(`${SERVER_URL.replace('/api','')}/api/sse/user-dashboard`, { withCredentials: true });
 
-        source.addEventListener('userDashboard', (event) => {
-            setDashboardData(JSON.parse(event.data));
+        source.addEventListener('userDashboard', (e) => {
+            try {
+                setDashboardData(JSON.parse(e.data));
+            } catch {
+                // ignore malformed packet
+            }
         });
 
         source.onerror = () => {
             source.close();
         };
-
         return () => source.close();
     }, []);
 
@@ -35,6 +38,9 @@ export default function UserDashboardSSE() {
         );
     }
 
+    const topicDiff = dashboardData.topicDifficulty || {};
+    const subtopicDiff = dashboardData.subtopicDifficulty || {};
+
     return (
         <Box>
             <Typography variant="h5" gutterBottom>
@@ -45,13 +51,44 @@ export default function UserDashboardSSE() {
                 {t('currentDifficulty')}: {t(dashboardData.currentDifficulty || 'BASIC')}
             </Typography>
 
-            {/* New field (will appear after backend refactor). If absent, nothing breaks. */}
             {dashboardData.overallProgressLevel && (
                 <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
                     {t('overallProgressLevel')}: {t(dashboardData.overallProgressLevel)}
                 </Typography>
             )}
 
+            {Object.keys(topicDiff).length > 0 && (
+                <>
+                    <Divider sx={{ my: 2 }} />
+                    <Typography variant="h6" sx={{ mb: 1 }}>{t('topicDifficulties')}</Typography>
+                    <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1 }}>
+                        {Object.entries(topicDiff).map(([name, lvl]) => (
+                            <Box key={name} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <Typography>{t(name)}</Typography>
+                                <Typography sx={{ fontWeight: 600 }}>{t(lvl)}</Typography>
+                            </Box>
+                        ))}
+                    </Box>
+                </>
+            )}
+
+            {/* NEW: Live difficulty by Subtopic */}
+            {Object.keys(subtopicDiff).length > 0 && (
+                <>
+                    <Divider sx={{ my: 2 }} />
+                    <Typography variant="h6" sx={{ mb: 1 }}>{t('subtopicDifficulties')}</Typography>
+                    <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1 }}>
+                        {Object.entries(subtopicDiff).map(([name, lvl]) => (
+                            <Box key={name} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <Typography>{t(name)}</Typography>
+                                <Typography sx={{ fontWeight: 600 }}>{t(lvl)}</Typography>
+                            </Box>
+                        ))}
+                    </Box>
+                </>
+            )}
+
+            <Divider sx={{ my: 3 }} />
             <ChartSuccessRateByTopic data={dashboardData} />
             <ChartTotalSuccessRate data={dashboardData} />
         </Box>

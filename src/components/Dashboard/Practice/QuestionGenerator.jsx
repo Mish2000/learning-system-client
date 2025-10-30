@@ -9,7 +9,7 @@ import {GET_DIRECTION, PRACTICE_URL, SERVER_URL} from "../../../utils/Constants.
 import {useTranslation} from "react-i18next";
 
 function QuestionGenerator({onQuestionGenerated}) {
-    const [difficulty, setDifficulty] = useState('');
+    // removed difficulty state – auto-selected by backend
     const [parentTopics, setParentTopics] = useState([]);
     const [subTopics, setSubTopics] = useState([]);
     const [selectedParent, setSelectedParent] = useState('');
@@ -73,7 +73,7 @@ function QuestionGenerator({onQuestionGenerated}) {
 
             const response = await axios.post(
                 `${SERVER_URL}/questions/generate`,
-                {topicId, difficultyLevel: difficulty},
+                { topicId }, // difficulty removed – backend decides
             );
             const questionData = response.data;
 
@@ -119,9 +119,13 @@ function QuestionGenerator({onQuestionGenerated}) {
         const newDesc = prompt(t('description'), '');
         const descValue = newDesc === null ? '' : newDesc;
 
-
         try {
-            await axios.post(`${SERVER_URL}/topics`, { name: newName, description: descValue, difficultyLevel: 'BASIC', parentId: parseInt(selectedParent) });
+            await axios.post(`${SERVER_URL}/topics`, {
+                name: newName,
+                description: descValue,
+                difficultyLevel: 'BASIC',
+                parentId: parseInt(selectedParent)
+            });
             alert(t('topicCreatedSuccessfully'));
             fetchSubTopics(selectedParent);
         } catch (error) {
@@ -159,7 +163,7 @@ function QuestionGenerator({onQuestionGenerated}) {
 
             <Box sx={{marginLeft: '30px', minWidth: 12}}>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} sm={4}>
+                    <Grid item xs={12} sm={6}>
                         <Typography>{t('questionType')}:</Typography>
                         <FormControl variant="standard" sx={{m: 1, minWidth: 150}}>
                             <InputLabel>{t('selectType')}</InputLabel>
@@ -176,7 +180,7 @@ function QuestionGenerator({onQuestionGenerated}) {
                         </FormControl>
                     </Grid>
 
-                    <Grid item xs={12} sm={4}>
+                    <Grid item xs={12} sm={6}>
                         <Typography>
                             {t(isGeometry ? 'shapeType' : 'operatorType')}:
                         </Typography>
@@ -192,22 +196,6 @@ function QuestionGenerator({onQuestionGenerated}) {
                                         {t(topic.name)}
                                     </MenuItem>
                                 ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
-
-                    <Grid item xs={12} sm={4}>
-                        <Typography>{t('difficulty')}:</Typography>
-                        <FormControl variant="standard" sx={{m: 1, minWidth: 150}}>
-                            <InputLabel>{t('selectDifficulty')}</InputLabel>
-                            <Select
-                                value={difficulty}
-                                onChange={(e) => setDifficulty(e.target.value)}
-                            >
-                                <MenuItem value="BASIC">{t('basic')}</MenuItem>
-                                <MenuItem value="EASY">{t('easy')}</MenuItem>
-                                <MenuItem value="MEDIUM">{t('medium')}</MenuItem>
-                                <MenuItem value="ADVANCED">{t('advanced')}</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>
@@ -238,11 +226,7 @@ function QuestionGenerator({onQuestionGenerated}) {
             <Button
                 variant="contained"
                 onClick={handleGenerate}
-                disabled={
-                    !selectedParent
-                    || !selectedSubtopic
-                    || !difficulty
-                }
+                disabled={!selectedParent || !selectedSubtopic}
             >
                 {t('generate')}
             </Button>
