@@ -1,10 +1,13 @@
-import {useState, useEffect} from 'react';
-import {IconButton, Badge, Menu, MenuItem, ListItemText, Chip, Divider, Box, Snackbar, Alert} from '@mui/material';
+import { useState, useEffect } from 'react';
+import {
+    IconButton, Badge, Menu, MenuItem, ListItemText,
+    Chip, Divider, Box, Snackbar, Alert
+} from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import axios from 'axios';
-import {SERVER_URL} from '../../utils/Constants';
+import { SERVER_URL } from '../../utils/Constants.js';
 
-function NotificationCenter() {
+export default function NotificationCenter() {
     const [notifications, setNotifications] = useState([]);
     const [anchorEl, setAnchorEl] = useState(null);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -17,12 +20,12 @@ function NotificationCenter() {
     useEffect(() => {
         function handleNewNotification(e) {
             const newNotif = e.detail;
-            setNotifications((prev) => [newNotif, ...prev]);
-            setSnackbarMessage("New Notification: " + newNotif.message);
+            setNotifications(prev => [newNotif, ...prev]);
+            setSnackbarMessage('New Notification: ' + (newNotif?.message ?? ''));
             setSnackbarOpen(true);
-            console.log("Got SSE custom event in NotificationCenter:", e.detail);
         }
 
+        // NavBar dispatches 'server-notification' on SSE 'notification' event
         window.addEventListener('server-notification', handleNewNotification);
         return () => {
             window.removeEventListener('server-notification', handleNewNotification);
@@ -31,8 +34,8 @@ function NotificationCenter() {
 
     const fetchNotifications = async () => {
         try {
-            const res = await axios.get(`${SERVER_URL}/notifications`);
-            setNotifications(res.data.slice(0, 15));
+            const res = await axios.get(`${SERVER_URL}/notifications`, { withCredentials: true });
+            setNotifications((res.data || []).slice(0, 15));
         } catch (error) {
             console.error('Error fetching notifications', error);
         }
@@ -43,10 +46,10 @@ function NotificationCenter() {
 
     const handleMarkAsRead = async (notificationId) => {
         try {
-            await axios.post(`${SERVER_URL}/notifications/markRead/${notificationId}`);
-            setNotifications((prev) =>
-                prev.map((notif) =>
-                    notif.id === notificationId ? {...notif, isRead: true} : notif
+            await axios.post(`${SERVER_URL}/notifications/markRead/${notificationId}`, null, { withCredentials: true });
+            setNotifications(prev =>
+                prev.map(notif =>
+                    notif.id === notificationId ? { ...notif, isRead: true } : notif
                 )
             );
         } catch (error) {
@@ -55,7 +58,7 @@ function NotificationCenter() {
     };
 
     const markAllAsRead = async () => {
-        for (let n of notifications) {
+        for (const n of notifications) {
             if (!n.isRead) {
                 await handleMarkAsRead(n.id);
             }
@@ -64,60 +67,53 @@ function NotificationCenter() {
 
     const clearAllNotifications = async () => {
         try {
-            await axios.delete(`${SERVER_URL}/notifications/clearAll`);
+            await axios.delete(`${SERVER_URL}/notifications/clearAll`, { withCredentials: true });
             setNotifications([]);
         } catch (error) {
             console.error('Error clearing notifications', error);
         }
     };
 
-    const unreadCount = notifications.filter((n) => !n.isRead).length;
+    const unreadCount = notifications.filter(n => !n.isRead).length;
 
     return (
         <>
             <IconButton color="inherit" onClick={handleClick}>
                 <Badge badgeContent={unreadCount} color="secondary">
-                    <NotificationsIcon/>
+                    <NotificationsIcon />
                 </Badge>
             </IconButton>
 
-            <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-            >
+            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
                 {notifications.length > 0 ? (
                     <>
-                        <MenuItem onClick={async () => {
-                            await markAllAsRead();
-                            handleClose();
-                        }}>
-                            <ListItemText primary="Mark All as Read"/>
+                        <MenuItem
+                            onClick={async () => { await markAllAsRead(); handleClose(); }}
+                        >
+                            <ListItemText primary="Mark All as Read" />
                         </MenuItem>
 
-                        <MenuItem onClick={async () => {
-                            await clearAllNotifications();
-                            handleClose();
-                        }}>
-                            <ListItemText primary="Clear Notifications"/>
+                        <MenuItem
+                            onClick={async () => { await clearAllNotifications(); handleClose(); }}
+                        >
+                            <ListItemText primary="Clear Notifications" />
                         </MenuItem>
 
-                        <Divider/>
+                        <Divider />
 
-                        <Box sx={{maxHeight: 300, overflowY: 'auto'}}>
+                        <Box sx={{ maxHeight: 300, overflowY: 'auto' }}>
                             {notifications.map((notification) => (
                                 <MenuItem
                                     key={notification.id}
                                     onClick={() => handleMarkAsRead(notification.id)}
+                                    divider
                                 >
-                                    <ListItemText primary={notification.message}/>
+                                    <ListItemText
+                                        primary={notification.message}
+                                        secondary={new Date(notification.createdAt).toLocaleString()}
+                                    />
                                     {!notification.isRead && (
-                                        <Chip
-                                            label="Unread"
-                                            color="warning"
-                                            size="small"
-                                            sx={{ml: 1}}
-                                        />
+                                        <Chip size="small" label="new" color="secondary" />
                                     )}
                                 </MenuItem>
                             ))}
@@ -125,22 +121,21 @@ function NotificationCenter() {
                     </>
                 ) : (
                     <MenuItem>
-                        <ListItemText primary="No notifications"/>
+                        <ListItemText primary="No notifications yet" />
                     </MenuItem>
                 )}
             </Menu>
+
             <Snackbar
                 open={snackbarOpen}
-                autoHideDuration={4000}
+                autoHideDuration={2500}
                 onClose={() => setSnackbarOpen(false)}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             >
-                <Alert onClose={() => setSnackbarOpen(false)} severity="info" sx={{width: '100%'}}>
+                <Alert onClose={() => setSnackbarOpen(false)} severity="info" sx={{ width: '100%' }}>
                     {snackbarMessage}
                 </Alert>
             </Snackbar>
         </>
     );
 }
-
-export default NotificationCenter;
-

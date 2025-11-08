@@ -63,14 +63,11 @@ function TopicList({ topics, onDeleted }) {
                     {topics.map((topic) => {
                         const translatedName = t(topic.name) || topic.name;
 
-                        // Try a "{name}Description" key first; if not found, fall back to the raw description (and run through t() just in case).
                         const descKey = topic.name + 'Description';
                         let finalDescription = t(descKey);
                         if (finalDescription === descKey) {
                             finalDescription = t(topic.description) || topic.description;
                         }
-
-                        const translatedDiff = t(topic.difficultyLevel) || topic.difficultyLevel;
 
                         return (
                             <TableRow key={topic.id}>
@@ -79,7 +76,7 @@ function TopicList({ topics, onDeleted }) {
                                         <Box>
                                             <Typography variant="h6">{translatedName}</Typography>
                                             <Typography variant="body2">
-                                                {finalDescription} ({t('difficulty')}: {translatedDiff})
+                                                {finalDescription}
                                             </Typography>
                                         </Box>
 

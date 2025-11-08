@@ -3,7 +3,6 @@ import axios from 'axios';
 import {
     Typography,
     Box,
-    CardMedia,
     TextField,
     Button,
     Stack,
@@ -50,11 +49,7 @@ export default function ProfilePage() {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                // Cookie flow: do NOT gate on localStorage token.
-                const resp = await axios.get(`${SERVER_URL}/profile`, {
-                    withCredentials: true,
-                });
-
+                const resp = await axios.get(`${SERVER_URL}/profile`, {withCredentials: true});
                 setProfile(resp.data);
                 const uiLang = resp.data.interfaceLanguage || 'English';
                 setLanguage(uiLang);
@@ -88,6 +83,31 @@ export default function ProfilePage() {
         return isValid;
     };
 
+    const handleDeleteImage = async () => {
+        try {
+            await axios.delete(`${SERVER_URL}/profile/image`, {withCredentials: true});
+        } catch (err) {
+            const code = err?.response?.status;
+            if (code === 404 || code === 405) {
+                await axios.post(`${SERVER_URL}/profile/image/delete`, null, {withCredentials: true});
+            } else {
+                console.error('Failed to delete profile image', err);
+                setSnackbarSeverity('error');
+                setSnackbarMessage(t('updateFailed'));
+                setSnackbarOpen(true);
+                return;
+            }
+        }
+
+        const refreshed = await axios.get(`${SERVER_URL}/profile`, {withCredentials: true});
+        setProfile(refreshed.data);
+        setUserImage(null);
+        window.dispatchEvent(new CustomEvent('profile-updated', {detail: refreshed.data}));
+        setSnackbarSeverity('success');
+        setSnackbarMessage(t('profileImageRemoved') || 'Profile image removed');
+        setSnackbarOpen(true);
+    };
+
     const handleUpdate = async () => {
         if (!validateInputs()) {
             setSnackbarSeverity('error');
@@ -96,7 +116,7 @@ export default function ProfilePage() {
             return;
         }
         try {
-
+            // Upload image first (if any)
             if (userImage) {
                 const formData = new FormData();
                 formData.append('image', userImage);
@@ -106,17 +126,22 @@ export default function ProfilePage() {
                 });
             }
 
+            // Update profile fields
+            const langCodeToSave =
+                (language && (language.toLowerCase().startsWith('he') || language === '×¢×‘×¨×™×ª'))
+                    ? 'he'
+                    : 'en';
             const payload = {
                 username: newUsername,
                 password: newPassword,
-                interfaceLanguage: language,
+                interfaceLanguage: langCodeToSave,
             };
 
             const resp = await axios.put(`${SERVER_URL}/profile`, payload, {
                 withCredentials: true,
             });
 
-            // Legacy support (harmless if unused now):
+            // Legacy token support (harmless if unused)
             if (resp.data?.newToken) {
                 localStorage.setItem('jwtToken', resp.data.newToken);
             }
@@ -128,15 +153,15 @@ export default function ProfilePage() {
             setNewPassword('');
             setRepeatPassword('');
 
-            // Refresh the profile view from server (cookie-auth)
-            const refreshed = await axios.get(`${SERVER_URL}/profile`, {
-                withCredentials: true,
-            });
+            // Refresh view from server
+            const refreshed = await axios.get(`${SERVER_URL}/profile`, {withCredentials: true});
             setProfile(refreshed.data);
 
-            // Reset baselines so the Save button disables when nothing pending
-            setOriginalLanguage(language);
+            // Inform NavBar to update instantly
+            window.dispatchEvent(new CustomEvent('profile-updated', {detail: refreshed.data}));
 
+            // Reset baseline for Save button
+            setOriginalLanguage(language);
         } catch (err) {
             console.error('Failed to update profile', err);
             setSnackbarSeverity('error');
@@ -155,9 +180,6 @@ export default function ProfilePage() {
         handleMenuClose();
     };
 
-    const handleImageClick = () =>
-        document.getElementById('profile-image-upload').click();
-
     const handleImageChange = (e) => {
         if (e.target.files && e.target.files[0]) {
             setUserImage(e.target.files[0]);
@@ -175,6 +197,7 @@ export default function ProfilePage() {
         );
     }
 
+    // Compute preview (new upload > stored picture)
     let displayImage = null;
     if (userImage) {
         displayImage = URL.createObjectURL(userImage);
@@ -187,10 +210,7 @@ export default function ProfilePage() {
     const hasPasswordEntered = newPassword.length > 0 || repeatPassword.length > 0;
     const hasImageUploaded = !!userImage;
     const buttonEnabled =
-        hasLanguageChanged ||
-        hasUsernameChanged ||
-        hasPasswordEntered ||
-        hasImageUploaded;
+        hasLanguageChanged || hasUsernameChanged || hasPasswordEntered || hasImageUploaded;
 
     return (
         <Box
@@ -201,6 +221,7 @@ export default function ProfilePage() {
                 width: '100%',
             }}
         >
+            {/* Snackbar */}
             <Snackbar
                 open={snackbarOpen}
                 autoHideDuration={4000}
@@ -216,26 +237,29 @@ export default function ProfilePage() {
                 </Alert>
             </Snackbar>
 
+            {/* Title */}
             <Box sx={{textAlign: 'center', mt: 3}}>
                 <Typography variant="h4" gutterBottom>
                     {t('profileManagement')}
                 </Typography>
             </Box>
 
+            {/* Image + actions */}
             <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                 <Box
                     sx={{
                         m: 1,
                         border: '5px solid #0c8686',
+                        borderRadius: '50%',
+                        overflow: 'hidden',
+                        width: 160,
+                        height: 160,
+                        mb: 2,
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center',
-                        width: 100,
-                        height: 100,
-                        mb: 2,
-                        cursor: 'pointer',
+                        backgroundColor: '#f5f5f5',
                     }}
-                    onClick={handleImageClick}
                 >
                     <input
                         id="profile-image-upload"
@@ -245,17 +269,31 @@ export default function ProfilePage() {
                         onChange={handleImageChange}
                     />
                     {displayImage ? (
-                        <CardMedia
-                            component="img"
-                            image={displayImage}
+                        <img
+                            src={displayImage}
                             alt="User Profile"
-                            sx={{width: '100%', height: 100, objectFit: 'cover'}}
+                            style={{width: '100%', height: '100%', objectFit: 'cover'}}
                         />
                     ) : (
-                        <CustomAccountCircleIcon style={{width: '100%', height: 100}}/>
+                        <CustomAccountCircleIcon style={{width: '80%', height: '80%'}}/>
                     )}
                 </Box>
 
+                <Stack direction="row" spacing={2} sx={{mb: 2}}>
+                    <Button
+                        variant="outlined"
+                        onClick={() => document.getElementById('profile-image-upload').click()}
+                    >
+                        {t('UploadNewPhoto') || 'Upload New Photo'}
+                    </Button>
+                    {profile?.profileImage && (
+                        <Button variant="text" color="error" onClick={handleDeleteImage}>
+                            {t('RemovePhoto') || 'Remove photo'}
+                        </Button>
+                    )}
+                </Stack>
+
+                {/* Difficulty line */}
                 <Box sx={{mb: 2}}>
                     <Typography variant="h6">
                         {t('currentDifficulty')}: {t(profile.currentDifficulty || 'BASIC')}
@@ -265,6 +303,7 @@ export default function ProfilePage() {
                     </Typography>
                 </Box>
 
+                {/* Form */}
                 <Stack
                     spacing={3}
                     sx={{direction: GET_DIRECTION(i18n.language), width: '90%', maxWidth: 600}}
