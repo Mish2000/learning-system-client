@@ -1,5 +1,6 @@
 import i18n from 'i18next';
 import {initReactI18next} from 'react-i18next';
+import hePractice from './practice.js'
 
 const resources = {
     en: {
@@ -461,6 +462,11 @@ const resources = {
 };
 
 const userLanguage = localStorage.getItem('language') || 'en';
+resources.he = resources.he || {translation: {}};
+resources.he.translation = {
+    ...resources.he.translation,
+    ...hePractice,
+};
 
 i18n
     .use(initReactI18next)
