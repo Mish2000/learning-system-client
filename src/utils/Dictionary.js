@@ -10,6 +10,7 @@ const resources = {
             home: "Home",
             practice: "Practice",
             statistics: "Statistics",
+            adminSection: 'Admin Section',
             profile: "Profile",
             logOut: "Log Out",
 
@@ -31,6 +32,8 @@ const resources = {
             ProfileEmailHelperText: "Enter a valid email address.",
             subLevel: "Sub-level",
             currentDifficulty: "Current Difficulty",
+            UploadNewPhoto: "Upload New Photo",
+            RemovePhoto: "Delete Photo",
 
             // NoteBook.jsx
             solutionSteps: "Solution Steps",
@@ -87,6 +90,20 @@ const resources = {
             // UserDashboardSSE.jsx
             loadingUserDashboardPage: "Loading user dashboard...",
             userDashboardTitle: "User Dashboard",
+            loading: "Loading...",
+            welcomeBack: "Welcome back",
+            overallProgress: "Overall Progress",
+            overallProgressLevel: "Progress Level",
+            overallProgressScore: "Progress Score",
+            overallProgressPendingBackend: "No overall progress data yet. Start practicing to unlock it.",
+            successRateByTopic: "Success Rate by Topic",
+            totalSuccessRate: "Total Success Rate",
+            parentTopicDifficulty: "General Topic Difficulty",
+            topic: "Topic",
+            topicDifficultyPendingBackend: "No topic difficulty data yet. Start practicing to unlock it.",
+            subtopicDifficulty: "Subtopic Difficulty",
+            subtopic: "Subtopic",
+            subtopicDifficultyPendingBackend: "No subtopic difficulty data yet. Start practicing to unlock it.",
 
             // ChartSuccessRateByTopic.jsx
             successRateTitle: "Success Rate By Topic",
@@ -158,6 +175,17 @@ const resources = {
             topicDeleted: "Topic deleted!",
             topicDeletionFailed: "Topic deletion failed.",
             pleaseEnterValidTopicName: "Please enter a valid topic name",
+            restoreDeletedTopics: "Restore existing subtopic from server",
+            restore: "Restore",
+            topicRestored: "Topic restored successfully.",
+            topicRestoreFailed: "Topic restore failed.",
+            noDeletedTopicsFound: "No deleted topics to restore.",
+            loadingDeletedTopics: "Loading deleted topics...",
+            restoreParentFirst: "Restore parent topic first.",
+            deletedSubtopics: "Deleted subtopics (parent active)",
+            unknownParent: "Unknown parent",
+            createHiddenUntilDeletion: "Creating new topics is disabled. Delete a topic/subtopic first to enable restore.",
+
 
             // Dynamic Server Content - Topics and Descriptions
             Arithmetic: "Arithmetic",
@@ -172,6 +200,7 @@ const resources = {
             Triangle: "Triangle",
             Circle: "Circle",
             Polygon: "Polygon",
+            ArithmeticDescription: "Basic arithmetic operations",
             AdditionDescription: "Adding numbers together",
             SubtractionDescription: "Subtracting numbers from each other",
             MultiplicationDescription: "Multiplying numbers",
@@ -234,6 +263,7 @@ const resources = {
             home: "בית",
             practice: "תרגול",
             statistics: "סטטיסטיקה",
+            adminSection: 'אזור ניהול',
             profile: "פרופיל",
             logOut: "התנתק",
 
@@ -255,6 +285,8 @@ const resources = {
             ProfileEmailHelperText: "הזן כתובת דוא\"ל חוקית.",
             subLevel: "תת רמה",
             currentDifficulty: "רמת קושי נוכחית",
+            UploadNewPhoto: "העלאת תמונה חדשה",
+            RemovePhoto: "מחיקת תמונה",
 
             // NoteBook.jsx
             solutionSteps: "שלבי פתרון",
@@ -311,6 +343,21 @@ const resources = {
             // UserDashboardSSE.jsx
             loadingUserDashboardPage: "טוען לוח מחוונים משתמש...",
             userDashboardTitle: "לוח מחוונים משתמש",
+            loading: "טוען...",
+            welcomeBack: "ברוך הבא חזרה",
+            overallProgress: "התקדמות כללית",
+            overallProgressLevel: "רמת התקדמות",
+            overallProgressScore: "ציון התקדמות",
+            overallProgressPendingBackend: "עדיין אין נתוני התקדמות כללית. התחילו לתרגל כדי לפתוח אותם.",
+            successRateByTopic: "אחוז הצלחה לפי נושא",
+            totalSuccessRate: "אחוז הצלחה כולל",
+            parentTopicDifficulty: "רמת קושי של נושאים כלליים",
+            topic: "נושא",
+            topicDifficultyPendingBackend: "עדיין אין נתוני רמת קושי לנושאים. התחילו לתרגל כדי לפתוח אותם.",
+            subtopicDifficulty: "רמת קושי של תתי־נושאים",
+            subtopic: "תת־נושא",
+            subtopicDifficultyPendingBackend: "עדיין אין נתוני רמת קושי לתתי־נושאים. התחילו לתרגל כדי לפתוח אותם.",
+
 
             // ChartSuccessRateByTopic.jsx
             successRateTitle: "אחוזי הצלחה לפי נושאים",
@@ -384,9 +431,20 @@ const resources = {
             topicDeleted: "הנושא נמחק!",
             topicDeletionFailed: "מחיקת הנושא נכשלה.",
             pleaseEnterValidTopicName: "אנא הזן שם נושא תקין",
+            restoreDeletedTopics: "שחזור תת-נושא/נושא קיים מהשרת",
+            restore: "שחזור",
+            topicRestored: "הנושא שוחזר בהצלחה.",
+            topicRestoreFailed: "שחזור הנושא נכשל.",
+            noDeletedTopicsFound: "אין נושאים שנמחקו לשחזור.",
+            loadingDeletedTopics: "טוענת נושאים שנמחקו...",
+            restoreParentFirst: "יש לשחזר קודם את נושא האב.",
+            deletedSubtopics: "תתי-נושאים שנמחקו (נושא אב פעיל)",
+            unknownParent: "נושא אב לא ידוע",
+            createHiddenUntilDeletion: "יצירת נושאים חדשים מושבתת. מחק נושא/תת־נושא כדי להפעיל שחזור.",
+
 
             // Dynamic Server Content - Topics and Descriptions
-            Arithmetic: "חשבון מתקדם",
+            Arithmetic: "חשבון",
             Addition: "חיבור",
             Subtraction: "חיסור",
             Multiplication: "כפל",
@@ -397,6 +455,7 @@ const resources = {
             Triangle: "משולש",
             Circle: "מעגל",
             Polygon: "מצולע",
+            ArithmeticDescription: "פעולות חשבון בסיסיות",
             AdditionDescription: "חיבור מספרים יחד",
             SubtractionDescription: "חיסור מספרים זה מזה",
             MultiplicationDescription: "כפל מספרים",

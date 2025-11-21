@@ -5,8 +5,17 @@ import { Avatar, Box, Button, Stack } from "@mui/material";
 import AppIcon from "../Common/AppIcon.jsx";
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { HOME_URL, LOGIN_URL, PRACTICE_URL, PROFILE_URL, SERVER_URL, STATISTICS_URL } from "../../utils/Constants.js";
+import {
+    ADMIN_DASHBOARD_URL,
+    HOME_URL,
+    LOGIN_URL,
+    PRACTICE_URL,
+    PROFILE_URL,
+    SERVER_URL,
+    STATISTICS_URL
+} from "../../utils/Constants.js";
 import CalculateIcon from '@mui/icons-material/Calculate';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import HomeIcon from '@mui/icons-material/Home';
@@ -176,6 +185,19 @@ export default function NavBar() {
                                 {t('statistics')}
                             </Button>
 
+                            {role === 'ADMIN' && (
+                                <Button
+                                    sx={{
+                                        textTransform: 'inherit',
+                                        color: location.pathname === ADMIN_DASHBOARD_URL ? 'secondary.light' : 'inherit',
+                                    }}
+                                    onClick={() => navigate(ADMIN_DASHBOARD_URL)}
+                                >
+                                    <AdminPanelSettingsIcon />
+                                    {t('adminSection')}
+                                </Button>
+                            )}
+
                             <Button
                                 sx={{
                                     textTransform: 'inherit',
@@ -186,18 +208,6 @@ export default function NavBar() {
                                 <PersonIcon />
                                 {t('profile')}
                             </Button>
-
-                            {role === 'ADMIN' && (
-                                <Button
-                                    sx={{
-                                        textTransform: 'inherit',
-                                        color: location.pathname === '/manage-topics' ? 'secondary.light' : 'inherit',
-                                    }}
-                                    onClick={() => navigate('/manage-topics')}
-                                >
-                                    {t('adminTopicManagement')}
-                                </Button>
-                            )}
 
                             <NotificationCenter />
 
@@ -225,4 +235,5 @@ export default function NavBar() {
             <Outlet />
         </Stack>
     );
+
 }

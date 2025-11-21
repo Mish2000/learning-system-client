@@ -364,7 +364,6 @@ export default function ProfilePage() {
                         onChange={(e) => setRepeatPassword(e.target.value)}
                     />
 
-                    {/* Language as a read-only field that opens a menu; show label, store code */}
                     <TextField
                         label={t('interfaceLanguage')}
                         value={codeToLabel(languageCode)}

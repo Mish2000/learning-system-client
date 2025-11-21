@@ -15,12 +15,11 @@ import rtlPlugin from 'stylis-plugin-rtl';
 import {prefixer} from 'stylis';
 
 import axios from 'axios';
-import {SERVER_URL} from './utils/Constants.js';
+import {ADMIN_DASHBOARD_URL, SERVER_URL} from './utils/Constants.js';
 
 import Login from './components/Auth/Login.jsx';
 import Register from './components/Auth/Register.jsx';
 import Error404 from './components/Dashboard/Error404.jsx';
-import CombinedDashboard from './components/Dashboard/CombinedDashboard';
 import PracticePage from './components/Dashboard/Practice/PracticePage';
 import {
     HOME_URL,
@@ -38,7 +37,9 @@ import NoteBook from './components/Dashboard/Practice/NoteBook.jsx';
 import i18n from './utils/Dictionary.js';
 import createAppTheme from './utils/Theme.js';
 import TopicManagementPage from "./components/Admin/TopicManagementPage.jsx";
-import LandingDashboard from "./components/Dashboard/LandingDashboard.jsx";
+import UserDashboardSSE from "./components/Dashboard/UserDashboardSSE.jsx";
+import AdminDashboardSSE from "./components/Admin/AdminDashboardSSE.jsx";
+import AdminSectionPage from "./components/Admin/AdminSectionPage.jsx";
 
 const createEmotionCache = (dir = 'ltr') =>
     createCache({
@@ -160,31 +161,55 @@ function App() {
                         {!isAuth && (
                             <>
                                 <Route path={STATISTICS_URL} element={<Navigate to={LOGIN_URL} replace/>}/>
+                                <Route path={ADMIN_DASHBOARD_URL} element={<Navigate to={LOGIN_URL} replace/>}/>
                                 <Route path={PRACTICE_URL} element={<Navigate to={LOGIN_URL} replace/>}/>
                                 <Route path={PROFILE_URL} element={<Navigate to={LOGIN_URL} replace/>}/>
-                                <Route path={`${PRACTICE_URL}/:questionId`}
-                                       element={<Navigate to={LOGIN_URL} replace/>}/>
-                                <Route path={`${PRACTICE_URL}/:id`} element={<Navigate to={LOGIN_URL} replace/>}/>
+                                <Route
+                                    path={`${PRACTICE_URL}/:questionId`}
+                                    element={<Navigate to={LOGIN_URL} replace/>}
+                                />
+                                <Route
+                                    path={`${PRACTICE_URL}/:id`}
+                                    element={<Navigate to={LOGIN_URL} replace/>}
+                                />
                                 <Route path="/manage-topics" element={<Navigate to={LOGIN_URL} replace/>}/>
                             </>
                         )}
+
+
 
                         {/* AUTHENTICATED AREA (with NavBar) */}
                         {isAuth && (
                             <Route element={<NavBar/>}>
                                 {/* Intentionally NO /home here, so Home never shows NavBar */}
-                                <Route path="/dashboard" element={<LandingDashboard/>}/>
-                                <Route path={STATISTICS_URL}
-                                       element={<CombinedDashboard role={role} onLogout={handleLogout}/>}/>
+
+                                {/* Single canonical user statistics dashboard */}
+                                <Route path={STATISTICS_URL} element={<UserDashboardSSE />} />
+
+                                {/* Admin-only section (statistics + topic management).
+                                    If a non-admin tries to access it, redirect them back to the user dashboard. */}
+                                <Route
+                                    path={ADMIN_DASHBOARD_URL}
+                                    element={
+                                        role === 'ADMIN'
+                                            ? <AdminSectionPage />
+                                            : <Navigate to={STATISTICS_URL} replace />
+                                    }
+                                />
+
                                 <Route path={PRACTICE_URL} element={<PracticePage onLogout={handleLogout}/>}/>
                                 <Route path={`${PRACTICE_URL}/:questionId`} element={<NoteBook/>}/>
                                 <Route path={`${PRACTICE_URL}/:id`} element={<NoteBook/>}/>
                                 <Route path={PROFILE_URL} element={<ProfilePage/>}/>
-                                {role === 'ADMIN' && (
-                                    <Route path="/manage-topics" element={<TopicManagementPage/>}/>
-                                )}
+
+                                {/* Backwards compatibility: old /manage-topics URL now points into Admin Section */}
+                                <Route
+                                    path="/manage-topics"
+                                    element={<Navigate to={ADMIN_DASHBOARD_URL} replace />}
+                                />
                             </Route>
                         )}
+
 
                         {/* ROOT: if not auth → /home (public). if auth → a sensible protected default */}
                         <Route path="/" element={<Navigate to={isAuth ? STATISTICS_URL : HOME_URL} replace/>}/>

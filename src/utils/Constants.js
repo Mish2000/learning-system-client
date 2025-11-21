@@ -14,3 +14,6 @@ export const DASHBOARD_URL = "/dashboard";
 
 // Back-compat alias: several components (e.g., NavBar) still import STATISTICS_URL
 export const STATISTICS_URL = DASHBOARD_URL;
+
+// Dedicated route for system administrator statistics
+export const ADMIN_DASHBOARD_URL = "/admin-dashboard"
