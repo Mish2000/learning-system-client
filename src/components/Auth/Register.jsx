@@ -62,9 +62,18 @@ function Register() {
 
             <Card sx={{ width: '100%', boxShadow: 3 }} variant="outlined">
                 <Stack spacing={2} padding={2}>
-                    <Typography variant="h4">
-                        {t('registerPageTitle')}
-                    </Typography>
+                    <Stack direction="row" spacing={2} alignItems="center">
+                        <Box
+                            component="img"
+                            src="src/assets/favicon.png"
+                            alt="QuickMath icon"
+                            sx={{ width: 70, height: 70 }}
+                        />
+                        <Typography variant="h4">
+                            {t('registerPageTitle')}
+                        </Typography>
+                    </Stack>
+
 
                     {success ? (
                         <Alert variant="filled" severity="success">

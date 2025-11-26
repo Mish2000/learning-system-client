@@ -7,7 +7,7 @@ const resources = {
         translation: {
             // NavBar.jsx
             quickMath: "Quick Math",
-            home: "Home",
+            home: "LandingPage",
             practice: "Practice",
             statistics: "Statistics",
             adminSection: 'Admin Section',
@@ -36,6 +36,7 @@ const resources = {
             RemovePhoto: "Delete Photo",
 
             // NoteBook.jsx
+            notebook: "Notebook",
             solutionSteps: "Solution Steps",
             correctAnswer: "Correct Answer:",
             question: "Question",
@@ -144,7 +145,7 @@ const resources = {
             repeatPasswordPlaceholder: "Re-enter your password",
             passwordsMustMatch: "Passwords must match.",
 
-            // Home.jsx
+            // LandingPage.jsx
             welcomeQuickMath: "Welcome to Quick Math!",
             selfLearningMath: "This is a platform for self-learning and practicing math with a wide variety of topics. We have a detector that identifies what you are struggling with and matches the exercises to your level. This is designed to help you understand how to solve problems and then move on to higher difficulties to improve your math skills. We also offer dynamic question generation and personalized dashboards.",
             homeDescription: "This is a platform for self-learning and practicing math with a wide variety of topics...",
@@ -289,6 +290,7 @@ const resources = {
             RemovePhoto: "מחיקת תמונה",
 
             // NoteBook.jsx
+            notebook: "מחברת",
             solutionSteps: "שלבי פתרון",
             correctAnswer: "תשובה נכונה",
             question: "שאלה",
@@ -398,7 +400,7 @@ const resources = {
             repeatPasswordPlaceholder: "הזן שוב את הסיסמה שלך",
             passwordsMustMatch: "הסיסמאות חייבות להתאים",
 
-            // Home.jsx
+            // LandingPage.jsx
             welcomeQuickMath: "ברוכים הבאים לחשבון מהיר!",
             selfLearningMath: "זו פלטפורמה ללימוד עצמי ותרגול מתמטיקה עם מגוון רחב של נושאים. אנחנו עוזרים לך להבין עם מה אתה מתקשה ונתאים את התרגילים לרמתך. כל זאת כדי שתבין את הדרך לפתור בעיות ולאחר מכן תעבור לרמות קושי גבוהות יותר כדי לשפר את כישורי המתמטיקה שלך. אנו מציעים גם יצירת שאלות דינמית ולוח סטטיסטיקה אישי ונוח",
             homeDescription: "זו פלטפורמה ללימוד עצמי ותרגול מתמטיקה עם מגוון רחב של נושאים...",

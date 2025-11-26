@@ -9,8 +9,7 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
     ADMIN_DASHBOARD_URL,
-    HOME_URL,
-    LOGIN_URL,
+    HOME_URL, LANDING_URL,
     PRACTICE_URL,
     PROFILE_URL,
     SERVER_URL,
@@ -50,7 +49,7 @@ export default function NavBar() {
         try {
             await axios.post(`${SERVER_URL}/auth/logout`, null, { withCredentials: true });
         } catch { /* ignore */ }
-        navigate(LOGIN_URL);
+        navigate(LANDING_URL);
         window.location.reload();
     };
 

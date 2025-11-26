@@ -15,7 +15,7 @@ import rtlPlugin from 'stylis-plugin-rtl';
 import {prefixer} from 'stylis';
 
 import axios from 'axios';
-import {ADMIN_DASHBOARD_URL, SERVER_URL} from './utils/Constants.js';
+import {ADMIN_DASHBOARD_URL, LANDING_URL, SERVER_URL} from './utils/Constants.js';
 
 import Login from './components/Auth/Login.jsx';
 import Register from './components/Auth/Register.jsx';
@@ -30,16 +30,17 @@ import {
     STATISTICS_URL,
 } from './utils/Constants.js';
 import NavBar from './components/Dashboard/NavBar.jsx';
-import Home from './components/Dashboard/Home.jsx';
+import LandingPage from './components/Dashboard/LandingPage.jsx';
 import ProfilePage from './components/Dashboard/ProfilePage.jsx';
 import NoteBook from './components/Dashboard/Practice/NoteBook.jsx';
 
 import i18n from './utils/Dictionary.js';
 import createAppTheme from './utils/Theme.js';
-import TopicManagementPage from "./components/Admin/TopicManagementPage.jsx";
 import UserDashboardSSE from "./components/Dashboard/UserDashboardSSE.jsx";
-import AdminDashboardSSE from "./components/Admin/AdminDashboardSSE.jsx";
 import AdminSectionPage from "./components/Admin/AdminSectionPage.jsx";
+import Home from "./components/Dashboard/Home.jsx";
+import LastRouteTracker from "./utils/LastRouteTracker.jsx";
+
 
 const createEmotionCache = (dir = 'ltr') =>
     createCache({
@@ -101,14 +102,18 @@ function App() {
         didRun.current = true;
 
         const path = window.location.pathname;
-        // Treat /home as a public "auth screen" to avoid unnecessary /auth/me 401 on first load
-        const onAuthScreens = (path === LOGIN_URL) || (path === REGISTER_URL) || (path === '/') || (path === HOME_URL);
+        const onAuthScreens =
+            (path === LOGIN_URL) ||
+            (path === REGISTER_URL) ||
+            (path === "/") ||
+            (path === LANDING_URL);
+
         if (onAuthScreens) {
             setIsAuth(false);
             setRole(null);
             return;
         }
-        // Only check /auth/me for real app routes
+
         refreshAuthState();
     }, []);
 
@@ -145,74 +150,77 @@ function App() {
             <ThemeProvider theme={theme}>
                 <CssBaseline/>
                 <BrowserRouter>
+                    <LastRouteTracker/>
                     <Routes>
                         {/* LOGIN / REGISTER */}
                         {isAuth ? (
-                            <Route path={LOGIN_URL} element={<Navigate to={STATISTICS_URL} replace/>}/>
+                            <Route path={LOGIN_URL} element={<Navigate to={HOME_URL} replace/>}/>
                         ) : (
                             <Route path={LOGIN_URL} element={<Login onLoginSuccess={handleLoginSuccess}/>}/>
                         )}
                         <Route path={REGISTER_URL} element={<Register/>}/>
 
-                        {/* PUBLIC HOME (no NavBar) */}
-                        <Route path={HOME_URL} element={<Home/>}/>
+                        {/* PUBLIC LANDING (no NavBar). If already authenticated, bounce to protected default */}
+                        <Route
+                            path={LANDING_URL}
+                            element={isAuth ? <Navigate to={HOME_URL} replace/> : <LandingPage/>}
+                        />
 
                         {/* REDIRECTS for unauthenticated users hitting protected routes */}
                         {!isAuth && (
                             <>
+                                {/* /home is now a protected user route */}
+                                <Route path={HOME_URL} element={<Navigate to={LANDING_URL} replace/>}/>
+
                                 <Route path={STATISTICS_URL} element={<Navigate to={LOGIN_URL} replace/>}/>
-                                <Route path={ADMIN_DASHBOARD_URL} element={<Navigate to={LOGIN_URL} replace/>}/>
-                                <Route path={PRACTICE_URL} element={<Navigate to={LOGIN_URL} replace/>}/>
-                                <Route path={PROFILE_URL} element={<Navigate to={LOGIN_URL} replace/>}/>
+                                <Route path={ADMIN_DASHBOARD_URL} element={<Navigate to={HOME_URL} replace/>}/>
+
+                                {/* After assessment/logout we want LANDING instead of LOGIN */}
+                                <Route path={PRACTICE_URL} element={<Navigate to={LANDING_URL} replace/>}/>
                                 <Route
                                     path={`${PRACTICE_URL}/:questionId`}
-                                    element={<Navigate to={LOGIN_URL} replace/>}
+                                    element={<Navigate to={LANDING_URL} replace/>}
                                 />
                                 <Route
                                     path={`${PRACTICE_URL}/:id`}
-                                    element={<Navigate to={LOGIN_URL} replace/>}
+                                    element={<Navigate to={LANDING_URL} replace/>}
                                 />
+
+                                <Route path={PROFILE_URL} element={<Navigate to={LOGIN_URL} replace/>}/>
+
+                                {/* Backwards compatibility: old /manage-topics URL now points into Admin Section */}
                                 <Route path="/manage-topics" element={<Navigate to={LOGIN_URL} replace/>}/>
                             </>
                         )}
 
-
-
                         {/* AUTHENTICATED AREA (with NavBar) */}
                         {isAuth && (
                             <Route element={<NavBar/>}>
-                                {/* Intentionally NO /home here, so Home never shows NavBar */}
+                                <Route path={HOME_URL} element={<Home/>}/>
 
-                                {/* Single canonical user statistics dashboard */}
-                                <Route path={STATISTICS_URL} element={<UserDashboardSSE />} />
+                                <Route path={STATISTICS_URL} element={<UserDashboardSSE/>}/>
 
-                                {/* Admin-only section (statistics + topic management).
-                                    If a non-admin tries to access it, redirect them back to the user dashboard. */}
                                 <Route
                                     path={ADMIN_DASHBOARD_URL}
                                     element={
-                                        role === 'ADMIN'
-                                            ? <AdminSectionPage />
-                                            : <Navigate to={STATISTICS_URL} replace />
+                                        role === "ADMIN"
+                                            ? <AdminSectionPage/>
+                                            : <Navigate to={STATISTICS_URL} replace/>
                                     }
                                 />
 
                                 <Route path={PRACTICE_URL} element={<PracticePage onLogout={handleLogout}/>}/>
                                 <Route path={`${PRACTICE_URL}/:questionId`} element={<NoteBook/>}/>
                                 <Route path={`${PRACTICE_URL}/:id`} element={<NoteBook/>}/>
+
                                 <Route path={PROFILE_URL} element={<ProfilePage/>}/>
 
-                                {/* Backwards compatibility: old /manage-topics URL now points into Admin Section */}
-                                <Route
-                                    path="/manage-topics"
-                                    element={<Navigate to={ADMIN_DASHBOARD_URL} replace />}
-                                />
+                                {/* Backwards compatibility inside auth area */}
+                                <Route path="/manage-topics" element={<Navigate to={ADMIN_DASHBOARD_URL} replace/>}/>
                             </Route>
                         )}
 
-
-                        {/* ROOT: if not auth → /home (public). if auth → a sensible protected default */}
-                        <Route path="/" element={<Navigate to={isAuth ? STATISTICS_URL : HOME_URL} replace/>}/>
+                        <Route path="/" element={<Navigate to={isAuth ? HOME_URL : LANDING_URL} replace/>}/>
 
                         {/* 404 */}
                         <Route path="*" element={<Error404/>}/>

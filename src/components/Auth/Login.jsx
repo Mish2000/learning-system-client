@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Alert, Box, Button, Card, Snackbar, Stack, TextField, Typography } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
-import { REGISTER_URL, STATISTICS_URL, SERVER_URL } from "../../utils/Constants.js";
+import {REGISTER_URL, SERVER_URL, HOME_URL} from "../../utils/Constants.js";
 import PasswordTextField from "../Common/PasswordTextField.jsx";
-import AppIcon from "../Common/AppIcon.jsx";
 import axios from "axios";
 import PropTypes from 'prop-types';
 import { useTranslation } from "react-i18next";
@@ -64,8 +63,7 @@ function Login({ onLoginSuccess }) {
             setLoginError(false);
             onLoginSuccess && onLoginSuccess(null, profResp?.data?.role);
 
-            // Redirect to landing/dashboard
-            navigate(STATISTICS_URL, { replace: true });
+            navigate(HOME_URL, { replace: true });
         } catch {
             setLoginError(true);
         }
@@ -87,7 +85,12 @@ function Login({ onLoginSuccess }) {
             <Card sx={{ display: "flex", flexDirection: "column", width: '100%', boxShadow: 3 }} variant="outlined">
                 <Stack direction={"column"} spacing={2} padding={2}>
                     <Stack direction={"row"} spacing={2}>
-                        <AppIcon size={70} />
+                        <Box
+                            component="img"
+                            src="src/assets/favicon.png"
+                            alt="QuickMath pointer"
+                            sx={{ width: 70, height: 70 }}
+                        />
                         <Stack margin={1}>
                             <Typography variant='h4'>{t('loginTitle')}</Typography>
                             <Typography>{t('slogan')}</Typography>

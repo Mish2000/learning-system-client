@@ -323,7 +323,7 @@ function NoteBook() {
                         width: '100%',
                         display: 'flex',
                         flexDirection: 'column',
-                        bgcolor: 'transparent', // main frame back to transparent
+                        bgcolor: 'transparent',
                         borderRadius: 2,
                         p: 2,
                         boxShadow: 1,

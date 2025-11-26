@@ -1,17 +1,20 @@
-import {CardMedia} from "@mui/material";
+import { CardMedia } from "@mui/material";
 import PropTypes from "prop-types";
+import favicon from "../../assets/favicon.png";
 
-function AppIcon(props) {
+function AppIcon({ size }) {
     return (
         <CardMedia
-            image={"src/assets/favicon.png"}
-            sx={{ height: props.size , width: props.size }}
+            component="img"
+            image={favicon}
+            alt="QuickMath logo"
+            sx={{ height: size, width: size }}
         />
     );
 }
 
-export default AppIcon;
-
 AppIcon.propTypes = {
     size: PropTypes.number.isRequired
-}
+};
+
+export default AppIcon;
