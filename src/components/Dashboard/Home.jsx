@@ -7,9 +7,6 @@ import {
     CircularProgress,
     Divider,
     LinearProgress,
-    List,
-    ListItem,
-    ListItemText,
     Stack,
     Tooltip,
     Typography
@@ -35,7 +32,6 @@ export default function Home() {
     const navigate = useNavigate();
     const {i18n, t} = useTranslation();
 
-    // Logic aligned with PracticePage.jsx [cite: 446, 447]
     const dir = useMemo(() => GET_DIRECTION(i18n.language), [i18n.language]);
     const lang = (i18n.language || "en").toLowerCase();
     const isHebrew = lang.startsWith("he");
@@ -58,6 +54,10 @@ export default function Home() {
     const hasAutoStreamedRef = useRef(false);
     const summaryEndRef = useRef(null);
     const shouldAutoStreamRef = useRef(false);
+
+    // Ref to track if user manually scrolled up (away from bottom)
+    const userScrolledUpRef = useRef(false);
+
     const LAST_ROUTE_KEY = "qm:lastRoute";
 
     const aiSummaryRef = useRef("");
@@ -79,7 +79,7 @@ export default function Home() {
                 topicsTitle: "הנושאים במערכת",
                 aiTitle: "הסיכום האישי שלך מ-AI",
                 regenerate: "הפקת סיכום מחדש",
-                startPractice: "התחילי תרגול",
+                startPractice: "התחל תרגול",
                 progressTitle: "התקדמות כללית",
                 progressPending: "אין עדיין מספיק נתונים — התקדמות תופיע לאחר תרגול.",
                 strongAt: "חזק/ה ב-",
@@ -240,66 +240,102 @@ export default function Home() {
     // ---------- build AI prompt ----------
     const buildPrompt = () => {
         const uiLang = i18n.language || "en";
+        const isHeb = uiLang === "he";
         const role = profile?.role === "ADMIN" ? "ADMIN" : "USER";
         const username = profile?.username || "user";
 
-        const topicLines = topics.map(tp => {
-            const parentName = t(tp.name) || tp.name;
-            const subs = (tp.subtopics || []).map(st => t(st.name) || st.name);
-            return `- ${parentName}${subs.length ? ` (subtopics: ${subs.join(", ")})` : ""}`;
-        });
-
+        // 1. Separate topics into "Attempted" and "Not Attempted" based on user stats
         const successRates = userStats?.successRateByTopic || {};
-        const overallLevel = userStats?.overallProgressLevel || null;
-        const overallScore = userStats?.overallProgressScore || null;
+        const attemptedLines = [];
+        const unattemptedNames = [];
 
-        if (uiLang === "he") {
+        // Helper to ensure translation or fallback
+        const trans = (k) => t(k) || k;
+
+        // Recursive helper to process topics AND subtopics
+        const processTopicNode = (node) => {
+            const rawName = node.name;
+            const displayName = trans(rawName);
+            const rate = successRates[rawName];
+
+            // Check if this specific topic/subtopic exists in the stats map
+            if (rate !== undefined && rate !== null && typeof rate === 'number') {
+                attemptedLines.push(`- ${displayName}: ${rate.toFixed(1)}%`);
+            } else {
+                unattemptedNames.push(displayName);
+            }
+
+            // Recurse into subtopics if they exist
+            if (node.subtopics && Array.isArray(node.subtopics)) {
+                node.subtopics.forEach(processTopicNode);
+            }
+        };
+
+        // Start processing from top-level topics
+        topics.forEach(processTopicNode);
+
+        // 2. Format the list strings
+        const attemptedText = attemptedLines.length > 0
+            ? attemptedLines.join("\n")
+            : (isHeb ? "עדיין לא תורגלו נושאים." : "No topics practiced yet.");
+
+        const unattemptedText = unattemptedNames.length > 0
+            ? unattemptedNames.join(", ")
+            : (isHeb ? "כל הנושאים תורגלו." : "All available topics have been practiced.");
+
+        const overallLevel = userStats?.overallProgressLevel || (isHeb ? "טרם נקבע" : "Not set");
+        const overallScore = userStats?.overallProgressScore != null ? userStats.overallProgressScore : (isHeb ? "0" : "0");
+
+        // 3. Build the prompt
+        if (isHeb) {
             let prompt =
                 `את/ה עוזר/ת ה-AI של QuickMath.\n` +
                 `שפת הממשק: עברית.\n` +
-                `התייחס/י למשתמש בשם "${username}". אם הוא מנהל מערכת, פנה/י אליו כ"מנהל מערכת".\n\n` +
-                `המטרה: כתבי סיכום אישי קצר אך עשיר, שמסביר על כל נושא לימוד במערכת, מה המשתמש עושה טוב, ומה צריך לחזק.\n` +
+                `התייחס/י למשתמש בשם "${username}".\n` +
+                (role === "ADMIN" ? `שים לב: המשתמש הזה הוא מנהל מערכת (Admin). פנה אליו בהתאם.\n` : ``) +
+                `המטרה: כתוב סיכום אישי קצר, שמסביר מה המשתמש עושה טוב, ומה צריך לחזק.\n` +
                 `השתמש/י בטון תומך ומוטיבציוני.\n\n` +
-                `נושאים במערכת:\n${topicLines.join("\n")}\n\n` +
-                `נתוני התקדמות כלליים:\n` +
-                `- רמת התקדמות: ${overallLevel || "לא ידוע"}\n` +
-                `- ציון התקדמות: ${overallScore != null ? overallScore : "לא ידוע"}\n\n` +
-                `אחוזי הצלחה לפי נושא (אם קיימים):\n${JSON.stringify(successRates)}\n\n`;
+                `=== נתוני התרגול של ${username} (אישי בלבד) ===\n` +
+                `- רמת התקדמות כללית: ${overallLevel}\n` +
+                `- ציון התקדמות: ${overallScore}\n\n` +
+                `נושאים ותתי-נושאים שתורגלו (עם אחוזי הצלחה):\n${attemptedText}\n\n` +
+                `נושאים שטרם תורגלו כלל (המלץ למשתמש להתחיל לתרגל אותם):\n${unattemptedText}\n\n`;
 
             if (role === "ADMIN" && adminStats) {
                 prompt +=
-                    `בנוסף, מאחר ואתה מנהל מערכת, הוסף בסוף סיכום סטטיסטי קצר של המערכת:\n` +
+                    `\n=== סטטיסטיקות מערכת (לעיתי המנהל בלבד) ===\n` +
+                    `אזהרה: נתונים אלו שייכים לכלל המשתמשים במערכת. אל תשייך אותם ליכולות האישיות של ${username}.\n` +
                     `- סה"כ משתמשים: ${adminStats.totalUsers}\n` +
-                    `- סה"כ ניסיונות: ${adminStats.totalAttempts}\n` +
-                    `- אחוז הצלחה כללי: ${adminStats.overallSuccessRate}\n` +
-                    `- ניסיונות לפי נושא: ${JSON.stringify(adminStats.attemptsByTopic)}\n` +
-                    `- הצלחה לפי נושא: ${JSON.stringify(adminStats.successRateByTopic)}\n`;
+                    `- סה"כ ניסיונות במערכת: ${adminStats.totalAttempts}\n` +
+                    `- אחוז הצלחה ממוצע כלל-מערכתי: ${adminStats.overallSuccessRate}\n` +
+                    `- הצלחה ממוצעת במערכת לפי נושא: ${JSON.stringify(adminStats.successRateByTopic)}\n` +
+                    `הוסף פסקה נפרדת בסוף לגבי בריאות המערכת עבור המנהל.\n`;
             }
-
             return prompt;
         }
 
-        // English
+        // English Prompt
         let prompt =
             `You are QuickMath's AI tutor.\n` +
             `UI language: English.\n` +
-            `Address "${username}" as a regular user, and if the role is ADMIN, address them as "administrator".\n\n` +
-            `Goal: Write a concise but rich personal summary. Go through each topic, say what the user is strong at, and what to improve next.\n` +
-            `Use a friendly, motivating tone.\n\n` +
-            `Topics in the system:\n${topicLines.join("\n")}\n\n` +
-            `Overall progress data:\n` +
-            `- Progress level: ${overallLevel || "unknown"}\n` +
-            `- Progress score: ${overallScore != null ? overallScore : "unknown"}\n\n` +
-            `Success rates per topic (if any):\n${JSON.stringify(successRates)}\n\n`;
+            `Address "${username}" as a regular user${role === "ADMIN" ? ', and as an Administrator' : ''}.\n\n` +
+            `Goal: Write a concise, motivating personal summary. Discuss what the user is strong at and what to improve.\n` +
+            `Use a friendly tone.\n\n` +
+            `=== PERSONAL PRACTICE DATA FOR ${username} ===\n` +
+            `- Overall Progress Level: ${overallLevel}\n` +
+            `- Overall Progress Score: ${overallScore}\n\n` +
+            `Topics and Subtopics practiced (with Success Rate):\n${attemptedText}\n\n` +
+            `Topics NOT practiced yet (Explicitly encourage the user to try these):\n${unattemptedText}\n\n`;
 
         if (role === "ADMIN" && adminStats) {
             prompt +=
-                `Additionally, because the user is an administrator, add a short system stats section at the end:\n` +
+                `\n=== SYSTEM-WIDE STATISTICS (ADMIN VIEW ONLY) ===\n` +
+                `WARNING: These stats belong to the entire system. DO NOT attribute them to ${username}'s personal skills.\n` +
                 `- Total users: ${adminStats.totalUsers}\n` +
-                `- Total attempts: ${adminStats.totalAttempts}\n` +
-                `- Overall success rate: ${adminStats.overallSuccessRate}\n` +
-                `- Attempts by topic: ${JSON.stringify(adminStats.attemptsByTopic)}\n` +
-                `- Success rate by topic: ${JSON.stringify(adminStats.successRateByTopic)}\n`;
+                `- Total attempts in system: ${adminStats.totalAttempts}\n` +
+                `- System-wide Success Rate: ${adminStats.overallSuccessRate}\n` +
+                `- System-wide Success by Topic: ${JSON.stringify(adminStats.successRateByTopic)}\n` +
+                `Add a separate paragraph at the end summarizing system health for the administrator.\n`;
         }
 
         return prompt;
@@ -345,6 +381,20 @@ export default function Home() {
         }
     }, [profile, i18n.language]);
 
+    // ---------- Window Scroll Listener ----------
+    useEffect(() => {
+        const handleScroll = () => {
+            // Check if user is near bottom (e.g. within 50px)
+            const isAtBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50;
+            // If user scrolled up (not at bottom), we engage the 'userScrolledUp' lock to stop auto-scroll.
+            // If user returns to bottom, we release the lock.
+            userScrolledUpRef.current = !isAtBottom;
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
     // ---------- AI streaming ----------
     const startAiStream = (force = false) => {
         if (!profile || topics.length === 0) return;
@@ -373,6 +423,10 @@ export default function Home() {
         aiSummaryRef.current = "";
         setAiError(null);
         setAiLoading(true);
+        // Reset scroll lock logic on new stream
+        userScrolledUpRef.current = false;
+        // Start at bottom so user sees the beginning
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 
         const question = buildPrompt();
         const uiLang = i18n.language || "en";
@@ -435,16 +489,18 @@ export default function Home() {
     // auto-start stream once data is ready ONLY when arriving from Landing (reconnect)
     useEffect(() => {
         if (!profile || topics.length === 0) return;
-        if (profile.role === "ADMIN" && !adminStats) return; // wait for admin stats to enrich prompt
+        if (!userStats) return;
+
+        if (profile.role === "ADMIN" && !adminStats) return;
         if (!shouldAutoStreamRef.current) return;
 
         startAiStream(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [profile, topics, adminStats, i18n.language]);
+    }, [profile, topics, adminStats, userStats, i18n.language]);
 
-    // auto scroll to bottom while streaming
+    // auto scroll to bottom while streaming ONLY if user hasn't scrolled up
     useEffect(() => {
-        if (summaryEndRef.current) {
+        if (!userScrolledUpRef.current && summaryEndRef.current) {
             summaryEndRef.current.scrollIntoView({behavior: "smooth"});
         }
     }, [aiSummary]);
@@ -537,9 +593,6 @@ export default function Home() {
                                     <Typography sx={{opacity: 0.8}}>
                                         {t(userStats?.overallProgressLevel) || userStats?.overallProgressLevel}
                                     </Typography>
-                                    <Typography sx={{opacity: 0.8}}>
-                                        {overallScore.toFixed(2)} / 5
-                                    </Typography>
                                 </Stack>
                                 <LinearProgress
                                     variant="determinate"
@@ -571,62 +624,6 @@ export default function Home() {
                                     ))}
                                 </Stack>
                             </>
-                        )}
-                    </CardContent>
-                </Card>
-
-                {/* Topics overview */}
-                <Card elevation={2} sx={{borderRadius: 3}}>
-                    <CardContent>
-                        <Typography variant="h6" sx={{fontWeight: 700}}>
-                            {L.topicsTitle}
-                        </Typography>
-
-                        {topics.length === 0 ? (
-                            <Typography sx={{mt: 1}}>{L.noTopics}</Typography>
-                        ) : (
-                            <List dense>
-                                {topics.map((tp) => {
-                                    const rateMap = userStats?.successRateByTopic || {};
-                                    const rate = rateMap[tp.name];
-                                    const percent = typeof rate === "number" ? rate : null;
-
-                                    return (
-                                        <ListItem key={tp.id} sx={{py: 1}}>
-                                            <ListItemText
-                                                primary={
-                                                    <Stack direction="row" spacing={1} alignItems="center"
-                                                           flexWrap="wrap">
-                                                        <Typography sx={{fontWeight: 600}}>
-                                                            {t(tp.name) || tp.name}
-                                                        </Typography>
-                                                        {(tp.subtopics || []).length > 0 && (
-                                                            <Chip size="small"
-                                                                  label={`${tp.subtopics.length} subtopics`}/>
-                                                        )}
-                                                        {percent != null && (
-                                                            <Chip
-                                                                size="small"
-                                                                color={percent >= 70 ? "success" : percent <= 50 ? "warning" : "default"}
-                                                                label={`${percent.toFixed(0)}%`}
-                                                            />
-                                                        )}
-                                                    </Stack>
-                                                }
-                                                secondary={
-                                                    percent != null ? (
-                                                        <LinearProgress
-                                                            variant="determinate"
-                                                            value={Math.min(100, Math.max(0, percent))}
-                                                            sx={{height: 6, borderRadius: 4, mt: 0.5}}
-                                                        />
-                                                    ) : null
-                                                }
-                                            />
-                                        </ListItem>
-                                    );
-                                })}
-                            </List>
                         )}
                     </CardContent>
                 </Card>

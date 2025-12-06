@@ -1,18 +1,11 @@
 import PropTypes from "prop-types";
-import {
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    Tooltip,
-    CartesianGrid,
-    ResponsiveContainer,
-} from "recharts";
-import {Box, Typography} from "@mui/material";
-import {useTranslation} from "react-i18next";
+import { Box, Typography, CircularProgress } from "@mui/material";
+import { useTranslation } from "react-i18next";
+import { useTheme } from "@mui/material/styles";
 
-function ChartTotalSuccessRate({data}) {
-    const {t} = useTranslation();
+function ChartTotalSuccessRate({ data }) {
+    const { t } = useTranslation();
+    const theme = useTheme();
 
     const hasData =
         data &&
@@ -20,34 +13,76 @@ function ChartTotalSuccessRate({data}) {
         (!("totalAttempts" in data) || data.totalAttempts > 0);
 
     if (!hasData) {
-        return <Typography>{t("noOverallSuccessData")}</Typography>;
+        return (
+            <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 2 }}>
+                {t("noOverallSuccessData")}
+            </Typography>
+        );
     }
 
-    const chartData = [
-        {
-            name: t("overallSuccess"),
-            value: Number(data.successRate.toFixed(1)),
-        },
-    ];
+    const value = Math.round(data.successRate);
+
+    // Color logic based on success rate
+    let circleColor = theme.palette.error.main;
+    if (value >= 50) circleColor = theme.palette.warning.main;
+    if (value >= 70) circleColor = theme.palette.secondary.main;
+    if (value >= 90) circleColor = theme.palette.success.main;
 
     return (
-        <Box sx={{mt: 2}}>
-            <Typography variant="h6" gutterBottom>
-                {t("overallSuccessTitle")}
-            </Typography>
+        <Box sx={{
+            mt: 2,
+            height: 260,
+            width: "100%",
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'relative'
+        }}>
+            {/* Background Circle (Grey track) */}
+            <CircularProgress
+                variant="determinate"
+                value={100}
+                size={180}
+                thickness={4}
+                sx={{
+                    color: theme.palette.action.hover,
+                    position: 'absolute'
+                }}
+            />
 
-            <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={chartData}>
-                    <CartesianGrid strokeDasharray="3 3"/>
-                    <XAxis dataKey="name"/>
-                    <YAxis domain={[0, 100]}/>
-                    <Tooltip
-                        cursor={{fill: "transparent"}}
-                        formatter={(v) => `${v}%`}
-                    />
-                    <Bar dataKey="value" fill="#82ca9d"/>
-                </BarChart>
-            </ResponsiveContainer>
+            {/* Value Circle */}
+            <CircularProgress
+                variant="determinate"
+                value={value}
+                size={180}
+                thickness={4}
+                sx={{
+                    color: circleColor,
+                    strokeLinecap: 'round',
+                }}
+            />
+
+            {/* Centered Text */}
+            <Box
+                sx={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    bottom: 0,
+                    right: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
+            >
+                <Typography variant="h3" fontWeight="800" color="text.primary">
+                    {value}%
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                    {t('overallSuccess')}
+                </Typography>
+            </Box>
         </Box>
     );
 }

@@ -1,7 +1,21 @@
 import { useEffect, useState } from 'react';
-import { Alert, Box, Button, Card, Snackbar, Stack, TextField, Typography } from "@mui/material";
+import {
+    Alert,
+    Box,
+    Button,
+    Card,
+    CardContent,
+    Snackbar,
+    Stack,
+    TextField,
+    Typography,
+    Container,
+    Fade,
+    FormControlLabel,
+    Checkbox
+} from "@mui/material";
 import { useNavigate } from 'react-router-dom';
-import {REGISTER_URL, SERVER_URL, HOME_URL} from "../../utils/Constants.js";
+import { REGISTER_URL, SERVER_URL, HOME_URL } from "../../utils/Constants.js";
 import PasswordTextField from "../Common/PasswordTextField.jsx";
 import axios from "axios";
 import PropTypes from 'prop-types';
@@ -22,9 +36,8 @@ function Login({ onLoginSuccess }) {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [isAdmin, setIsAdmin] = useState(false);
     const [loginError, setLoginError] = useState(false);
-
-    // Snackbar for "Registration successful" message passed from Register.jsx
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState("");
 
@@ -46,9 +59,9 @@ function Login({ onLoginSuccess }) {
                 return;
             }
 
-            await axios.post(`${SERVER_URL}/auth/login`, { email, password }, { withCredentials: true });
+            // Include isAdmin in the request payload
+            await axios.post(`${SERVER_URL}/auth/login`, { email, password, isAdmin }, { withCredentials: true });
 
-            // Fetch profile to capture interfaceLanguage (and optionally role, etc.)
             const profResp = await axios.get(`${SERVER_URL}/profile`, { withCredentials: true });
             const userLang = (profResp?.data?.interfaceLanguage || 'en').toLowerCase();
 
@@ -62,7 +75,6 @@ function Login({ onLoginSuccess }) {
 
             setLoginError(false);
             onLoginSuccess && onLoginSuccess(null, profResp?.data?.role);
-
             navigate(HOME_URL, { replace: true });
         } catch {
             setLoginError(true);
@@ -70,74 +82,118 @@ function Login({ onLoginSuccess }) {
     }
 
     return (
-        <Box
-            sx={{
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                minHeight: '100vh', padding: { xs: 0, sm: 4, md: 4, lg: 4 }, width: '100%',
-                maxWidth: { xs: '90%', sm: '850px' }, mx: 'auto'
-            }}
-        >
-            {/* Top-right language selector (public) */}
-            <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
-                <LanguageSwitcher />
+        <Fade in={true} timeout={600}>
+            <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', p: 2 }}>
+                <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
+                    <LanguageSwitcher />
+                </Box>
+
+                <Container maxWidth="xs">
+                    <Card sx={{ borderRadius: 4, overflow: 'visible' }}>
+                        <CardContent sx={{ p: 4 }}>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
+                                <Box
+                                    component="img"
+                                    src="src/assets/favicon.png"
+                                    alt="QuickMath pointer"
+                                    sx={{ width: 80, height: 80, mb: 2 }}
+                                />
+                                <Typography
+                                    variant="h4"
+                                    gutterBottom
+                                    sx={{
+                                        fontWeight: 800,
+                                        background: (theme) => `linear-gradient(45deg, ${theme.palette.primary.main} 30%, ${theme.palette.secondary.main} 90%)`,
+                                        WebkitBackgroundClip: "text",
+                                        WebkitTextFillColor: "transparent",
+                                    }}
+                                >
+                                    {t('loginTitle')}
+                                </Typography>
+                                <Typography variant="subtitle1" color="text.secondary">
+                                    {t('slogan')}
+                                </Typography>
+                            </Box>
+
+                            <Stack spacing={3}>
+                                {loginError && (
+                                    <Alert severity="error" variant="filled">
+                                        {t('loginFailed')}
+                                    </Alert>
+                                )}
+
+                                <TextField
+                                    error={loginError}
+                                    type="email"
+                                    label={t('email')}
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    fullWidth
+                                    dir="ltr"
+                                    InputLabelProps={{
+                                        sx: {
+                                            left: 0,
+                                            right: 'auto',
+                                            transformOrigin: 'top left',
+                                            textAlign: 'left'
+                                        }
+                                    }}
+                                    InputProps={{
+                                        style: { textAlign: 'left', direction: 'ltr' }
+                                    }}
+                                />
+
+                                <PasswordTextField
+                                    error={loginError}
+                                    type="password"
+                                    label={t('password')}
+                                    value={password}
+                                    helperText={t('loginPasswordHelperText')}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    fullWidth
+                                />
+
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={isAdmin}
+                                            onChange={(e) => setIsAdmin(e.target.checked)}
+                                            color="primary"
+                                        />
+                                    }
+                                    label={t('loginAsAdmin')}
+                                />
+
+                                <Button
+                                    variant='contained'
+                                    size="large"
+                                    onClick={handleLogin}
+                                    fullWidth
+                                    sx={{ py: 1.5, fontSize: '1.1rem' }}
+                                >
+                                    {t('login')}
+                                </Button>
+
+                                <Box sx={{ textAlign: 'center', mt: 1 }}>
+                                    <Button
+                                        variant='text'
+                                        onClick={() => navigate(REGISTER_URL)}
+                                    >
+                                        {t('createAccount')}
+                                    </Button>
+                                </Box>
+                            </Stack>
+                        </CardContent>
+                    </Card>
+                </Container>
+
+                <Snackbar open={snackbarOpen} autoHideDuration={4000} onClose={handleCloseSnackbar}>
+                    <Alert severity="success" onClose={handleCloseSnackbar} sx={{ width: '100%' }}>
+                        {snackbarMessage || t('registerSuccess')}
+                    </Alert>
+                </Snackbar>
             </Box>
-
-            <Card sx={{ display: "flex", flexDirection: "column", width: '100%', boxShadow: 3 }} variant="outlined">
-                <Stack direction={"column"} spacing={2} padding={2}>
-                    <Stack direction={"row"} spacing={2}>
-                        <Box
-                            component="img"
-                            src="src/assets/favicon.png"
-                            alt="QuickMath pointer"
-                            sx={{ width: 70, height: 70 }}
-                        />
-                        <Stack margin={1}>
-                            <Typography variant='h4'>{t('loginTitle')}</Typography>
-                            <Typography>{t('slogan')}</Typography>
-                        </Stack>
-                    </Stack>
-
-                    {loginError &&
-                        <Typography color='error' variant="h7">
-                            {t('loginFailed')}
-                        </Typography>
-                    }
-
-                    <TextField
-                        error={loginError}
-                        variant="outlined"
-                        type="email"
-                        label={t('email')}
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-
-                    <PasswordTextField
-                        error={loginError}
-                        variant="outlined"
-                        type="password"
-                        label={t('password')}
-                        value={password}
-                        helperText={t('loginPasswordHelperText')}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-
-                    <Button sx={{ textTransform: 'inherit' }} variant='contained' onClick={handleLogin}>
-                        {t('login')}
-                    </Button>
-
-                    <Button sx={{ textTransform: 'inherit' }} variant='text' onClick={() => navigate(REGISTER_URL)}>
-                        {t('createAccount')}
-                    </Button>
-                </Stack>
-            </Card>
-
-            <Snackbar open={snackbarOpen} autoHideDuration={4000} onClose={handleCloseSnackbar}>
-                <Alert severity="success" onClose={handleCloseSnackbar} sx={{ width: '100%' }}>
-                    {snackbarMessage || t('registerSuccess')}
-                </Alert>
-            </Snackbar>
-        </Box>
+        </Fade>
     );
 }
 

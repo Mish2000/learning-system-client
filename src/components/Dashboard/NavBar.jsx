@@ -1,32 +1,49 @@
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import { Avatar, Box, Button, Stack } from "@mui/material";
-import AppIcon from "../Common/AppIcon.jsx";
+import { useEffect, useRef, useState } from "react";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
+import axios from "axios";
+
+// MUI Components
+import {
+    AppBar,
+    Avatar,
+    Box,
+    Button,
+    Container,
+    Stack,
+    Toolbar,
+    Typography,
+    useTheme
+} from "@mui/material";
+import { alpha } from "@mui/material/styles";
+
+// Icons
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import CalculateIcon from '@mui/icons-material/Calculate';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import HomeIcon from '@mui/icons-material/Home';
+
+// Custom Components & Constants
+import AppIcon from "../Common/AppIcon.jsx";
+import NotificationCenter from "../Common/NotificationCenter.jsx";
 import {
     ADMIN_DASHBOARD_URL,
-    HOME_URL, LANDING_URL,
+    HOME_URL,
+    LANDING_URL,
     PRACTICE_URL,
     PROFILE_URL,
     SERVER_URL,
     STATISTICS_URL
 } from "../../utils/Constants.js";
-import CalculateIcon from '@mui/icons-material/Calculate';
-import BarChartIcon from '@mui/icons-material/BarChart';
-import HomeIcon from '@mui/icons-material/Home';
-import { useTranslation } from 'react-i18next';
-import { useEffect, useRef, useState } from "react";
-import NotificationCenter from "../Common/NotificationCenter.jsx";
-import axios from "axios";
 
 export default function NavBar() {
     const { t } = useTranslation();
     const location = useLocation();
     const navigate = useNavigate();
+    const theme = useTheme();
+
     const [userData, setUserData] = useState(null);
     const [avatarSrc, setAvatarSrc] = useState(null);
     const [avatarRev, setAvatarRev] = useState(0);
@@ -60,6 +77,7 @@ export default function NavBar() {
                 setUserData((prev) => ({ ...(prev || {}), ...updated }));
             }
         };
+
         window.addEventListener('profile-updated', onProfileUpdated);
         return () => window.removeEventListener('profile-updated', onProfileUpdated);
     }, []);
@@ -72,7 +90,7 @@ export default function NavBar() {
 
         // --- notifications SSE ---
         const openSSE = () => {
-            closeSSE(); // safety
+            closeSSE();
             const src = new EventSource(`${SERVER_URL}/notifications/stream`, { withCredentials: true });
             esRef.current = src;
 
@@ -81,23 +99,17 @@ export default function NavBar() {
                     const payload = JSON.parse(event.data);
                     window.dispatchEvent(new CustomEvent('server-notification', { detail: payload }));
                     // eslint-disable-next-line no-unused-vars
-                } catch (e) {
-                    //
-                }
+                } catch (e) { /* ignore */ }
             });
 
             src.onopen = () => {
-                // Reset backoff on a clean open
                 backoffRef.current = 1000;
             };
 
             src.onerror = async () => {
-                // Attempt to refresh cookies, then reconnect with backoff
                 try {
                     await axios.post(`${SERVER_URL}/auth/refresh`, {}, { withCredentials: true });
-                } catch {
-                    // even if refresh fails, we'll try to reconnect (server may also slide-refresh)
-                }
+                } catch { /* ignore */ }
                 closeSSE();
                 const delay = Math.min(backoffRef.current, 30000);
                 setTimeout(openSSE, delay);
@@ -113,15 +125,11 @@ export default function NavBar() {
             }
         };
 
-        // Open on mount
         openSSE();
-
-        // Gentle keep-alive: refresh before typical access-token expiry
         keepAliveRef.current = setInterval(() => {
             axios.post(`${SERVER_URL}/auth/refresh`, {}, { withCredentials: true }).catch(() => {});
-        }, 9 * 60 * 1000); // 9 minutes
+        }, 9 * 60 * 1000);
 
-        // Cleanup on unmount
         return () => {
             closeSSE();
             if (keepAliveRef.current) {
@@ -131,108 +139,138 @@ export default function NavBar() {
         };
     }, []);
 
+    // Helper to generate consistent styled buttons
+    // eslint-disable-next-line react/prop-types
+    const NavButton = ({ to, icon, label }) => {
+        const isActive = location.pathname === to;
+        return (
+            <Button
+                startIcon={icon}
+                onClick={() => navigate(to)}
+                sx={{
+                    px: 2,
+                    py: 1,
+                    borderRadius: 2,
+                    color: isActive ? 'primary.main' : 'text.secondary',
+                    bgcolor: isActive ? alpha(theme.palette.primary.main, 0.08) : 'transparent',
+                    fontWeight: isActive ? 700 : 500,
+                    transition: 'all 0.2s ease-in-out',
+                    '&:hover': {
+                        bgcolor: isActive
+                            ? alpha(theme.palette.primary.main, 0.16)
+                            : alpha(theme.palette.text.primary, 0.05),
+                        color: isActive ? 'primary.dark' : 'text.primary',
+                        transform: 'translateY(-1px)',
+                    },
+                }}
+            >
+                {label}
+            </Button>
+        );
+    };
+
     return (
-        <Stack spacing={7}>
-            <AppBar position="fixed" color="primary">
-                <Toolbar>
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            width: '100%',
-                        }}
-                    >
-                        <Stack direction="row" spacing={2} alignItems="center">
-                            <AppIcon size={50} />
-                            <Typography variant="h6" component="div">
+        <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+            <AppBar
+                position="fixed"
+                color="default"
+                sx={{
+                    bgcolor: alpha(theme.palette.background.default, 0.8),
+                    backdropFilter: 'blur(12px)',
+                    boxShadow: 'none',
+                    borderBottom: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                }}
+            >
+                <Container maxWidth="xl">
+                    <Toolbar disableGutters sx={{ height: 72 }}>
+                        {/* LEFT: LOGO */}
+                        <Stack direction="row" spacing={1.5} alignItems="center" sx={{ width: 240 }}>
+                            <AppIcon size={42} />
+                            <Typography
+                                variant="h6"
+                                component="div"
+                                sx={{
+                                    fontWeight: 800,
+                                    background: `linear-gradient(45deg, ${theme.palette.primary.main} 30%, ${theme.palette.secondary.main} 90%)`,
+                                    WebkitBackgroundClip: "text",
+                                    WebkitTextFillColor: "transparent",
+                                    letterSpacing: -0.5
+                                }}
+                            >
                                 {t('quickMath')}
                             </Typography>
                         </Stack>
 
-                        <Stack direction="row" spacing={4} alignItems="center">
-                            <Button
-                                sx={{
-                                    textTransform: 'inherit',
-                                    color: location.pathname === HOME_URL ? 'secondary.light' : 'inherit',
-                                }}
-                                onClick={() => navigate(HOME_URL)}
-                            >
-                                <HomeIcon />
-                                {t('home')}
-                            </Button>
-
-                            <Button
-                                sx={{
-                                    textTransform: 'inherit',
-                                    color: location.pathname === PRACTICE_URL ? 'secondary.light' : 'inherit',
-                                }}
-                                onClick={() => navigate(PRACTICE_URL)}
-                            >
-                                <CalculateIcon />
-                                {t('practice')}
-                            </Button>
-
-                            <Button
-                                sx={{
-                                    textTransform: 'inherit',
-                                    color: location.pathname === STATISTICS_URL ? 'secondary.light' : 'inherit',
-                                }}
-                                onClick={() => navigate(STATISTICS_URL)}
-                            >
-                                <BarChartIcon />
-                                {t('statistics')}
-                            </Button>
-
+                        {/* CENTER: NAVIGATION */}
+                        <Stack direction="row" spacing={1} sx={{ flexGrow: 1, justifyContent: 'center' }}>
+                            <NavButton to={HOME_URL} icon={<HomeIcon />} label={t('home')} />
+                            <NavButton to={PRACTICE_URL} icon={<CalculateIcon />} label={t('practice')} />
+                            <NavButton to={STATISTICS_URL} icon={<BarChartIcon />} label={t('statistics')} />
                             {role === 'ADMIN' && (
-                                <Button
-                                    sx={{
-                                        textTransform: 'inherit',
-                                        color: location.pathname === ADMIN_DASHBOARD_URL ? 'secondary.light' : 'inherit',
-                                    }}
-                                    onClick={() => navigate(ADMIN_DASHBOARD_URL)}
-                                >
-                                    <AdminPanelSettingsIcon />
-                                    {t('adminSection')}
-                                </Button>
+                                <NavButton to={ADMIN_DASHBOARD_URL} icon={<AdminPanelSettingsIcon />} label={t('adminSection')} />
                             )}
+                        </Stack>
 
-                            <Button
-                                sx={{
-                                    textTransform: 'inherit',
-                                    color: location.pathname === PROFILE_URL ? 'secondary.light' : 'inherit',
-                                }}
-                                onClick={() => navigate(PROFILE_URL)}
-                            >
-                                <PersonIcon />
-                                {t('profile')}
-                            </Button>
-
+                        {/* RIGHT: USER ACTIONS */}
+                        <Stack direction="row" spacing={2} alignItems="center" sx={{ width: 240, justifyContent: 'flex-end' }}>
                             <NotificationCenter />
 
-                            {userData && (
-                                <Stack direction="row" spacing={1} alignItems="center">
-                                    <Avatar key={avatarRev} alt="User Avatar" src={avatarSrc || undefined} />
-                                    <Typography variant="body1">
+                            <Box
+                                onClick={() => navigate(PROFILE_URL)}
+                                sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 1.5,
+                                    cursor: 'pointer',
+                                    p: 0.5,
+                                    pl: 1,
+                                    pr: 2,
+                                    borderRadius: 50,
+                                    border: `1px solid ${location.pathname === PROFILE_URL ? theme.palette.primary.main : 'transparent'}`,
+                                    transition: 'all 0.2s',
+                                    '&:hover': { bgcolor: alpha(theme.palette.text.primary, 0.05) }
+                                }}
+                            >
+                                <Avatar
+                                    key={avatarRev}
+                                    alt="User"
+                                    src={avatarSrc || undefined}
+                                    sx={{ width: 36, height: 36, bgcolor: 'primary.main' }}
+                                >
+                                    {!avatarSrc && <PersonIcon />}
+                                </Avatar>
+                                {userData && (
+                                    <Typography variant="subtitle2" sx={{ fontWeight: 600, maxWidth: 100 }} noWrap>
                                         {userData.username}
                                     </Typography>
-                                </Stack>
-                            )}
+                                )}
+                            </Box>
 
                             <Button
-                                sx={{ textTransform: 'inherit' }}
-                                color="inherit"
                                 onClick={handleLogout}
+                                sx={{
+                                    minWidth: 40,
+                                    width: 40,
+                                    height: 40,
+                                    borderRadius: '50%',
+                                    p: 0,
+                                    color: 'text.secondary',
+                                    '&:hover': { color: 'error.main', bgcolor: alpha(theme.palette.error.main, 0.1) }
+                                }}
                             >
-                                <LogoutIcon />
-                                {t('logOut')}
+                                <LogoutIcon fontSize="small" />
                             </Button>
                         </Stack>
-                    </Box>
-                </Toolbar>
+                    </Toolbar>
+                </Container>
             </AppBar>
-            <Outlet />
-        </Stack>
-    );
 
+            {/* Spacer for Fixed AppBar */}
+            <Toolbar sx={{ height: 72 }} />
+
+            <Box component="main" sx={{ flexGrow: 1, position: 'relative' }}>
+                <Outlet />
+            </Box>
+        </Box>
+    );
 }

@@ -19,9 +19,18 @@ const PasswordTextField = ({ label, helperText, ...props }) => {
             {...props}
             label={label}
             type={showPassword ? 'text' : 'password'}
-            dir={"ltr"}
+            dir="ltr"
+            InputLabelProps={{
+                sx: {
+                    left: 0,
+                    right: 'auto',
+                    transformOrigin: 'top left',
+                    textAlign: 'left'
+                }
+            }}
             helperText={helperText}
             InputProps={{
+                style: { textAlign: 'left', direction: 'ltr' },
                 endAdornment: (
                     <InputAdornment position="end">
                         <IconButton

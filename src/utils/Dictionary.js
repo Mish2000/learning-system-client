@@ -34,6 +34,7 @@ const resources = {
             currentDifficulty: "Current Difficulty",
             UploadNewPhoto: "Upload New Photo",
             RemovePhoto: "Delete Photo",
+            changePassword: "Password Change",
 
             // NoteBook.jsx
             notebook: "Notebook",
@@ -90,7 +91,7 @@ const resources = {
 
             // UserDashboardSSE.jsx
             loadingUserDashboardPage: "Loading user dashboard...",
-            userDashboardTitle: "User Dashboard",
+            userDashboardTitle: "Personal stats",
             loading: "Loading...",
             welcomeBack: "Welcome back",
             overallProgress: "Overall Progress",
@@ -105,6 +106,11 @@ const resources = {
             subtopicDifficulty: "Subtopic Difficulty",
             subtopic: "Subtopic",
             subtopicDifficultyPendingBackend: "No subtopic difficulty data yet. Start practicing to unlock it.",
+            rank1: "First rank out of five",
+            rank2: "Second rank out of five",
+            rank3: "Third rank out of five",
+            rank4: "Fourth rank out of five",
+            rank5: "Max rank",
 
             // ChartSuccessRateByTopic.jsx
             successRateTitle: "Success Rate By Topic",
@@ -131,6 +137,7 @@ const resources = {
             loginPasswordHelperText: "Do not share your password with anyone else",
             loginTitle: "Quick Math",
             slogan: "Think Fast - Solve Faster!",
+            loginAsAdmin: "Login as Administrator",
 
             // Register.jsx
             registerPageTitle: "Create New Account",
@@ -254,6 +261,40 @@ const resources = {
             combineHundreds: "Combine the hundreds",
             simplifiesTo: "which simplifies to",
             by: "by",
+
+            // NotificationCenter.jsx
+            notifications: "Notifications",
+            markAllRead: "Mark all as read",
+            clearAll: "Clear all",
+            noNotifications: "You have no notifications",
+            newNotification: "New Notification",
+            close: "Close",
+            difficultyChangeMsg: "Your difficulty for {{topic}} {{direction}} from {{from}} to {{to}}",
+            diff_increased: "increased",
+            diff_decreased: "decreased",
+
+            // AiInstallationGuide.jsx
+            aiSetupGuide: "AI Assistant Setup Guide",
+            aiSetupTitle: "Install & Configure Local AI",
+            aiSetupClose: "Close",
+            step1Label: "Download Ollama",
+            step1Desc: "Navigate to the Ollama website",
+            step1LinkText: "Click here to visit Ollama.com",
+            step2Label: "Run Installer",
+            step2Desc: "Click the 'Download' button on the website and run the Setup file on your PC.",
+            step3Label: "Installation",
+            step3Desc: "Follow the installation guide prompts to complete the setup.",
+            step4Label: "Launch Application",
+            step4Desc: "Run the 'Ollama' application (exe) and wait for the UI/Terminal to open.",
+            step5Label: "Pull Model",
+            step5Desc: "In the menu/terminal, type the following command to download the recommended model: ",
+            step5Command: "aya-expanse:8b",
+            step5DescSuffix: " Send a simple message (e.g., 'Hi') to start the download.",
+            step6Label: "Verify & Restart",
+            step6Desc: "Once the model responds to your first message, the download is complete. You may exit the UI and restart your server.",
+            step7Label: "Ready",
+            step7Desc: "The AI assistant is now active and ready to be used within the system.",
+            aiModelNote: "Note: To use a different model, update the 'MODEL_NAME' constant in the 'StreamingOllamaService' backend class.",
         }
     },
 
@@ -288,6 +329,7 @@ const resources = {
             currentDifficulty: "רמת קושי נוכחית",
             UploadNewPhoto: "העלאת תמונה חדשה",
             RemovePhoto: "מחיקת תמונה",
+            changePassword: "שינוי סיסמה",
 
             // NoteBook.jsx
             notebook: "מחברת",
@@ -344,7 +386,7 @@ const resources = {
 
             // UserDashboardSSE.jsx
             loadingUserDashboardPage: "טוען לוח מחוונים משתמש...",
-            userDashboardTitle: "לוח מחוונים משתמש",
+            userDashboardTitle: "סטטיסטיקה אישית",
             loading: "טוען...",
             welcomeBack: "ברוך הבא חזרה",
             overallProgress: "התקדמות כללית",
@@ -359,6 +401,11 @@ const resources = {
             subtopicDifficulty: "רמת קושי של תתי־נושאים",
             subtopic: "תת־נושא",
             subtopicDifficultyPendingBackend: "עדיין אין נתוני רמת קושי לתתי־נושאים. התחילו לתרגל כדי לפתוח אותם.",
+            rank1: "דרגה ראשונה מתוך חמש",
+            rank2: "דרגה שניה מתוך חמש",
+            rank3: "דרגה שלישית מתוך חמש",
+            rank4: "דרגה רביעית מתוך חמש",
+            rank5: "דרגה מקסימלית",
 
 
             // ChartSuccessRateByTopic.jsx
@@ -386,6 +433,7 @@ const resources = {
             loginPasswordHelperText: "נא לא לשתף את סיסמתך עם כל אדם אחר",
             loginTitle: "חשבון מהיר",
             slogan: "לחשוב מהר - לפתור מהר יותר!",
+            loginAsAdmin: "התחבר כמנהל",
 
             // Register.jsx
             registerPageTitle: "צור משתמש חדש",
@@ -517,7 +565,41 @@ const resources = {
             combineOnes: "שלב את האחדות",
             combineTens: "שלב את העשרות",
             combineHundreds: "שלב את המאות",
-            simplifiesTo: "מה שמתפשט ל"
+            simplifiesTo: "מה שמתפשט ל",
+
+            // NotificationCenter.jsx
+            notifications: "התראות",
+            markAllRead: "סמן הכל כנקרא",
+            clearAll: "נקה הכל",
+            noNotifications: "אין התראות",
+            newNotification: "התראה חדשה",
+            close: "סגור",
+            difficultyChangeMsg: "רמת הקושי שלך ב{{topic}} {{direction}} מ-{{from}} ל-{{to}}",
+            diff_increased: "עלתה",
+            diff_decreased: "ירדה",
+
+            // AiInstallationGuide.jsx
+            aiSetupGuide: "מדריך התקנת עוזר בינה מלאכותית",
+            aiSetupTitle: "התקנה והגדרה של AI מקומי",
+            aiSetupClose: "סגור",
+            step1Label: "הורדת Ollama",
+            step1Desc: "נווט לאתר הרשמי של Ollama",
+            step1LinkText: "לחץ כאן למעבר מהיר",
+            step2Label: "הפעלת ההתקנה",
+            step2Desc: "לחץ על כפתור ההורדה (Download) באתר והפעל את קובץ ההתקנה במחשבך.",
+            step3Label: "תהליך ההתקנה",
+            step3Desc: "עקוב אחר הוראות ההתקנה עד לסיום התהליך.",
+            step4Label: "הפעלת היישום",
+            step4Desc: "הפעל את היישום 'Ollama' והמתן לפתיחת הממשק/טרמינל.",
+            step5Label: "הורדת המודל",
+            step5Desc: "בשורת החיפוש, הקלד ",
+            step5Command: "aya-expanse:8b",
+            step5DescSuffix: " ושלח הודעה פשוטה (למשל 'Hi') כדי להתחיל את ההורדה.",
+            step6Label: "אימות ואתחול",
+            step6Desc: "לאחר שהמודל הגיב להודעה הראשונה, ההורדה הושלמה. ניתן לצאת מהממשק ולהפעיל מחדש את השרת.",
+            step7Label: "מוכן לשימוש",
+            step7Desc: "עוזר הבינה המלאכותית פעיל כעת ומוכן לשימוש במערכת.",
+            aiModelNote: "הערה: אם ברצונך להשתמש במודל אחר, עליך לשנות את הקבוע 'MODEL_NAME' במחלקה 'StreamingOllamaService' בצד השרת.",
         }
     }
 };

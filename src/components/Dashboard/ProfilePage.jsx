@@ -1,4 +1,4 @@
-import {useEffect, useState, useRef, useMemo} from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import axios from 'axios';
 import {
     Typography,
@@ -10,40 +10,40 @@ import {
     MenuItem,
     Alert,
     Snackbar,
+    Container,
+    Card,
+    CardContent,
+    Avatar,
+    Fade
 } from '@mui/material';
+import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import DeleteIcon from '@mui/icons-material/Delete';
+import TranslateIcon from '@mui/icons-material/Translate';
+
 import Loading from '../Common/Loading.jsx';
-import {useTranslation} from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import CustomAccountCircleIcon from '../Common/CustomAccountCircleIcon.jsx';
 import PasswordTextField from '../Common/PasswordTextField.jsx';
 import PasswordStrengthIndicator from '../Common/PasswordStrengthIndicator.jsx';
-import {GET_DIRECTION, SERVER_URL} from '../../utils/Constants.js';
+import { GET_DIRECTION, SERVER_URL } from '../../utils/Constants.js';
 
 // ---- Language helpers ----
 const LANG_OPTIONS = [
     { code: 'en', label: 'English' },
     { code: 'he', label: 'עברית' },
 ];
-
 const codeToLabel = (code) => {
     const hit = LANG_OPTIONS.find(o => o.code === String(code || '').toLowerCase());
     return hit ? hit.label : 'English';
 };
 
-// Robust canonicalization: accept codes, English labels, Hebrew text, or historical mojibake
 const toLangCode = (raw) => {
     const s = String(raw || '').trim();
     const lower = s.toLowerCase();
-
-    // common codes / English labels
     if (lower === 'en' || lower.startsWith('eng') || lower.includes('english')) return 'en';
     if (lower === 'he' || lower === 'iw' || lower.startsWith('heb') || lower.includes('hebrew')) return 'he';
-
-    // raw Hebrew text → he
-    if (/[א-ת]/.test(s)) return 'he';
-
-    // historical mojibake for "עברית"
-    if (s === '×¢×‘×¨×™×ª') return 'he';
-
+    if (/[א-ת]/.test(s)) return 'he'; // Hebrew charset detection
+    if (s === '×¢×‘×¨×™×ª') return 'he'; // Mojibake check
     return 'en';
 };
 
@@ -51,8 +51,6 @@ export default function ProfilePage() {
     const { t, i18n } = useTranslation();
 
     const [profile, setProfile] = useState(null);
-
-    // store language **as code**, show label in UI
     const [languageCode, setLanguageCode] = useState('en');
     const [originalLanguageCode, setOriginalLanguageCode] = useState('en');
     const [languageAnchorEl, setLanguageAnchorEl] = useState(null);
@@ -73,9 +71,8 @@ export default function ProfilePage() {
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
     const [snackbarMessage, setSnackbarMessage] = useState('');
 
-    const usernameRegex = /^[A-Za-z0-9]{4,30}$/;
-    const passwordRegex =
-        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+={}'":;?.<>,-]).{8,30}$/;
+    const usernameRegex = /^[a-zA-Z0-9\u0590-\u05FF]{4,30}$/;
+    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+={}'":;?.<>,-]).{8,30}$/;
 
     const dir = useMemo(() => GET_DIRECTION(i18n.language), [i18n.language]);
 
@@ -85,14 +82,11 @@ export default function ProfilePage() {
                 const resp = await axios.get(`${SERVER_URL}/profile`, { withCredentials: true });
                 setProfile(resp.data);
 
-                // normalize whatever is stored to a code ('en' / 'he')
                 const code = toLangCode(resp.data?.interfaceLanguage || 'English');
                 setLanguageCode(code);
                 setOriginalLanguageCode(code);
-
                 setNewUsername(resp.data?.username || '');
 
-                // keep runtime i18n aligned with stored value
                 i18n.changeLanguage(code);
                 localStorage.setItem('language', code);
             } catch (err) {
@@ -108,13 +102,16 @@ export default function ProfilePage() {
         let isValid = true;
 
         if (newUsername && !usernameRegex.test(newUsername)) {
-            newErrors.username = true; isValid = false;
+            newErrors.username = true;
+            isValid = false;
         }
         if (newPassword && !passwordRegex.test(newPassword)) {
-            newErrors.password = true; isValid = false;
+            newErrors.password = true;
+            isValid = false;
         }
         if (newPassword && newPassword !== repeatPassword) {
-            newErrors.repeatPassword = true; isValid = false;
+            newErrors.repeatPassword = true;
+            isValid = false;
         }
 
         setErrors(newErrors);
@@ -154,7 +151,6 @@ export default function ProfilePage() {
             return;
         }
         try {
-            // 1) Upload image if any
             if (userImage) {
                 const formData = new FormData();
                 formData.append('image', userImage);
@@ -164,11 +160,10 @@ export default function ProfilePage() {
                 });
             }
 
-            // 2) Update profile fields — SAVE **code** to DB
             const payload = {
                 username: newUsername,
                 password: newPassword || undefined,
-                interfaceLanguage: languageCode, // <-- important: 'en' | 'he'
+                interfaceLanguage: languageCode,
             };
 
             const resp = await axios.put(`${SERVER_URL}/profile`, payload, { withCredentials: true });
@@ -182,12 +177,10 @@ export default function ProfilePage() {
             setNewPassword('');
             setRepeatPassword('');
 
-            // refresh & broadcast to NavBar
             const refreshed = await axios.get(`${SERVER_URL}/profile`, { withCredentials: true });
             setProfile(refreshed.data);
             window.dispatchEvent(new CustomEvent('profile-updated', { detail: refreshed.data }));
 
-            // update baselines
             setOriginalLanguageCode(languageCode);
             i18n.changeLanguage(languageCode);
             localStorage.setItem('language', languageCode);
@@ -199,13 +192,10 @@ export default function ProfilePage() {
         }
     };
 
-    const handleLanguageMenuOpen = (event) => setLanguageAnchorEl(event.currentTarget);
-    const handleMenuClose = () => setLanguageAnchorEl(null);
     const handleLanguageSelect = (code) => {
         setLanguageCode(code);
-        i18n.changeLanguage(code);
-        localStorage.setItem('language', code);
-        handleMenuClose();
+        // Do NOT change global i18n here; only on Save
+        setLanguageAnchorEl(null);
     };
 
     const handleImageChange = (e) => {
@@ -216,16 +206,12 @@ export default function ProfilePage() {
 
     if (!profile) {
         return (
-            <Box>
-                <Typography variant="h3" sx={{ m: 10 }}>
-                    {t('loadingProfile')}
-                </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 10 }}>
                 <Loading />
             </Box>
         );
     }
 
-    // Compute preview (new upload > stored picture)
     let displayImage = null;
     if (userImage) {
         displayImage = URL.createObjectURL(userImage);
@@ -237,174 +223,201 @@ export default function ProfilePage() {
     const hasUsernameChanged = (newUsername || '') !== (profile.username || '');
     const hasPasswordEntered = newPassword.length > 0 || repeatPassword.length > 0;
     const hasImageUploaded = !!userImage;
-    const buttonEnabled =
-        hasLanguageChanged || hasUsernameChanged || hasPasswordEntered || hasImageUploaded;
+    const buttonEnabled = hasLanguageChanged || hasUsernameChanged || hasPasswordEntered || hasImageUploaded;
 
     return (
-        <Box
-            sx={{
-                direction: dir,
-                display: 'flex',
-                flexDirection: 'column',
-                width: '100%',
-            }}
-        >
-            {/* Snackbar */}
-            <Snackbar
-                open={snackbarOpen}
-                autoHideDuration={4000}
-                onClose={() => setSnackbarOpen(false)}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-            >
-                <Alert
-                    onClose={() => setSnackbarOpen(false)}
-                    severity={snackbarSeverity}
-                    sx={{ width: '100%' }}
-                >
-                    {snackbarMessage}
-                </Alert>
-            </Snackbar>
-
-            {/* Title */}
-            <Box sx={{ textAlign: 'center', mt: 3 }}>
-                <Typography variant="h4" gutterBottom>
-                    {t('profileManagement')}
-                </Typography>
-            </Box>
-
-            {/* Image + actions */}
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <Box
-                    sx={{
-                        m: 1,
-                        border: '5px solid #0c8686',
-                        borderRadius: '50%',
-                        overflow: 'hidden',
-                        width: 160,
-                        height: 160,
-                        mb: 2,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        backgroundColor: '#f5f5f5',
-                    }}
-                >
-                    <input
-                        id="profile-image-upload"
-                        type="file"
-                        accept="image/*"
-                        style={{ display: 'none' }}
-                        onChange={handleImageChange}
-                    />
-                    {displayImage ? (
-                        <img
-                            src={displayImage}
-                            alt="User Profile"
-                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        />
-                    ) : (
-                        <CustomAccountCircleIcon style={{ width: '80%', height: '80%' }} />
-                    )}
-                </Box>
-
-                <Stack direction="row" spacing={2} sx={{ mb: 2 }}>
-                    <Button
-                        variant="outlined"
-                        onClick={() => document.getElementById('profile-image-upload').click()}
+        <Fade in={true} timeout={600}>
+            <Container maxWidth="sm" sx={{ py: 6 }} dir={dir}>
+                <Box sx={{ textAlign: 'center', mb: 4 }}>
+                    <Typography
+                        variant="h3"
+                        component="h1"
+                        gutterBottom
+                        sx={{
+                            fontWeight: 800,
+                            background: (theme) => `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+                            WebkitBackgroundClip: "text",
+                            WebkitTextFillColor: "transparent",
+                        }}
                     >
-                        {t('UploadNewPhoto') || 'Upload New Photo'}
-                    </Button>
-                    {profile?.profileImage && (
-                        <Button variant="text" color="error" onClick={handleDeleteImage}>
-                            {t('RemovePhoto') || 'Remove photo'}
-                        </Button>
-                    )}
-                </Stack>
-
-                {/* Difficulty line */}
-                <Box sx={{ mb: 2 }}>
-                    <Typography variant="h6">
-                        {t('currentDifficulty')}: {t(profile.currentDifficulty || 'BASIC')}
-                        {profile.subDifficultyLevel > 0 && (
-                            <> ({t('subLevel')} {profile.subDifficultyLevel})</>
-                        )}
+                        {t('profileManagement')}
                     </Typography>
                 </Box>
 
-                {/* Form */}
-                <Stack
-                    spacing={3}
-                    sx={{ direction: dir, width: '90%', maxWidth: 600 }}
+                <Card sx={{ overflow: 'visible' }}>
+                    <CardContent sx={{ p: 4 }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 4, position: 'relative' }}>
+                            <Box
+                                sx={{
+                                    position: 'relative',
+                                    width: 120,
+                                    height: 120,
+                                    mb: 2,
+                                    '&:hover .overlay': { opacity: 1 }
+                                }}
+                            >
+                                <Avatar
+                                    src={displayImage}
+                                    sx={{
+                                        width: 120,
+                                        height: 120,
+                                        bgcolor: 'primary.light',
+                                        fontSize: 40,
+                                        boxShadow: 3
+                                    }}
+                                >
+                                    {!displayImage && <CustomAccountCircleIcon />}
+                                </Avatar>
+
+                                <Box
+                                    className="overlay"
+                                    onClick={() => document.getElementById('profile-image-upload').click()}
+                                    sx={{
+                                        position: 'absolute',
+                                        top: 0,
+                                        left: 0,
+                                        width: '100%',
+                                        height: '100%',
+                                        borderRadius: '50%',
+                                        bgcolor: 'rgba(0,0,0,0.5)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        opacity: 0,
+                                        transition: 'opacity 0.2s',
+                                        cursor: 'pointer',
+                                        color: '#fff'
+                                    }}
+                                >
+                                    <PhotoCameraIcon />
+                                </Box>
+                            </Box>
+
+                            <input
+                                id="profile-image-upload"
+                                type="file"
+                                accept="image/*"
+                                style={{ display: 'none' }}
+                                onChange={handleImageChange}
+                            />
+
+                            <Stack direction="row" spacing={1}>
+                                <Button
+                                    size="small"
+                                    startIcon={<PhotoCameraIcon />}
+                                    onClick={() => document.getElementById('profile-image-upload').click()}
+                                >
+                                    {t('UploadNewPhoto') || 'Change Photo'}
+                                </Button>
+                                {profile?.profileImage && (
+                                    <Button
+                                        size="small"
+                                        color="error"
+                                        startIcon={<DeleteIcon />}
+                                        onClick={handleDeleteImage}
+                                    >
+                                        {t('RemovePhoto') || 'Remove'}
+                                    </Button>
+                                )}
+                            </Stack>
+
+                            <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+                                {t('currentDifficulty')}: <b>{t(profile.currentDifficulty || 'BASIC')}</b>
+                                {profile.subDifficultyLevel > 0 && ` (${t('subLevel')} ${profile.subDifficultyLevel})`}
+                            </Typography>
+                        </Box>
+
+                        <Stack spacing={3}>
+                            <TextField
+                                label={t('newUsername')}
+                                value={newUsername}
+                                onChange={(e) => setNewUsername(e.target.value)}
+                                error={errors.username}
+                                helperText={errors.username ? t('usernameHelperText') : ''}
+                                fullWidth
+                            />
+
+                            <Box>
+                                <TextField
+                                    label={t('interfaceLanguage')}
+                                    value={codeToLabel(languageCode)}
+                                    onClick={(e) => setLanguageAnchorEl(e.currentTarget)}
+                                    InputProps={{
+                                        readOnly: true,
+                                        startAdornment: <TranslateIcon color="action" sx={{ mr: 1 }} />
+                                    }}
+                                    inputRef={languageRef}
+                                    fullWidth
+                                    sx={{ cursor: 'pointer' }}
+                                />
+                                <Menu
+                                    anchorEl={languageAnchorEl}
+                                    open={Boolean(languageAnchorEl)}
+                                    onClose={() => setLanguageAnchorEl(null)}
+                                    PaperProps={{ style: { width: languageRef.current ? languageRef.current.offsetWidth : 'auto' } }}
+                                >
+                                    {LANG_OPTIONS.map((opt) => (
+                                        <MenuItem
+                                            key={opt.code}
+                                            selected={languageCode === opt.code}
+                                            onClick={() => handleLanguageSelect(opt.code)}
+                                        >
+                                            {opt.label}
+                                        </MenuItem>
+                                    ))}
+                                </Menu>
+                            </Box>
+
+                            <Box sx={{ pt: 2 }}>
+                                <Typography variant="subtitle2" color="primary" sx={{ mb: 1 }}>
+                                    {t('changePassword') || 'Change Password'}
+                                </Typography>
+                                <Stack spacing={2}>
+                                    <PasswordTextField
+                                        label={t('newPassword')}
+                                        value={newPassword}
+                                        error={errors.password}
+                                        helperText={errors.password ? t('RegisterPasswordHelperText') : ''}
+                                        onChange={(e) => setNewPassword(e.target.value)}
+                                        fullWidth
+                                    />
+                                    {newPassword && <PasswordStrengthIndicator password={newPassword} />}
+
+                                    <PasswordTextField
+                                        label={t('repeatPassword')}
+                                        value={repeatPassword}
+                                        error={errors.repeatPassword}
+                                        helperText={errors.repeatPassword ? t('passwordsMustMatch') : ''}
+                                        onChange={(e) => setRepeatPassword(e.target.value)}
+                                        fullWidth
+                                    />
+                                </Stack>
+                            </Box>
+
+                            <Button
+                                variant="contained"
+                                size="large"
+                                disabled={!buttonEnabled}
+                                onClick={handleUpdate}
+                                sx={{ mt: 2 }}
+                            >
+                                {t('saveProfile')}
+                            </Button>
+                        </Stack>
+                    </CardContent>
+                </Card>
+
+                <Snackbar
+                    open={snackbarOpen}
+                    autoHideDuration={4000}
+                    onClose={() => setSnackbarOpen(false)}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
                 >
-                    <TextField
-                        label={t('newUsername')}
-                        value={newUsername}
-                        onChange={(e) => setNewUsername(e.target.value)}
-                        error={errors.username}
-                        helperText={errors.username ? t('usernameHelperText') : ''}
-                    />
-
-                    <PasswordTextField
-                        label={t('newPassword')}
-                        type="password"
-                        value={newPassword}
-                        error={errors.password}
-                        helperText={errors.password ? t('RegisterPasswordHelperText') : ''}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                    />
-
-                    <PasswordStrengthIndicator password={newPassword} />
-
-                    <PasswordTextField
-                        label={t('repeatPassword')}
-                        type="password"
-                        value={repeatPassword}
-                        error={errors.repeatPassword}
-                        helperText={errors.repeatPassword ? t('passwordsMustMatch') : ''}
-                        onChange={(e) => setRepeatPassword(e.target.value)}
-                    />
-
-                    <TextField
-                        label={t('interfaceLanguage')}
-                        value={codeToLabel(languageCode)}
-                        onClick={(e) => setLanguageAnchorEl(e.currentTarget)}
-                        InputProps={{ readOnly: true }}
-                        inputRef={languageRef}
-                    />
-                    <Menu
-                        anchorEl={languageAnchorEl}
-                        open={Boolean(languageAnchorEl)}
-                        onClose={() => setLanguageAnchorEl(null)}
-                        PaperProps={{
-                            style: {
-                                width: languageRef.current ? languageRef.current.offsetWidth : 'auto',
-                            },
-                        }}
-                    >
-                        <MenuItem
-                            selected={languageCode === 'en'}
-                            onClick={() => handleLanguageSelect('en')}
-                        >
-                            English
-                        </MenuItem>
-                        <MenuItem
-                            selected={languageCode === 'he'}
-                            onClick={() => handleLanguageSelect('he')}
-                        >
-                            עברית
-                        </MenuItem>
-                    </Menu>
-
-                    <Button
-                        variant="contained"
-                        color={buttonEnabled ? 'primary' : 'inherit'}
-                        disabled={!buttonEnabled}
-                        onClick={handleUpdate}
-                    >
-                        {t('saveProfile')}
-                    </Button>
-                </Stack>
-            </Box>
-        </Box>
+                    <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
+                        {snackbarMessage}
+                    </Alert>
+                </Snackbar>
+            </Container>
+        </Fade>
     );
 }
