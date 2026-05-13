@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import axios from "axios";
+import PropTypes from "prop-types";
 
 // MUI Components
 import {
@@ -38,7 +39,7 @@ import {
     STATISTICS_URL
 } from "../../utils/Constants.js";
 
-export default function NavBar() {
+export default function NavBar({ role: authRole }) {
     const { t } = useTranslation();
     const location = useLocation();
     const navigate = useNavigate();
@@ -51,7 +52,9 @@ export default function NavBar() {
     const backoffRef = useRef(1000);
     const keepAliveRef = useRef(null);
 
-    const role = (userData?.role || '').replace('ROLE_', '');
+    const profileRole = (userData?.role || '').replace('ROLE_', '');
+    const role = ((authRole || '').replace('ROLE_', '') || profileRole);
+    const isAdmin = role === 'ADMIN';
 
     useEffect(() => {
         if (userData?.profileImage) {
@@ -206,7 +209,7 @@ export default function NavBar() {
                             <NavButton to={HOME_URL} icon={<HomeIcon />} label={t('home')} />
                             <NavButton to={PRACTICE_URL} icon={<CalculateIcon />} label={t('practice')} />
                             <NavButton to={STATISTICS_URL} icon={<BarChartIcon />} label={t('statistics')} />
-                            {role === 'ADMIN' && (
+                            {isAdmin && (
                                 <NavButton to={ADMIN_DASHBOARD_URL} icon={<AdminPanelSettingsIcon />} label={t('adminSection')} />
                             )}
                         </Stack>
@@ -269,8 +272,12 @@ export default function NavBar() {
             <Toolbar sx={{ height: 72 }} />
 
             <Box component="main" sx={{ flexGrow: 1, position: 'relative' }}>
-                <Outlet />
+                <Outlet context={{ role, isAdmin }} />
             </Box>
         </Box>
     );
 }
+
+NavBar.propTypes = {
+    role: PropTypes.string,
+};

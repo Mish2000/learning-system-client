@@ -20,6 +20,7 @@ import {useTranslation} from "react-i18next";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import faviconUrl from "../../assets/favicon.png";
 
 function concatSmart(prev, next) {
     if (!prev) return next ?? '';
@@ -542,7 +543,7 @@ export default function Home() {
                         >
                             <Box
                                 component="img"
-                                src="src/assets/favicon.png"
+                                src={faviconUrl}
                                 alt="icon"
                                 sx={{
                                     width: {xs: 90, md: 120},

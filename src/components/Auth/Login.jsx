@@ -10,9 +10,7 @@ import {
     TextField,
     Typography,
     Container,
-    Fade,
-    FormControlLabel,
-    Checkbox
+    Fade
 } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
 import { REGISTER_URL, SERVER_URL, HOME_URL } from "../../utils/Constants.js";
@@ -22,6 +20,7 @@ import PropTypes from 'prop-types';
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
 import LanguageSwitcher from "../Common/LanguageSwitcher.jsx";
+import faviconUrl from "../../assets/favicon.png";
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -36,7 +35,6 @@ function Login({ onLoginSuccess }) {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [isAdmin, setIsAdmin] = useState(false);
     const [loginError, setLoginError] = useState(false);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -59,8 +57,7 @@ function Login({ onLoginSuccess }) {
                 return;
             }
 
-            // Include isAdmin in the request payload
-            await axios.post(`${SERVER_URL}/auth/login`, { email, password, isAdmin }, { withCredentials: true });
+            await axios.post(`${SERVER_URL}/auth/login`, { email, password }, { withCredentials: true });
 
             const profResp = await axios.get(`${SERVER_URL}/profile`, { withCredentials: true });
             const userLang = (profResp?.data?.interfaceLanguage || 'en').toLowerCase();
@@ -94,7 +91,7 @@ function Login({ onLoginSuccess }) {
                             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
                                 <Box
                                     component="img"
-                                    src="src/assets/favicon.png"
+                                    src={faviconUrl}
                                     alt="QuickMath pointer"
                                     sx={{ width: 80, height: 80, mb: 2 }}
                                 />
@@ -151,17 +148,6 @@ function Login({ onLoginSuccess }) {
                                     helperText={t('loginPasswordHelperText')}
                                     onChange={(e) => setPassword(e.target.value)}
                                     fullWidth
-                                />
-
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={isAdmin}
-                                            onChange={(e) => setIsAdmin(e.target.checked)}
-                                            color="primary"
-                                        />
-                                    }
-                                    label={t('loginAsAdmin')}
                                 />
 
                                 <Button

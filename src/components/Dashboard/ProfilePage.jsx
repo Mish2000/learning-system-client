@@ -32,6 +32,10 @@ const LANG_OPTIONS = [
     { code: 'en', label: 'English' },
     { code: 'he', label: 'עברית' },
 ];
+const PROFILE_IMAGE_ACCEPT = 'image/png,image/jpeg,image/webp';
+const MAX_PROFILE_IMAGE_BYTES = 2 * 1024 * 1024;
+const ALLOWED_PROFILE_IMAGE_TYPES = new Set(PROFILE_IMAGE_ACCEPT.split(','));
+
 const codeToLabel = (code) => {
     const hit = LANG_OPTIONS.find(o => o.code === String(code || '').toLowerCase());
     return hit ? hit.label : 'English';
@@ -75,6 +79,19 @@ export default function ProfilePage() {
     const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+={}'":;?.<>,-]).{8,30}$/;
 
     const dir = useMemo(() => GET_DIRECTION(i18n.language), [i18n.language]);
+
+    const showSnackbar = (message, severity = 'success') => {
+        setSnackbarSeverity(severity);
+        setSnackbarMessage(message);
+        setSnackbarOpen(true);
+    };
+
+    const getErrorMessage = (err) => {
+        const data = err?.response?.data;
+        if (typeof data === 'string' && data.trim()) return data;
+        if (data?.message) return data.message;
+        return t('updateFailed');
+    };
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -127,9 +144,7 @@ export default function ProfilePage() {
                 await axios.post(`${SERVER_URL}/profile/image/delete`, null, { withCredentials: true });
             } else {
                 console.error('Failed to delete profile image', err);
-                setSnackbarSeverity('error');
-                setSnackbarMessage(t('updateFailed'));
-                setSnackbarOpen(true);
+                showSnackbar(getErrorMessage(err), 'error');
                 return;
             }
         }
@@ -138,16 +153,12 @@ export default function ProfilePage() {
         setProfile(refreshed.data);
         setUserImage(null);
         window.dispatchEvent(new CustomEvent('profile-updated', { detail: refreshed.data }));
-        setSnackbarSeverity('success');
-        setSnackbarMessage(t('profileImageRemoved') || 'Profile image removed');
-        setSnackbarOpen(true);
+        showSnackbar(t('profileImageRemoved') || 'Profile image removed');
     };
 
     const handleUpdate = async () => {
         if (!validateInputs()) {
-            setSnackbarSeverity('error');
-            setSnackbarMessage(t('pleaseCheckFields'));
-            setSnackbarOpen(true);
+            showSnackbar(t('pleaseCheckFields'), 'error');
             return;
         }
         try {
@@ -166,13 +177,9 @@ export default function ProfilePage() {
                 interfaceLanguage: languageCode,
             };
 
-            const resp = await axios.put(`${SERVER_URL}/profile`, payload, { withCredentials: true });
+            await axios.put(`${SERVER_URL}/profile`, payload, { withCredentials: true });
 
-            if (resp.data?.newToken) localStorage.setItem('jwtToken', resp.data.newToken);
-
-            setSnackbarSeverity('success');
-            setSnackbarMessage(t('profileUpdatedSuccessfully'));
-            setSnackbarOpen(true);
+            showSnackbar(t('profileUpdatedSuccessfully'));
 
             setNewPassword('');
             setRepeatPassword('');
@@ -186,9 +193,7 @@ export default function ProfilePage() {
             localStorage.setItem('language', languageCode);
         } catch (err) {
             console.error('Failed to update profile', err);
-            setSnackbarSeverity('error');
-            setSnackbarMessage(t('updateFailed'));
-            setSnackbarOpen(true);
+            showSnackbar(getErrorMessage(err), 'error');
         }
     };
 
@@ -199,9 +204,23 @@ export default function ProfilePage() {
     };
 
     const handleImageChange = (e) => {
-        if (e.target.files && e.target.files[0]) {
-            setUserImage(e.target.files[0]);
+        const file = e.target.files?.[0];
+        if (!file) {
+            return;
         }
+        if (!ALLOWED_PROFILE_IMAGE_TYPES.has(file.type)) {
+            setUserImage(null);
+            e.target.value = '';
+            showSnackbar('Please choose a JPEG, PNG, or WebP image.', 'error');
+            return;
+        }
+        if (file.size > MAX_PROFILE_IMAGE_BYTES) {
+            setUserImage(null);
+            e.target.value = '';
+            showSnackbar('Profile image must be 2MB or smaller.', 'error');
+            return;
+        }
+        setUserImage(file);
     };
 
     if (!profile) {
@@ -296,7 +315,7 @@ export default function ProfilePage() {
                             <input
                                 id="profile-image-upload"
                                 type="file"
-                                accept="image/*"
+                                accept={PROFILE_IMAGE_ACCEPT}
                                 style={{ display: 'none' }}
                                 onChange={handleImageChange}
                             />

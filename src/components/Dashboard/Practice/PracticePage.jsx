@@ -2,12 +2,14 @@ import PropTypes from "prop-types";
 import { Box, Container, Typography, Card, Fade } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useMemo } from "react";
+import { useOutletContext } from "react-router-dom";
 import QuestionGenerator from "./QuestionGenerator.jsx";
 import { GET_DIRECTION } from "../../../utils/Constants.js";
 
 
 function PracticePage() {
     const { t, i18n } = useTranslation();
+    const { isAdmin = false } = useOutletContext() || {};
     const dir = useMemo(() => GET_DIRECTION(i18n.language), [i18n.language]);
 
     return (
@@ -61,7 +63,12 @@ function PracticePage() {
                         }}
                     >
                         {/* Pass UI language down; remount on language change to keep streams clean */}
-                        <QuestionGenerator key={i18n.language} uiLanguage={i18n.language} onQuestionGenerated={null} />
+                        <QuestionGenerator
+                            key={i18n.language}
+                            uiLanguage={i18n.language}
+                            isAdmin={isAdmin}
+                            onQuestionGenerated={null}
+                        />
                     </Card>
                 </Container>
             </Box>

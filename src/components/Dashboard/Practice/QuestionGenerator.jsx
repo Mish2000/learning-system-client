@@ -26,7 +26,7 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 import { PRACTICE_URL, SERVER_URL } from "../../../utils/Constants.js";
 
-function QuestionGenerator({ onQuestionGenerated }) {
+function QuestionGenerator({ onQuestionGenerated, isAdmin = false }) {
     const { t } = useTranslation();
     const navigate = useNavigate();
 
@@ -35,7 +35,6 @@ function QuestionGenerator({ onQuestionGenerated }) {
     const [selectedParent, setSelectedParent] = useState('');
     const [selectedSubtopic, setSelectedSubtopic] = useState('');
     const [isGeometry, setIsGeometry] = useState(false);
-    const [isAdmin] = useState(localStorage.getItem('role') === 'ADMIN');
 
     useEffect(() => {
         fetchParents();
@@ -321,7 +320,8 @@ function QuestionGenerator({ onQuestionGenerated }) {
 }
 
 QuestionGenerator.propTypes = {
-    onQuestionGenerated: PropTypes.func
+    onQuestionGenerated: PropTypes.func,
+    isAdmin: PropTypes.bool,
 };
 
 export default QuestionGenerator;

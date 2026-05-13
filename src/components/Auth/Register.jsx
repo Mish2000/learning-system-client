@@ -18,6 +18,7 @@ import { registerUser } from '../../services/UserAPI.js';
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../Common/LanguageSwitcher.jsx";
 import PasswordStrengthIndicator from "../Common/PasswordStrengthIndicator.jsx";
+import faviconUrl from "../../assets/favicon.png";
 
 function Register() {
     const { t } = useTranslation();
@@ -74,7 +75,7 @@ function Register() {
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 3, gap: 2 }}>
                                 <Box
                                     component="img"
-                                    src="src/assets/favicon.png"
+                                    src={faviconUrl}
                                     alt="QuickMath icon"
                                     sx={{ width: 50, height: 50 }}
                                 />

@@ -1,5 +1,9 @@
 import { createTheme } from '@mui/material/styles';
 import { heIL, enUS } from '@mui/material/locale';
+import pointerUrl from '../assets/pointer.png';
+
+const pointerCursor = `url(${pointerUrl}), pointer`;
+const textCursor = `url(${pointerUrl}), text`;
 
 const baseThemePart = {
     palette: {
@@ -65,10 +69,10 @@ const baseThemePart = {
                     borderRadius: 12, // Match global shape
                     padding: '8px 22px',
                     boxShadow: 'none',
-                    cursor: 'url(/Assets/pointer.png), pointer',
+                    cursor: pointerCursor,
                     '&:hover': {
                         boxShadow: '0 8px 16px 0 rgba(12, 134, 134, 0.24)',
-                        cursor: 'url(/Assets/pointer.png), pointer'
+                        cursor: pointerCursor
                     },
                 },
                 containedPrimary: {
@@ -104,27 +108,27 @@ const baseThemePart = {
         MuiSelect: {
             styleOverrides: {
                 root: {
-                    cursor: 'url(/Assets/pointer.png), pointer',
-                    '&:hover': { cursor: 'url(/Assets/pointer.png), pointer' },
-                    '&:focus': { cursor: 'url(/Assets/pointer.png), pointer' },
+                    cursor: pointerCursor,
+                    '&:hover': { cursor: pointerCursor },
+                    '&:focus': { cursor: pointerCursor },
                 },
             },
         },
         MuiMenuItem: {
             styleOverrides: {
                 root: {
-                    cursor: 'url(/Assets/pointer.png), pointer',
-                    '&:hover': { cursor: 'url(/Assets/pointer.png), pointer' },
-                    '&:focus': { cursor: 'url(/Assets/pointer.png), pointer' },
+                    cursor: pointerCursor,
+                    '&:hover': { cursor: pointerCursor },
+                    '&:focus': { cursor: pointerCursor },
                 },
             },
         },
         MuiInputBase: {
             styleOverrides: {
                 input: {
-                    cursor: 'url(/Assets/pointer.png), text',
-                    '&:hover': { cursor: 'url(/Assets/pointer.png), text' },
-                    '&:focus': { cursor: 'url(/Assets/pointer.png), text' },
+                    cursor: textCursor,
+                    '&:hover': { cursor: textCursor },
+                    '&:focus': { cursor: textCursor },
                 },
             },
         },
@@ -135,7 +139,7 @@ const baseThemePart = {
                         borderRadius: 12,
                     },
                     '& textarea.MuiInputBase-input.MuiTextarea-input': {
-                        cursor: 'url(/Assets/pointer.png), text',
+                        cursor: textCursor,
                     },
                 },
             },

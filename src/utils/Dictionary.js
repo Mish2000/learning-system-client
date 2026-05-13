@@ -137,7 +137,6 @@ const resources = {
             loginPasswordHelperText: "Do not share your password with anyone else",
             loginTitle: "Quick Math",
             slogan: "Think Fast - Solve Faster!",
-            loginAsAdmin: "Login as Administrator",
 
             // Register.jsx
             registerPageTitle: "Create New Account",
@@ -433,7 +432,6 @@ const resources = {
             loginPasswordHelperText: "נא לא לשתף את סיסמתך עם כל אדם אחר",
             loginTitle: "חשבון מהיר",
             slogan: "לחשוב מהר - לפתור מהר יותר!",
-            loginAsAdmin: "התחבר כמנהל",
 
             // Register.jsx
             registerPageTitle: "צור משתמש חדש",

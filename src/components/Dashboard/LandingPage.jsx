@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../Common/LanguageSwitcher.jsx";
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import AiInstallationGuide from "./AiInstallationGuide.jsx";
+import faviconUrl from "../../assets/favicon.png";
 
 function LandingPage() {
     const navigate = useNavigate();
@@ -32,7 +33,7 @@ function LandingPage() {
 
                 <Box
                     component="img"
-                    src="src/assets/favicon.png"
+                    src={faviconUrl}
                     alt="QuickMath icon"
                     sx={{
                         width: { xs: 120, sm: 150 },

@@ -195,7 +195,7 @@ function App() {
 
                         {/* AUTHENTICATED AREA (with NavBar) */}
                         {isAuth && (
-                            <Route element={<NavBar/>}>
+                            <Route element={<NavBar role={role}/>}>
                                 <Route path={HOME_URL} element={<Home/>}/>
 
                                 <Route path={STATISTICS_URL} element={<UserDashboardSSE/>}/>
