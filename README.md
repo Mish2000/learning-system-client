@@ -1,3 +1,5 @@
+> **Moved:** this code now lives in [Mish2000/quickmath](https://github.com/Mish2000/quickmath) with its full history.
+
 # QuickMath AI Learning System — Frontend Client
 
 ![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)
